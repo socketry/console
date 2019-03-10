@@ -1,0 +1,67 @@
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# 
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+# 
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+# 
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+require 'advise/console'
+
+RSpec.describe Advise::Console do
+	describe '#default_log_level' do
+		let!(:debug) {$DEBUG}
+		after {$DEBUG = debug}
+
+		let!(:verbose) {$VERBOSE}
+		after {$VERBOSE = verbose}
+
+		it 'should set default log level' do
+			$DEBUG = false
+			$VERBOSE = false
+
+			expect(Advise.default_log_level).to be == Advise::Logger::WARN
+		end
+
+		it 'should set default log level based on $DEBUG' do
+			$DEBUG = true
+
+			expect(Advise.default_log_level).to be == Advise::Logger::DEBUG
+		end
+
+		it 'should set default log level based on $VERBOSE' do
+			$DEBUG = false
+			$VERBOSE = true
+
+			expect(Advise.default_log_level).to be == Advise::Logger::INFO
+		end
+	end
+end
+
+module MyModule
+	extend Advise::Console
+	
+	logger.debug!
+	
+	def self.test_logger
+		debug "GOTO LINE 1."
+		info "5 things your doctor won't tell you!"
+		warn "Something didn't work as expected!"
+		error "The matrix has two cats!"
+		advise "There be the dragons!"
+	end
+	
+	test_logger
+end
