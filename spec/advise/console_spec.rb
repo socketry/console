@@ -59,8 +59,10 @@ module MyModule
 		debug "GOTO LINE 1."
 		info "5 things your doctor won't tell you!"
 		warn "Something didn't work as expected!"
-		error "The matrix has two cats!"
-		advise "There be the dragons!"
+		error "There be the dragons!", (raise RuntimeError, "Bits have incorrect rotation" rescue $!)
+		
+		
+		info self, shell: [{LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"}]
 	end
 	
 	test_logger

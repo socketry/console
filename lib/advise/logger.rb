@@ -23,7 +23,7 @@ require_relative 'buffer'
 
 module Advise
 	class Logger
-		LEVELS = {debug: 0, info: 1, warn: 2, error: 3, advise: 4}
+		LEVELS = {debug: 0, info: 1, warn: 2, error: 3}
 		
 		LEVELS.each do |name, level|
 			const_set(name.to_s.upcase, level)
@@ -32,7 +32,7 @@ module Advise
 				enabled = @subjects[subject.class]
 				
 				if enabled == true or (enabled != false and level >= @level)
-					self.format(subject, *arguments, &block)
+					self.format(name, subject, *arguments, &block)
 				end
 			end
 			
@@ -41,18 +41,29 @@ module Advise
 			end
 		end
 		
-		def initialize(output, level: 1)
+		def initialize(output, verbose = true, level: 1)
 			@output = output
 			@level = level
 			@start = Time.now
 			
+			@verbose = verbose
+			
 			@terminal = Terminal.new(output)
+			
+			@level_style = Hash.new{@prefix_style}
+			
 			@reset_style = @terminal.reset
 			@prefix_style = @terminal.color(Terminal::Colors::CYAN)
 			@subject_style = @terminal.color(nil, nil, Terminal::Attributes::BOLD)
 			@exception_title_style = @terminal.color(Terminal::Colors::RED, nil, Terminal::Attributes::BOLD)
 			@exception_details_style = @terminal.color(Terminal::Colors::YELLOW)
 			@exception_line_style = @terminal.color(Terminal::Colors::RED)
+			
+			@level_style[:info] = @terminal.color(Terminal::Colors::GREEN)
+			@level_style[:warn] = @terminal.color(Terminal::Colors::YELLOW)
+			@level_style[:error] = @terminal.color(Terminal::Colors::RED, nil, Terminal::Attributes::BLINK)
+			
+			@shell_command = @terminal.color(Terminal::Colors::BLUE, nil, Terminal::Attributes::BOLD)
 			
 			@subjects = {}
 		end
@@ -87,18 +98,22 @@ module Advise
 			self.send(level, *arguments, &block)
 		end
 		
-		def format(subject = nil, *arguments, &block)
+		def format(level, subject = nil, *arguments, **specific, &block)
 			prefix = time_offset_prefix
 			indent = " " * prefix.size
 			
 			buffer = Buffer.new("#{indent}| ")
 			
 			if subject
-				format_subject(prefix, subject, output: buffer)
+				format_subject(level, prefix, subject, output: buffer)
 			end
 			
 			arguments.each do |argument|
 				format_argument(argument, output: buffer)
+			end
+			
+			specific.each do |name, argument|
+				self.send("format_#{name}", argument, output: buffer)
 			end
 			
 			if block_given?
@@ -120,22 +135,47 @@ module Advise
 			end
 		end
 		
+		def chdir_string(options)
+			if options and chdir = options[:chdir]
+				" in #{chdir}"
+			end
+		end
+		
+		def format_shell(arguments, output: @output)
+			arguments = arguments.dup
+			
+			environment = arguments.first.is_a?(Hash) ? arguments.shift : nil
+			options = arguments.last.is_a?(Hash) ? arguments.pop : nil
+			
+			arguments = arguments.flatten.collect(&:to_s)
+			
+			output.puts "#{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
+			
+			if @verbose
+				if environment
+					environment.each do |key, value|
+						output.puts "  #{key}=#{value.dump}"
+					end
+				end
+			end
+		end
+		
 		def format_exception(exception, prefix = nil, pwd: Dir.pwd, output: @output)
 			lines = exception.message.lines.map(&:chomp)
 			
-			output.puts " #{prefix}#{@exception_title_style}#{exception.class}#{@reset_style}: #{lines.shift}"
+			output.puts "#{prefix}#{@exception_title_style}#{exception.class}#{@reset_style}: #{lines.shift}"
 			
 			lines.each do |line|
-				output.puts "   #{@exception_details_style}" + line + @reset_style
+				output.puts "  #{@exception_details_style}" + line + @reset_style
 			end
 			
-			exception.backtrace.each_with_index do |line, index|
+			exception.backtrace&.each_with_index do |line, index|
 				path, offset, message = line.split(":")
 				
 				# Make the path a bit more readable
 				path.gsub!(/^#{pwd}\//, "./")
 				
-				output.puts " #{index == 0 ? "→" : " "} #{@exception_line_style}#{path}:#{offset}#{@reset_style} #{message}"
+				output.puts "  #{index == 0 ? "→" : " "} #{@exception_line_style}#{path}:#{offset}#{@reset_style} #{message}"
 			end
 			
 			if exception.cause
@@ -143,8 +183,14 @@ module Advise
 			end
 		end
 		
-		def format_subject(prefix, subject, output: @output)
-			output.puts "#{@subject_style}#{subject}#{@reset_style} [pid=#{Process.pid}]", prefix: "#{@prefix_style}#{prefix}: "
+		def format_subject(level, prefix, subject, output: @output)
+			prefix_style = @level_style[level]
+			
+			if @verbose
+				suffix = " [pid=#{Process.pid}]"
+			end
+			
+			output.puts "#{@subject_style}#{subject}#{@reset_style}#{suffix}", prefix: "#{prefix_style}#{prefix}: "
 		end
 		
 		def format_value(value, output: @output)
