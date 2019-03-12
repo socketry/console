@@ -61,7 +61,7 @@ module Advise
 			
 			@level_style[:info] = @terminal.color(Terminal::Colors::GREEN)
 			@level_style[:warn] = @terminal.color(Terminal::Colors::YELLOW)
-			@level_style[:error] = @terminal.color(Terminal::Colors::RED, nil, Terminal::Attributes::BLINK)
+			@level_style[:error] = @terminal.color(Terminal::Colors::RED)
 			
 			@shell_command = @terminal.color(Terminal::Colors::BLUE, nil, Terminal::Attributes::BOLD)
 			
@@ -149,12 +149,12 @@ module Advise
 			
 			arguments = arguments.flatten.collect(&:to_s)
 			
-			output.puts "#{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
+			output.puts "  #{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
 			
 			if @verbose
 				if environment
 					environment.each do |key, value|
-						output.puts "  #{key}=#{value.dump}"
+						output.puts "    #{key}=#{value.dump}"
 					end
 				end
 			end
@@ -163,7 +163,7 @@ module Advise
 		def format_exception(exception, prefix = nil, pwd: Dir.pwd, output: @output)
 			lines = exception.message.lines.map(&:chomp)
 			
-			output.puts "#{prefix}#{@exception_title_style}#{exception.class}#{@reset_style}: #{lines.shift}"
+			output.puts "  #{prefix}#{@exception_title_style}#{exception.class}#{@reset_style}: #{lines.shift}"
 			
 			lines.each do |line|
 				output.puts "  #{@exception_details_style}" + line + @reset_style
