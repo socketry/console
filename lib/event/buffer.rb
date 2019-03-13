@@ -31,7 +31,6 @@ module Event
 		def puts(*args, prefix: @prefix)
 			args.each do |arg|
 				self.write(prefix) if prefix
-				
 				super(arg)
 			end
 		end

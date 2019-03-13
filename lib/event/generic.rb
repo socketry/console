@@ -18,17 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'terminal/text'
-require_relative 'terminal/xterm'
-
 module Event
-	module Terminal
-		def self.new(output)
-			if output.isatty
-				XTerm.new(output)
-			else
-				Text.new(output)
-			end
+	class Generic
+		def format_event(buffer, terminal)
 		end
 	end
 end

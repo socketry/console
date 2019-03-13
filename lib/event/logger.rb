@@ -21,7 +21,8 @@
 require_relative 'terminal'
 require_relative 'buffer'
 
-require 'pp'
+require_relative 'shell'
+require_relative 'error'
 
 module Event
 	class Logger
@@ -41,36 +42,38 @@ module Event
 			define_method("#{name}!") do
 				@level = level
 			end
+			
+			define_method("#{name}?") do
+				@level >= level
+			end
 		end
 		
-		def initialize(output, verbose = true, level: 1)
+		def initialize(output = $stderr, verbose: true, level: 1)
 			@output = output
 			@level = level
 			@start = Time.now
 			
 			@verbose = verbose
+			@subjects = {}
 			
 			@terminal = Terminal.new(output)
+			@terminal[:logger_prefix] ||= @terminal.style(nil, nil, :bold)
+			@terminal[:logger_suffix] ||= @terminal.style(:white, nil, :faint)
+			@terminal[:debug] = @terminal.style(:cyan)
+			@terminal[:info] = @terminal.style(:green)
+			@terminal[:warn] = @terminal.style(:yellow)
+			@terminal[:error] = @terminal.style(:red)
 			
-			@level_style = Hash.new{@prefix_style}
-			
-			@reset_style = @terminal.reset
-			@prefix_style = @terminal.color(Terminal::Colors::CYAN)
-			@subject_style = @terminal.color(nil, nil, Terminal::Attributes::BOLD)
-			@exception_title_style = @terminal.color(Terminal::Colors::RED, nil, Terminal::Attributes::BOLD)
-			@exception_details_style = @terminal.color(Terminal::Colors::YELLOW)
-			@exception_line_style = @terminal.color(Terminal::Colors::RED)
-			
-			@level_style[:info] = @terminal.color(Terminal::Colors::GREEN)
-			@level_style[:warn] = @terminal.color(Terminal::Colors::YELLOW)
-			@level_style[:error] = @terminal.color(Terminal::Colors::RED)
-			
-			@shell_command = @terminal.color(Terminal::Colors::BLUE, nil, Terminal::Attributes::BOLD)
-			
-			@subjects = {}
+			Shell.register(@terminal)
+			Error.register(@terminal)
 		end
 		
 		attr :level
+		attr :verbose
+		
+		def verbose!
+			@verbose = true
+		end
 		
 		def level= value
 			if value.is_a? Symbol
@@ -109,20 +112,16 @@ module Event
 			buffer = Buffer.new("#{indent}| ")
 			
 			if subject
-				format_subject(level, prefix, subject, output: buffer)
+				format_subject(level, prefix, subject, buffer)
 			end
 			
 			arguments.each do |argument|
-				format_argument(argument, output: buffer)
-			end
-			
-			specific.each do |name, argument|
-				self.send("format_#{name}", argument, output: buffer)
+				format_argument(argument, buffer)
 			end
 			
 			if block_given?
 				if block.arity.zero?
-					format_argument(yield, output: buffer)
+					format_argument(yield, buffer)
 				else
 					yield(buffer, @terminal)
 				end
@@ -131,73 +130,28 @@ module Event
 			@output.write buffer.string
 		end
 		
-		def format_argument(argument, output: @output)
-			if argument.is_a? Exception
-				format_exception(argument, output: output)
+		def format_argument(argument, output)
+			case argument
+			when Exception
+				Error.new(argument).format_event(output, @terminal, @verbose)
+			when Generic
+				argument.format_event(output, @terminal, @verbose)
 			else
-				format_value(argument, output: output)
+				format_value(argument, output)
 			end
 		end
 		
-		def chdir_string(options)
-			if options and chdir = options[:chdir]
-				" in #{chdir}"
-			end
-		end
-		
-		def format_shell(arguments, output: @output)
-			arguments = arguments.dup
-			
-			environment = arguments.first.is_a?(Hash) ? arguments.shift : nil
-			options = arguments.last.is_a?(Hash) ? arguments.pop : nil
-			
-			arguments = arguments.flatten.collect(&:to_s)
-			
-			output.puts "#{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
+		def format_subject(level, prefix, subject, output)
+			prefix_style = @terminal[level]
 			
 			if @verbose
-				if environment
-					environment.each do |key, value|
-						output.puts "export #{key}=#{value}"
-					end
-				end
+				suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}]#{@terminal.reset}"
 			end
+			
+			output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: "#{prefix_style}#{prefix}: "
 		end
 		
-		def format_exception(exception, prefix = nil, pwd: Dir.pwd, output: @output)
-			lines = exception.message.lines.map(&:chomp)
-			
-			output.puts "  #{prefix}#{@exception_title_style}#{exception.class}#{@reset_style}: #{lines.shift}"
-			
-			lines.each do |line|
-				output.puts "  #{@exception_details_style}" + line + @reset_style
-			end
-			
-			exception.backtrace&.each_with_index do |line, index|
-				path, offset, message = line.split(":")
-				
-				# Make the path a bit more readable
-				path.gsub!(/^#{pwd}\//, "./")
-				
-				output.puts "  #{index == 0 ? "→" : " "} #{@exception_line_style}#{path}:#{offset}#{@reset_style} #{message}"
-			end
-			
-			if exception.cause
-				format_exception(exception.cause, "Caused by ", pwd: pwd, output: output)
-			end
-		end
-		
-		def format_subject(level, prefix, subject, output: @output)
-			prefix_style = @level_style[level]
-			
-			if @verbose
-				suffix = " [pid=#{Process.pid}]"
-			end
-			
-			output.puts "#{@subject_style}#{subject}#{@reset_style}#{suffix}", prefix: "#{prefix_style}#{prefix}: "
-		end
-		
-		def format_value(value, output: @output)
+		def format_value(value, output)
 			string = value.to_s
 			
 			string.each_line do |line|

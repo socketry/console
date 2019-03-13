@@ -18,16 +18,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'terminal/text'
-require_relative 'terminal/xterm'
+require 'io/console'
 
 module Event
+	# Styled terminal output.
 	module Terminal
-		def self.new(output)
-			if output.isatty
-				XTerm.new(output)
-			else
-				Text.new(output)
+		class Text
+			def initialize(output)
+				@output = output
+			end
+			
+			def [] key
+				nil
+			end
+			
+			def []= key, value
+			end
+			
+			def style(foreground, background = nil, attributes = nil)
+			end
+			
+			def reset
 			end
 		end
 	end

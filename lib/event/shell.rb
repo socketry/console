@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,16 +18,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'terminal/text'
-require_relative 'terminal/xterm'
+require_relative 'terminal'
+require_relative 'buffer'
+
+require_relative 'generic'
 
 module Event
-	module Terminal
-		def self.new(output)
-			if output.isatty
-				XTerm.new(output)
+	class Shell < Generic
+		def self.for(*arguments, **options)
+			if arguments.first.is_a?(Hash)
+				self.new(*arguments, **options)
 			else
-				Text.new(output)
+				self.new(nil, arguments, **options)
+			end
+		end
+		
+		def initialize(environment, *arguments, **options)
+			@environment = environment
+			@arguments = arguments
+			@options = options
+		end
+		
+		attr :environment
+		attr :arguments
+		attr :options
+		
+		def chdir_string(options)
+			if options and chdir = options[:chdir]
+				" in #{chdir}"
+			end
+		end
+		
+		def self.register(terminal)
+			terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
+		end
+		
+		def format_event(output, terminal, verbose)
+			arguments = @arguments.flatten.collect(&:to_s)
+			
+			output.puts "  #{terminal[:shell_command]}#{arguments.join(' ')}#{terminal.reset}#{chdir_string(options)}"
+			
+			if verbose and @environment
+				@environment.each do |key, value|
+					output.puts "    export #{key}=#{value}"
+				end
 			end
 		end
 	end
