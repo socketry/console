@@ -26,8 +26,8 @@ require 'logger'
 module Advise
 	module Console
 		class << self
-			attr :logger
-			
+			attr_accessor :logger
+
 			# Set the default log level based on `$DEBUG` and `$VERBOSE`.
 			def default_log_level
 				if $DEBUG
