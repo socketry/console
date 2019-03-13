@@ -48,6 +48,14 @@ RSpec.describe Advise::Console do
 			expect(Advise.default_log_level).to be == Advise::Logger::INFO
 		end
 	end
+
+	describe '#logger' do
+		it 'sets and returns a logger' do
+			logger = double(:logger)
+			described_class.logger = logger
+			expect(described_class.logger).to be(logger)
+		end
+	end
 end
 
 module MyModule
