@@ -18,9 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'advise/console'
+require 'event/console'
 
-RSpec.describe Advise::Console do
+RSpec.describe Event::Console do
 	describe '#default_log_level' do
 		let!(:debug) {$DEBUG}
 		after {$DEBUG = debug}
@@ -32,20 +32,20 @@ RSpec.describe Advise::Console do
 			$DEBUG = false
 			$VERBOSE = false
 
-			expect(Advise.default_log_level).to be == Advise::Logger::WARN
+			expect(Event.default_log_level).to be == Event::Logger::WARN
 		end
 
 		it 'should set default log level based on $DEBUG' do
 			$DEBUG = true
 
-			expect(Advise.default_log_level).to be == Advise::Logger::DEBUG
+			expect(Event.default_log_level).to be == Event::Logger::DEBUG
 		end
 
 		it 'should set default log level based on $VERBOSE' do
 			$DEBUG = false
 			$VERBOSE = true
 
-			expect(Advise.default_log_level).to be == Advise::Logger::INFO
+			expect(Event.default_log_level).to be == Event::Logger::INFO
 		end
 	end
 
@@ -59,7 +59,7 @@ RSpec.describe Advise::Console do
 end
 
 module MyModule
-	extend Advise::Console
+	extend Event::Console
 	
 	logger.debug!
 	

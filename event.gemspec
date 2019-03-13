@@ -1,14 +1,14 @@
 
-require_relative "lib/advise/version"
+require_relative "lib/event/version"
 
 Gem::Specification.new do |spec|
-	spec.name = "advise"
-	spec.version = Advise::VERSION
+	spec.name = "event"
+	spec.version = Event::VERSION
 	spec.authors = ["Samuel Williams"]
 	spec.email = ["samuel.williams@oriontransfer.co.nz"]
 	
 	spec.summary = "Beautiful logging for Ruby."
-	spec.homepage = "https://github.com/socketry/advise"
+	spec.homepage = "https://github.com/socketry/event"
 	
 	spec.files = Dir.chdir(File.expand_path('..', __FILE__)) do
 		`git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }

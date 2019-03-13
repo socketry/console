@@ -21,7 +21,9 @@
 require_relative 'terminal'
 require_relative 'buffer'
 
-module Advise
+require 'pp'
+
+module Event
 	class Logger
 		LEVELS = {debug: 0, info: 1, warn: 2, error: 3}
 		
@@ -98,6 +100,8 @@ module Advise
 			self.send(level, *arguments, &block)
 		end
 		
+		protected
+		
 		def format(level, subject = nil, *arguments, **specific, &block)
 			prefix = time_offset_prefix
 			indent = " " * prefix.size
@@ -149,12 +153,12 @@ module Advise
 			
 			arguments = arguments.flatten.collect(&:to_s)
 			
-			output.puts "  #{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
+			output.puts "#{@shell_command}#{arguments.join(' ')}#{@reset_style}#{chdir_string(options)}"
 			
 			if @verbose
 				if environment
 					environment.each do |key, value|
-						output.puts "    #{key}=#{value.dump}"
+						output.puts "export #{key}=#{value}"
 					end
 				end
 			end

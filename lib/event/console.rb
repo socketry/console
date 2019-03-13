@@ -23,7 +23,7 @@ require_relative 'logger'
 # Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
 require 'logger'
 
-module Advise
+module Event
 	module Console
 		class << self
 			attr_accessor :logger

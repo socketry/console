@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,56 +18,35 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'advise'
+require_relative 'event/logger'
 
-RSpec.describe Advise::Logger do
-	let(:output) {StringIO.new}
-	subject{described_class.new(output)}
-	
-	let(:message) {"Hello World"}
-	
-	context "default log level" do
-		it "logs info" do
-			subject.info(message)
-			
-			expect(output.string).to include message
-		end
+# Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
+require 'logger'
+
+module Event
+	class << self
+		attr :logger
 		
-		it "doesn't log debug" do
-			subject.debug(message)
-			
-			expect(output.string).to_not include message
-		end
-		
-		it "can log to buffer" do
-			subject.info do |buffer|
-				buffer << message
+		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
+		def default_log_level
+			if $DEBUG
+				Logger::DEBUG
+			elsif $VERBOSE
+				Logger::INFO
+			else
+				Logger::WARN
 			end
-			
-			expect(output.string).to include message
 		end
 	end
 	
-	described_class::LEVELS.each do |name, level|
-		it "can log #{name} messages" do
-			subject.level = level
-			subject.log(name, message)
-			
-			expect(output.string).to include message
-		end
+	# Create the logger instance.
+	@logger = Logger.new($stderr, level: self.default_log_level)
+	
+	Logger::LEVELS.each do |name, level|
+		define_method(name, &@logger.method(name))
 	end
 	
-	describe '#enable' do
-		let(:object) {Object.new}
-		
-		it "can enable specific subjects" do
-			subject.warn!
-			
-			subject.enable(object)
-			expect(subject).to be_enabled(object)
-			
-			subject.debug(object, message)
-			expect(output.string).to include message
-		end
+	def logger
+		Event.logger
 	end
 end

@@ -18,10 +18,90 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'advise'
+require 'io/console'
 
-RSpec.describe Advise do
-	it "has a version number" do
-		expect(Advise::VERSION).not_to be nil
+module Event
+	# Styled terminal output.
+	class Terminal
+		module Attributes
+			NORMAL = 0
+			BOLD = 1
+			FAINT = 2
+			ITALIC = 3
+			UNDERLINE = 4
+			BLINK = 5
+			REVERSE = 7
+			HIDDEN = 8
+		end
+		
+		module Colors
+			BLACK = 0
+			RED = 1
+			GREEN = 2
+			YELLOW = 3
+			BLUE = 4
+			MAGENTA = 5
+			CYAN = 6
+			WHITE = 7
+			DEFAULT = 9
+		end
+		
+		def initialize(output)
+			@output = output
+		end
+		
+		def tty?
+			@output.isatty
+		end
+		
+		def size
+			if tty?
+				@output.winsize
+			end
+		end
+		
+		def color(foreground, background = nil, attributes = nil)
+			return nil unless tty?
+			
+			buffer = String.new
+			
+			buffer << "\e["
+			first = true
+			
+			if attributes
+				buffer << (attributes).to_s
+				first = false
+			end
+			
+			if foreground
+				if !first
+					buffer << ";" 
+				else
+					first = false
+				end
+				
+				buffer << (30 + foreground).to_s
+			end
+			
+			if background
+				if !first
+					buffer << ";" 
+				else
+					first = false
+				end
+				
+				buffer << (40 + background).to_s
+			end
+			
+			buffer << 'm'
+			
+			return buffer
+		end
+		
+		def reset
+			return nil unless tty?
+			
+			return "\e[0m"
+		end
 	end
 end

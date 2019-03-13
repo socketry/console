@@ -18,35 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'advise/logger'
+require 'event'
 
-# Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
-require 'logger'
-
-module Advise
-	class << self
-		attr :logger
-		
-		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
-		def default_log_level
-			if $DEBUG
-				Logger::DEBUG
-			elsif $VERBOSE
-				Logger::INFO
-			else
-				Logger::WARN
-			end
-		end
-	end
-	
-	# Create the logger instance.
-	@logger = Logger.new($stderr, level: self.default_log_level)
-	
-	Logger::LEVELS.each do |name, level|
-		define_method(name, &@logger.method(name))
-	end
-	
-	def logger
-		Advise.logger
+RSpec.describe Event do
+	it "has a version number" do
+		expect(Event::VERSION).not_to be nil
 	end
 end

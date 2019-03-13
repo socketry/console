@@ -1,9 +1,9 @@
-# Advise
+# Event
 
-Provides beautiful logging for Ruby applications. Implements fast, buffered log output.
+Provides beautiful event logging for Ruby applications. Implements fast, buffered log output.
 
-[![Build Status](https://travis-ci.com/socketry/advise.svg)](http://travis-ci.com/socketry/advise)
-[![Coverage Status](https://coveralls.io/repos/socketry/advise/badge.svg)](https://coveralls.io/r/socketry/advise)
+[![Build Status](https://travis-ci.com/socketry/event.svg)](http://travis-ci.com/socketry/event)
+[![Coverage Status](https://coveralls.io/repos/socketry/event/badge.svg)](https://coveralls.io/r/socketry/event)
 
 ## Motivation
 
@@ -14,7 +14,7 @@ When Ruby decided to reverse the order of exception backtraces, I finally gave u
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'advise'
+gem 'event'
 ```
 
 And then execute:
@@ -23,38 +23,35 @@ And then execute:
 
 ## Usage
 
-Generally speaking, use `Advise::Console.logger` which is suitable for logging to the user's advise.
+Generally speaking, use `Event::Console.logger` which is suitable for logging to the user's event.
 
-### Advise
+### Event
 
-If you don't like the name "Advise", you can also use the following:
+If you don't like the name "Event", you can also use the following:
 
 ```ruby
-require 'advise/console'
+require 'event/console'
 
-# The top level module Advise is an alias for Advise:
-Advise::Console.logger
+# The top level module Event is an alias for Event:
+Event::Console.logger
 ```
 
-The reason for this is because I cannot acquire the gem named "advise". "Advise" is a play on the word "Terminal".
+The reason for this is because I cannot acquire the gem named "event". "Event" is a play on the word "Terminal".
 
 ### Module Integration
 
 ```ruby
 # Set the log level:
-Advise::Console.logger.debug!
+Event::Console.logger.debug!
 
 module MyModule
-	extend Advise::Console
-	
-	logger.debug!
+	extend Event::Console
 	
 	def self.test_logger
 		debug "GOTO LINE 1."
 		info "5 things your doctor won't tell you!"
 		warn "Something didn't work as expected!"
 		error "The matrix has two cats!"
-		advise "There be the dragons!"
 	end
 	
 	test_logger
@@ -65,17 +62,16 @@ end
 
 ```ruby
 # Set the log level:
-Advise::Console.logger.debug!
+Event::Console.logger.debug!
 
 class MyObject
-	include Advise::Console
+	include Event::Console
 
 	def test_logger
 		debug "GOTO LINE 1."
 		info "5 things your doctor won't tell you!"
 		warn "Something didn't work as expected!"
 		error "The matrix has two cats!"
-		advise "There be the dragons!"
 	end
 end
 
