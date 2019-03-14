@@ -26,7 +26,7 @@ require_relative 'error'
 
 module Event
 	class Logger
-		LEVELS = {debug: 0, info: 1, warn: 2, error: 3}
+		LEVELS = {debug: 0, info: 1, warn: 2, error: 3, fatal: 4}
 		
 		LEVELS.each do |name, level|
 			const_set(name.to_s.upcase, level)
@@ -63,6 +63,7 @@ module Event
 			@terminal[:info] = @terminal.style(:green)
 			@terminal[:warn] = @terminal.style(:yellow)
 			@terminal[:error] = @terminal.style(:red)
+			@terminal[:fatal] = @terminal[:error]
 			
 			Shell.register(@terminal)
 			Error.register(@terminal)
