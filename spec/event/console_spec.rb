@@ -54,6 +54,12 @@ RSpec.describe Event::Console do
 	end
 
 	describe '#logger' do
+		let!(:original_logger) {described_class.logger}
+		
+		after do
+			described_class.logger = original_logger
+		end
+		
 		it 'sets and returns a logger' do
 			logger = double(:logger)
 			described_class.logger = logger
