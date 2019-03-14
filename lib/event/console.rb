@@ -48,7 +48,7 @@ module Event
 			end
 		end
 		
-		# Create the logger instance.
+		# Create the logger instance:
 		@logger = Logger.new($stderr, level: self.default_log_level)
 		
 		Logger::LEVELS.each do |name, level|
