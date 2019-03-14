@@ -19,34 +19,3 @@
 # THE SOFTWARE.
 
 require_relative 'event/logger'
-
-# Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
-require 'logger'
-
-module Event
-	class << self
-		attr :logger
-		
-		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
-		def default_log_level
-			if $DEBUG
-				Logger::DEBUG
-			elsif $VERBOSE
-				Logger::INFO
-			else
-				Logger::WARN
-			end
-		end
-	end
-	
-	# Create the logger instance.
-	@logger = Logger.new($stderr, level: self.default_log_level)
-	
-	Logger::LEVELS.each do |name, level|
-		define_method(name, &@logger.method(name))
-	end
-	
-	def logger
-		Event.logger
-	end
-end

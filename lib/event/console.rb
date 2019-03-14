@@ -27,10 +27,18 @@ module Event
 	module Console
 		class << self
 			attr_accessor :logger
-
+			
+			LEVELS = {
+				'debug' => Logger::DEBUG,
+				'info' => Logger::INFO,
+			}
+			
 			# Set the default log level based on `$DEBUG` and `$VERBOSE`.
-			def default_log_level
-				if $DEBUG
+			# You can also specify EVENT_CONSOLE=debug or EVENT_CONSOLE=info in environment.
+			def default_log_level(env = ENV)
+				if level = env['EVENT_CONSOLE']
+					LEVELS[level] || Logger.warn
+				elsif $DEBUG
 					Logger::DEBUG
 				elsif $VERBOSE
 					Logger::INFO

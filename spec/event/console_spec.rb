@@ -32,20 +32,24 @@ RSpec.describe Event::Console do
 			$DEBUG = false
 			$VERBOSE = false
 
-			expect(Event.default_log_level).to be == Event::Logger::WARN
+			expect(Event::Console.default_log_level).to be == Event::Logger::WARN
 		end
 
 		it 'should set default log level based on $DEBUG' do
 			$DEBUG = true
 
-			expect(Event.default_log_level).to be == Event::Logger::DEBUG
+			expect(Event::Console.default_log_level).to be == Event::Logger::DEBUG
 		end
 
 		it 'should set default log level based on $VERBOSE' do
 			$DEBUG = false
 			$VERBOSE = true
 
-			expect(Event.default_log_level).to be == Event::Logger::INFO
+			expect(Event::Console.default_log_level).to be == Event::Logger::INFO
+		end
+		
+		it 'can get log level from ENV' do
+			expect(Event::Console.default_log_level({'EVENT_CONSOLE' => 'debug'})).to be == Event::Logger::DEBUG
 		end
 	end
 
