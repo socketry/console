@@ -104,6 +104,13 @@ module Event
 			self.send(level, *arguments, &block)
 		end
 		
+		def puts(*args)
+			buffer = StringIO.new
+			buffer.puts(*args)
+			
+			@output.write buffer.string
+		end
+		
 		protected
 		
 		def format(level, subject = nil, *arguments, **specific, &block)
