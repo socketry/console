@@ -26,26 +26,29 @@ module Event
 	class Filter
 		def self.[] **levels
 			klass = Class.new(self)
-			klass.const_set(:LEVELS, levels)
-			klass.const_set(:MAXIMUM_LEVEL, levels.values.max)
 			
-			levels.each do |name, level|
-				klass.const_set(name.to_s.upcase, level)
-				
-				klass.define_method(name) do |subject = nil, *arguments, &block|
-					enabled = @subjects[subject.class]
+			klass.instance_exec do
+				const_set(:LEVELS, levels)
+				const_set(:MAXIMUM_LEVEL, levels.values.max)
+			
+				levels.each do |name, level|
+					const_set(name.to_s.upcase, level)
 					
-					if enabled == true or (enabled != false and level >= @level)
-						self.call(subject, *arguments, severity: name, **@options, &block)
+					define_method(name) do |subject = nil, *arguments, &block|
+						enabled = @subjects[subject.class]
+						
+						if enabled == true or (enabled != false and level >= @level)
+							self.call(subject, *arguments, severity: name, **@options, &block)
+						end
 					end
-				end
-				
-				klass.define_method("#{name}!") do
-					@level = level
-				end
-				
-				klass.define_method("#{name}?") do
-					@level >= level
+					
+					define_method("#{name}!") do
+						@level = level
+					end
+					
+					define_method("#{name}?") do
+						@level >= level
+					end
 				end
 			end
 			
