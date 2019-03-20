@@ -30,8 +30,8 @@ module Event
 			attr_accessor :logger
 			
 			LEVELS = {
-				'debug' => Filter::DEBUG,
-				'info' => Filter::INFO,
+				'debug' => Logger::DEBUG,
+				'info' => Logger::INFO,
 			}
 			
 			# Set the default log level based on `$DEBUG` and `$VERBOSE`.
@@ -40,11 +40,11 @@ module Event
 				if level = env['EVENT_CONSOLE']
 					LEVELS[level] || Logger.warn
 				elsif $DEBUG
-					Filter::DEBUG
+					Logger::DEBUG
 				elsif $VERBOSE
-					Filter::INFO
+					Logger::INFO
 				else
-					Filter::WARN
+					Logger::WARN
 				end
 			end
 		end

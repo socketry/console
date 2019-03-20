@@ -24,30 +24,38 @@ module Event
 	UNKNOWN = 'unknown'
 	
 	class Filter
-		LEVELS = {debug: 0, info: 1, warn: 2, error: 3, fatal: 4}
-		
-		LEVELS.each do |name, level|
-			const_set(name.to_s.upcase, level)
+		def self.[] **levels
+			klass = Class.new(self)
+			klass.const_set(:LEVELS, levels)
+			klass.const_set(:MAXIMUM_LEVEL, levels.values.max)
 			
-			define_method(name) do |subject = nil, *arguments, &block|
-				enabled = @subjects[subject.class]
+			levels.each do |name, level|
+				klass.const_set(name.to_s.upcase, level)
 				
-				if enabled == true or (enabled != false and level >= @level)
-					self.call(subject, *arguments, severity: name, **@options, &block)
+				klass.define_method(name) do |subject = nil, *arguments, &block|
+					enabled = @subjects[subject.class]
+					
+					if enabled == true or (enabled != false and level >= @level)
+						self.call(subject, *arguments, severity: name, **@options, &block)
+					end
+				end
+				
+				klass.define_method("#{name}!") do
+					@level = level
+				end
+				
+				klass.define_method("#{name}?") do
+					@level >= level
 				end
 			end
 			
-			define_method("#{name}!") do
-				@level = level
-			end
-			
-			define_method("#{name}?") do
-				@level >= level
-			end
+			return klass
 		end
 		
-		def initialize(output, verbose: true, level: 1, **options)
+		def initialize(output, verbose: true, level: 0, **options)
 			@level = level
+			@verbose = verbose
+			
 			@subjects = {}
 			
 			@output = output
@@ -57,16 +65,24 @@ module Event
 		attr :verbose
 		attr :level
 		
+		def level= level
+			if level.is_a? Symbol
+				@level = self.class::LEVELS[level]
+			else
+				@level = level
+			end
+		end
+		
 		def verbose!
 			@verbose = true
 		end
 		
-		def level= value
-			if value.is_a? Symbol
-				@level = LEVELS[value]
-			else
-				@level = value
-			end
+		def off!
+			@level = -1
+		end
+		
+		def all!
+			@level = self.class::MAXIMUM_LEVEL
 		end
 		
 		def enabled?(subject)
