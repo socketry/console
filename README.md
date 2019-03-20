@@ -34,6 +34,8 @@ Generally speaking, use `Event::Console.logger` which is suitable for logging to
 ### Module Integration
 
 ```ruby
+require 'event/console'
+
 # Set the log level:
 Event::Console.logger.debug!
 
@@ -41,10 +43,10 @@ module MyModule
 	extend Event::Console
 	
 	def self.test_logger
-		debug "GOTO LINE 1."
-		info "5 things your doctor won't tell you!"
-		warn "Something didn't work as expected!"
-		error "The matrix has two cats!"
+		logger.debug "GOTO LINE 1."
+		logger.info "5 things your doctor won't tell you!"
+		logger.warn "Something didn't work as expected!"
+		logger.error "The matrix has two cats!"
 	end
 	
 	test_logger
@@ -54,6 +56,8 @@ end
 ### Class Integration
 
 ```ruby
+require 'event/console'
+
 # Set the log level:
 Event::Console.logger.debug!
 
@@ -61,10 +65,10 @@ class MyObject
 	include Event::Console
 
 	def test_logger
-		debug "GOTO LINE 1."
-		info "5 things your doctor won't tell you!"
-		warn "Something didn't work as expected!"
-		error "The matrix has two cats!"
+		logger.debug "GOTO LINE 1."
+		logger.info "5 things your doctor won't tell you!"
+		logger.warn "Something didn't work as expected!"
+		logger.error "The matrix has two cats!"
 	end
 end
 
@@ -76,11 +80,15 @@ MyObject.new.test_logger
 Event classes are used to wrap data which can generate structured log messages:
 
 ```ruby
+require 'event/console'
+
 class MyEvent < Event::Generic
-	def format_event(output, terminal)
+	def format_event(output, terminal, verbose)
 		output.puts "My event text!"
 	end
 end
+
+Event::Console.logger.info("My Event", MyEvent.new)
 ```
 
 #### Error Events
@@ -91,6 +99,37 @@ end
 
 `Event::Shell` represents the execution of a shell command, and will log the environment, arguments and options used to execute it.
 
+### Multiple Loggers
+
+### Custom Log Levels
+
+`Event::Filter` implements support for multiple log levels.
+
+```ruby
+require 'event/console'
+
+MyLogger = Event::Filter[noise: 0, stuff: 1, broken: 2]
+
+logger = MyLogger.new(Event::Console.logger, name: "Java")
+
+logger.broken("It's so janky.")
+```
+
+### Multiple Outputs
+
+```ruby
+require 'event/terminal'
+require 'event/serialized/logger'
+require 'event/logger'
+require 'event/split'
+
+terminal = Event::Terminal::Logger.new
+file = Event::Serialized::Logger.new(File.open("/tmp/log.json", "w"))
+
+logger = Event::Logger.new(Event::Split[terminal, file])
+
+logger.info "I can go everywhere!"
+```
 
 ## Contributing
 

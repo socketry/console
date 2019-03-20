@@ -21,6 +21,10 @@
 
 module Event
 	class Split
+		def self.[] *outputs
+			self.new(outputs)
+		end
+		
 		def initialize(outputs)
 			@outputs = outputs
 		end

@@ -21,6 +21,7 @@
 require_relative '../buffer'
 require_relative '../filter'
 
+require 'time'
 require 'json'
 
 module Event
@@ -57,6 +58,7 @@ module Event
 				end
 				
 				@io.puts(@format.dump(message))
+				@io.flush
 			end
 		end
 	end

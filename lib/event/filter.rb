@@ -65,8 +65,13 @@ module Event
 			@options = options.freeze
 		end
 		
-		attr :verbose
 		attr :level
+		attr :verbose
+		
+		attr :subjects
+		
+		attr :output
+		attr :options
 		
 		def level= level
 			if level.is_a? Symbol

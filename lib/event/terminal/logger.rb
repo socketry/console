@@ -37,7 +37,7 @@ module Event
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: false, **options)
+			def initialize(io = $stderr, verbose: true, **options)
 				@io = io
 				@verbose = verbose
 				@start = Time.now
@@ -131,7 +131,7 @@ module Event
 			
 			def build_prefix(name)
 				if @verbose
-					"#{time_offset_prefix} #{name.ljust(8)}"
+					"#{time_offset_prefix} #{name.rjust(8)}"
 				else
 					time_offset_prefix
 				end
