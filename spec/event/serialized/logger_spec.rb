@@ -32,7 +32,5 @@ RSpec.describe Event::Serialized::Logger do
 		end
 		
 		expect(io.string).to include message
-		
-		puts io.string
 	end
 end

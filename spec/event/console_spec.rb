@@ -24,10 +24,24 @@ require_relative 'my_module'
 
 RSpec.describe Event::Console do
 	context MyModule do
+		let(:io) {StringIO.new}
+		let(:logger) {Event::Filter.new(Event::Terminal::Logger.new(io))}
+		
 		it "should log some messages" do
+			MyModule.logger = logger
+			MyModule.test_logger
+			
+			expect(io.string).to_not include("GOTO LINE 1")
+			expect(io.string).to include("There be the dragons!")
+		end
+		
+		it "should show debug messages" do
+			MyModule.logger = logger
 			MyModule.logger.debug!
 			
 			MyModule.test_logger
+			
+			expect(io.string).to include("GOTO LINE 1")
 		end
 	end
 	
