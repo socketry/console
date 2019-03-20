@@ -33,6 +33,13 @@ module Event
 				@format = format
 			end
 			
+			attr :io
+			attr :start
+			attr :format
+			
+			def verbose!(value = true)
+			end
+			
 			def call(subject = nil, *arguments, severity: UNKNOWN, &block)
 				message = {
 					time: Time.now.iso8601,

@@ -37,7 +37,7 @@ module Event
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: true, **options)
+			def initialize(io = $stderr, verbose: false, **options)
 				@io = io
 				@verbose = verbose
 				@start = Time.now
@@ -52,6 +52,15 @@ module Event
 				@terminal[:fatal] = @terminal[:error]
 				
 				self.register_default_events(@terminal)
+			end
+			
+			attr :io
+			attr_accessor :verbose
+			attr :start
+			attr :terminal
+			
+			def verbose!(value = true)
+				@verbose = value
 			end
 			
 			def register_default_events(terminal)

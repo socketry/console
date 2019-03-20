@@ -29,6 +29,10 @@ module Event
 			@outputs = outputs
 		end
 		
+		def verbose!(value = true)
+			@outputs.each{|output| output.verbose!(value)}
+		end
+		
 		def call(level, subject = nil, *arguments, **options, &block)
 			@outputs.each do |output|
 				output.call(level, subject, *arguments, **options, &block)

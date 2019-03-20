@@ -111,6 +111,7 @@ require 'event/console'
 MyLogger = Event::Filter[noise: 0, stuff: 1, broken: 2]
 
 logger = MyLogger.new(Event::Console.logger, name: "Java")
+logger.verbose! # log severity/name/pid etc.
 
 logger.broken("It's so janky.")
 ```

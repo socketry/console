@@ -81,8 +81,9 @@ module Event
 			end
 		end
 		
-		def verbose!
-			@verbose = true
+		def verbose!(value = true)
+			@verbose = value
+			@output.verbose!(value)
 		end
 		
 		def off!
