@@ -18,7 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'filter'
+require_relative 'logger'
 require_relative 'terminal/logger'
 
 # Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
@@ -50,7 +50,7 @@ module Event
 		end
 		
 		# Create the logger instance:
-		@logger = Filter.new(
+		@logger = Logger.new(
 			Terminal::Logger.new($stderr),
 			level: self.default_log_level,
 		)
