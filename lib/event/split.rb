@@ -1,4 +1,5 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,4 +19,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'event/console'
+module Event
+	class Split
+		def initialize(outputs)
+			@outputs = outputs
+		end
+		
+		def call(level, subject = nil, *arguments, **options, &block)
+			@outputs.each do |output|
+				output.call(level, subject, *arguments, **options, &block)
+			end
+		end
+	end
+end

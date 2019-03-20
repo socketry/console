@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,56 +18,46 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event'
+require_relative '../buffer'
+require_relative '../filter'
 
-RSpec.describe Event::Logger do
-	let(:output) {StringIO.new}
-	subject{described_class.new(output)}
-	
-	let(:message) {"Hello World"}
-	
-	context "default log level" do
-		it "logs info" do
-			subject.info(message)
-			
-			expect(output.string).to include message
-		end
-		
-		it "doesn't log debug" do
-			subject.debug(message)
-			
-			expect(output.string).to_not include message
-		end
-		
-		it "can log to buffer" do
-			subject.info do |buffer|
-				buffer << message
+require 'json'
+
+module Event
+	module Serialized
+		class Logger
+			def initialize(io = $stderr, format: JSON)
+				@io = io
+				@start = Time.now
+				@format = format
 			end
 			
-			expect(output.string).to include message
-		end
-	end
-	
-	described_class::LEVELS.each do |name, level|
-		it "can log #{name} messages" do
-			subject.level = level
-			subject.log(name, message)
-			
-			expect(output.string).to include message
-		end
-	end
-	
-	describe '#enable' do
-		let(:object) {Object.new}
-		
-		it "can enable specific subjects" do
-			subject.warn!
-			
-			subject.enable(object)
-			expect(subject).to be_enabled(object)
-			
-			subject.debug(object, message)
-			expect(output.string).to include message
+			def call(subject = nil, *arguments, severity: UNKNOWN, &block)
+				message = {
+					time: Time.now.iso8601,
+					severity: severity,
+				}
+				
+				if subject
+					message[:subject] = subject
+				end
+				
+				if arguments.any?
+					message[:arguments] = arguments
+				end
+				
+				if block_given?
+					if block.arity.zero?
+						message[:message] = yield
+					else
+						buffer = StringIO.new
+						yield buffer
+						message[:message] = buffer.string
+					end
+				end
+				
+				@io.puts(@format.dump(message))
+			end
 		end
 	end
 end

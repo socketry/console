@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,4 +18,47 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'event/console'
+require 'event/filter'
+
+RSpec.describe Event::Filter do
+	let(:output) {double}
+	subject{described_class.new(output)}
+	
+	let(:message) {"Hello World"}
+	
+	context "default log level" do
+		it "logs info" do
+			expect(output).to receive(:call).with(message, severity: :info)
+			
+			subject.info(message)
+		end
+		
+		it "doesn't log debug" do
+			expect(output).to_not receive(:call)
+			subject.debug(message)
+		end
+	end
+	
+	described_class::LEVELS.each do |name, level|
+		it "can log #{name} messages" do
+			expect(output).to receive(:call).with(message, severity: name)
+			
+			subject.level = level
+			subject.send(name, message)
+		end
+	end
+	
+	describe '#enable' do
+		let(:object) {Object.new}
+		
+		it "can enable specific subjects" do
+			subject.warn!
+			
+			subject.enable(object)
+			expect(subject).to be_enabled(object)
+			
+			expect(output).to receive(:call).with(object, message, severity: :debug)
+			subject.debug(object, message)
+		end
+	end
+end

@@ -18,17 +18,4 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'terminal/text'
-require_relative 'terminal/xterm'
-
-module Event
-	module Terminal
-		def self.new(output)
-			if output.isatty
-				XTerm.new(output)
-			else
-				Text.new(output)
-			end
-		end
-	end
-end
+require_relative 'terminal/logger'

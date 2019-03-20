@@ -20,7 +20,17 @@
 
 require 'event/console'
 
+require_relative 'my_module'
+
 RSpec.describe Event::Console do
+	context MyModule do
+		it "should log some messages" do
+			MyModule.logger.debug!
+			
+			MyModule.test_logger
+		end
+	end
+	
 	describe '#default_log_level' do
 		let!(:debug) {$DEBUG}
 		after {$DEBUG = debug}
@@ -32,24 +42,24 @@ RSpec.describe Event::Console do
 			$DEBUG = false
 			$VERBOSE = false
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::WARN
+			expect(Event::Console.default_log_level).to be == Event::Filter::WARN
 		end
 
 		it 'should set default log level based on $DEBUG' do
 			$DEBUG = true
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::DEBUG
+			expect(Event::Console.default_log_level).to be == Event::Filter::DEBUG
 		end
 
 		it 'should set default log level based on $VERBOSE' do
 			$DEBUG = false
 			$VERBOSE = true
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::INFO
+			expect(Event::Console.default_log_level).to be == Event::Filter::INFO
 		end
 		
 		it 'can get log level from ENV' do
-			expect(Event::Console.default_log_level({'EVENT_CONSOLE' => 'debug'})).to be == Event::Logger::DEBUG
+			expect(Event::Console.default_log_level({'EVENT_CONSOLE' => 'debug'})).to be == Event::Filter::DEBUG
 		end
 	end
 
@@ -66,27 +76,4 @@ RSpec.describe Event::Console do
 			expect(described_class.logger).to be(logger)
 		end
 	end
-end
-
-module MyModule
-	extend Event::Console
-	
-	logger.debug!
-	
-	def self.test_logger
-		logger.debug "1: GOTO LINE 2", "2: GOTO LINE 1"
-		
-		logger.info "Dear maintainer:" do |buffer|
-			buffer.puts "Once you are done trying to 'optimize' this routine, and have realized what a terrible mistake that was, please increment the following counter as a warning to the next guy:"
-			buffer.puts "total_hours_wasted_here = 42"
-		end
-		
-		logger.warn "Something didn't work as expected!"
-		logger.error "There be the dragons!", (raise RuntimeError, "Bits have been rotated incorrectly!" rescue $!)
-		
-		
-		logger.info(self) {Event::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"})}
-	end
-	
-	test_logger
 end

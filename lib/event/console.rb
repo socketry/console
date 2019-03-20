@@ -18,7 +18,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'logger'
+require_relative 'filter'
+require_relative 'terminal/logger'
 
 # Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
 require 'logger'
@@ -29,8 +30,8 @@ module Event
 			attr_accessor :logger
 			
 			LEVELS = {
-				'debug' => Logger::DEBUG,
-				'info' => Logger::INFO,
+				'debug' => Filter::DEBUG,
+				'info' => Filter::INFO,
 			}
 			
 			# Set the default log level based on `$DEBUG` and `$VERBOSE`.
@@ -39,20 +40,31 @@ module Event
 				if level = env['EVENT_CONSOLE']
 					LEVELS[level] || Logger.warn
 				elsif $DEBUG
-					Logger::DEBUG
+					Filter::DEBUG
 				elsif $VERBOSE
-					Logger::INFO
+					Filter::INFO
 				else
-					Logger::WARN
+					Filter::WARN
 				end
 			end
 		end
 		
 		# Create the logger instance:
-		@logger = Logger.new($stderr, level: self.default_log_level)
+		@logger = Filter.new(
+			Terminal::Logger.new($stderr),
+			level: self.default_log_level,
+		)
+		
+		def logger= logger
+			@logger = logger
+		end
 		
 		def logger
-			Console.logger
+			@logger || Console.logger
+		end
+		
+		def self.extended(klass)
+			klass.instance_variable_set(:@logger, nil)
 		end
 	end
 end
