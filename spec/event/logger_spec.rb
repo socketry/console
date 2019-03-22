@@ -19,12 +19,30 @@
 # THE SOFTWARE.
 
 require 'event/logger'
+require 'event/capture'
 
 RSpec.describe Event::Logger do
-	let(:output) {double}
+	let(:output) {Event::Capture.new}
 	subject{described_class.new(output)}
 	
 	let(:message) {"Hello World"}
+	
+	describe '#dup' do
+		let(:nested) {subject.dup(name: "nested")}
+		
+		it "should change name" do
+			expect(nested.options[:name]).to be == "nested"
+		end
+		
+		it "logs message with name" do
+			nested.error(message)
+			
+			expect(output.last).to include(
+				name: "nested",
+				subject: message,
+			)
+		end
+	end
 	
 	context "default log level" do
 		it "logs info" do

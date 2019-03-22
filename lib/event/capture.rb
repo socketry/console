@@ -28,6 +28,10 @@ module Event
 		
 		attr :events
 		
+		def last
+			@events.last
+		end
+		
 		def verbose!(value = true)
 		end
 		

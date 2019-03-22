@@ -70,8 +70,8 @@ module Event
 		
 		attr :subjects
 		
-		attr :output
-		attr :options
+		attr_accessor :output
+		attr_accessor :options
 		
 		def level= level
 			if level.is_a? Symbol
