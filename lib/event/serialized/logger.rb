@@ -65,7 +65,6 @@ module Event
 				end
 				
 				@io.puts(@format.dump(message))
-				@io.flush
 			end
 		end
 	end
