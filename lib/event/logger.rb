@@ -27,11 +27,5 @@ module Event
 			
 			self.info!
 		end
-		
-		def dup(**options)
-			super().tap do |logger|
-				logger.options = @options.merge(options)
-			end
-		end
 	end
 end

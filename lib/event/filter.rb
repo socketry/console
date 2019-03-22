@@ -62,7 +62,13 @@ module Event
 			@subjects = {}
 			
 			@output = output
-			@options = options.freeze
+			@options = options
+		end
+		
+		def dup(**options)
+			super().tap do |logger|
+				logger.options = @options.merge(options)
+			end
 		end
 		
 		attr :level
