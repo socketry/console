@@ -18,73 +18,17 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'io/console'
+require 'event/terminal/xterm'
 
-module Event
-	# Styled terminal output.
-	module Terminal
-		class XTerm
-			COLORS = {
-				black: 0,
-				red: 1,
-				green: 2,
-				yellow: 3,
-				blue: 4,
-				magenta: 5,
-				cyan: 6,
-				white: 7,
-				default: 9,
-			}
-			
-			ATTRIBUTES = {
-				normal: 0,
-				bold: 1,
-				faint: 2,
-				italic: 3,
-				underline: 4,
-				blink: 5,
-				reverse: 7,
-				hidden: 8,
-			}
-			
-			def initialize(output)
-				@output = output
-				@styles = {}
-			end
-			
-			def [] key
-				@styles[key]
-			end
-			
-			def []= key, value
-				@styles[key] = value
-			end
-			
-			def size
-				@output.winsize
-			end
-			
-			def style(foreground, background = nil, *attributes)
-				tokens = []
-				
-				attributes.each do |attribute|
-					tokens << ATTRIBUTES.fetch(attribute){attribute.to_i}
-				end
-				
-				if foreground
-					tokens << 30 + COLORS.fetch(foreground)
-				end
-				
-				if background
-					tokens << 40 + COLORS.fetch(background)
-				end
-				
-				return "\e[#{tokens.join(';')}m"
-			end
-			
-			def reset
-				"\e[0m"
-			end
-		end
+RSpec.describe Event::Terminal::XTerm do
+	let(:io) {StringIO.new}
+	subject{described_class.new(io)}
+	
+	it "can generate simple style" do
+		expect(subject.style(:blue)).to be == "\e[34m"
+	end
+	
+	it "can generate complex style" do
+		expect(subject.style(:blue, nil, :underline, :bold)).to be == "\e[4;1;34m"
 	end
 end
