@@ -26,19 +26,41 @@ module Event
 		class Text
 			def initialize(output)
 				@output = output
+				@styles = {}
 			end
 			
 			def [] key
-				nil
+				@styles[key]
 			end
 			
 			def []= key, value
+				@styles[key] = value
 			end
 			
-			def style(foreground, background = nil, attributes = nil)
+			def style(foreground, background = nil, *attributes)
 			end
 			
 			def reset
+			end
+			
+			def write(*args, style: nil)
+				if style and prefix = self[style]
+					@output.write(prefix)
+					@output.write(*args)
+					@output.write(self.reset)
+				else
+					@output.write(*args)
+				end
+			end
+			
+			def puts(*args, style: nil)
+				if style and prefix = self[style]
+					@output.write(prefix)
+					@output.puts(*args)
+					@output.write(self.reset)
+				else
+					@output.puts(*args)
+				end
 			end
 		end
 	end

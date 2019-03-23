@@ -29,6 +29,22 @@ RSpec.describe Event::Terminal::XTerm do
 	end
 	
 	it "can generate complex style" do
-		expect(subject.style(:blue, nil, :underline, :bold)).to be == "\e[4;1;34m"
+		expect(subject.style(:blue, nil, :underline, :bold)).to be == "\e[34;4;1m"
+	end
+	
+	it "can write text with specified style" do
+		subject[:bold] = subject.style(nil, nil, :bold)
+		
+		subject.write("Hello World", style: :bold)
+		
+		expect(io.string).to be == "\e[1mHello World\e[0m"
+	end
+	
+	it "can puts text with specified style" do
+		subject[:bold] = subject.style(nil, nil, :bold)
+		
+		subject.puts("Hello World", style: :bold)
+		
+		expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
 	end
 end

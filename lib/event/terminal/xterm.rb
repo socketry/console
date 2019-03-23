@@ -20,10 +20,12 @@
 
 require 'io/console'
 
+require_relative 'text'
+
 module Event
 	# Styled terminal output.
 	module Terminal
-		class XTerm
+		class XTerm < Text
 			COLORS = {
 				black: 0,
 				red: 1,
@@ -39,6 +41,7 @@ module Event
 			ATTRIBUTES = {
 				normal: 0,
 				bold: 1,
+				bright: 1,
 				faint: 2,
 				italic: 3,
 				underline: 4,
@@ -47,19 +50,6 @@ module Event
 				hidden: 8,
 			}
 			
-			def initialize(output)
-				@output = output
-				@styles = {}
-			end
-			
-			def [] key
-				@styles[key]
-			end
-			
-			def []= key, value
-				@styles[key] = value
-			end
-			
 			def size
 				@output.winsize
 			end
@@ -67,16 +57,16 @@ module Event
 			def style(foreground, background = nil, *attributes)
 				tokens = []
 				
-				attributes.each do |attribute|
-					tokens << ATTRIBUTES.fetch(attribute){attribute.to_i}
-				end
-				
 				if foreground
 					tokens << 30 + COLORS.fetch(foreground)
 				end
 				
 				if background
 					tokens << 40 + COLORS.fetch(background)
+				end
+				
+				attributes.each do |attribute|
+					tokens << ATTRIBUTES.fetch(attribute){attribute.to_i}
 				end
 				
 				return "\e[#{tokens.join(';')}m"
