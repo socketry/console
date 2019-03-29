@@ -18,9 +18,5 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Console
-	class Generic
-		def format(buffer, terminal)
-		end
-	end
-end
+require_relative 'event/spawn'
+require_relative 'event/failure'

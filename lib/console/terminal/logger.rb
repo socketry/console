@@ -19,9 +19,7 @@
 # THE SOFTWARE.
 
 require_relative '../buffer'
-
-require_relative '../shell'
-require_relative '../error'
+require_relative '../event'
 
 require_relative 'text'
 require_relative 'xterm'
@@ -64,8 +62,10 @@ module Console
 			end
 			
 			def register_defaults(terminal)
-				Shell.register(terminal)
-				Error.register(terminal)
+				Event.constants.each do |constant|
+					klass = Event.const_get(constant)
+					klass.register(terminal)
+				end
 			end
 			
 			UNKNOWN = 'unknown'
@@ -100,8 +100,8 @@ module Console
 			def format_argument(argument, output)
 				case argument
 				when Exception
-					Error.new(argument).format(output, @terminal, @verbose)
-				when Generic
+					Event::Failure.new(argument).format(output, @terminal, @verbose)
+				when Event
 					argument.format(output, @terminal, @verbose)
 				else
 					format_value(argument, output)
