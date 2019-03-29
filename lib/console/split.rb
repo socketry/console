@@ -1,4 +1,5 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,10 +19,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event'
-
-RSpec.describe Event do
-	it "has a version number" do
-		expect(Event::VERSION).not_to be nil
+module Console
+	class Split
+		def self.[] *outputs
+			self.new(outputs)
+		end
+		
+		def initialize(outputs)
+			@outputs = outputs
+		end
+		
+		def verbose!(value = true)
+			@outputs.each{|output| output.verbose!(value)}
+		end
+		
+		def call(level, subject = nil, *arguments, **options, &block)
+			@outputs.each do |output|
+				output.call(level, subject, *arguments, **options, &block)
+			end
+		end
 	end
 end

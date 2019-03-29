@@ -18,14 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event/console'
+require 'console'
 
 require_relative 'my_module'
 
-RSpec.describe Event::Console do
+RSpec.describe Console do
 	context MyModule do
 		let(:io) {StringIO.new}
-		let(:logger) {Event::Logger.new(Event::Terminal::Logger.new(io))}
+		let(:logger) {Console::Logger.new(Console::Terminal::Logger.new(io))}
 		
 		it "should log some messages" do
 			MyModule.logger = logger
@@ -56,24 +56,24 @@ RSpec.describe Event::Console do
 			$DEBUG = false
 			$VERBOSE = false
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::WARN
+			expect(Console.default_log_level).to be == Console::Logger::WARN
 		end
 
 		it 'should set default log level based on $DEBUG' do
 			$DEBUG = true
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::DEBUG
+			expect(Console.default_log_level).to be == Console::Logger::DEBUG
 		end
 
 		it 'should set default log level based on $VERBOSE' do
 			$DEBUG = false
 			$VERBOSE = true
 
-			expect(Event::Console.default_log_level).to be == Event::Logger::INFO
+			expect(Console.default_log_level).to be == Console::Logger::INFO
 		end
 		
 		it 'can get log level from ENV' do
-			expect(Event::Console.default_log_level({'EVENT_CONSOLE' => 'debug'})).to be == Event::Logger::DEBUG
+			expect(Console.default_log_level({'CONSOLE_LOG_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
 		end
 	end
 

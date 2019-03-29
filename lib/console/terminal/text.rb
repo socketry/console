@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,49 +18,50 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'filter'
+require 'io/console'
 
-module Event
-	class Capture
-		def initialize
-			@events = []
-		end
-		
-		attr :events
-		
-		def last
-			@events.last
-		end
-		
-		def verbose!(value = true)
-		end
-		
-		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
-			message = {
-				time: Time.now.iso8601,
-				severity: severity,
-				**options,
-			}
-			
-			if subject
-				message[:subject] = subject
+module Console
+	# Styled terminal output.
+	module Terminal
+		class Text
+			def initialize(output)
+				@output = output
+				@styles = {}
 			end
 			
-			if arguments.any?
-				message[:arguments] = arguments
+			def [] key
+				@styles[key]
 			end
 			
-			if block_given?
-				if block.arity.zero?
-					message[:message] = yield
+			def []= key, value
+				@styles[key] = value
+			end
+			
+			def style(foreground, background = nil, *attributes)
+			end
+			
+			def reset
+			end
+			
+			def write(*args, style: nil)
+				if style and prefix = self[style]
+					@output.write(prefix)
+					@output.write(*args)
+					@output.write(self.reset)
 				else
-					buffer = StringIO.new
-					yield buffer
-					message[:message] = buffer.string
+					@output.write(*args)
 				end
 			end
 			
-			@events << message
+			def puts(*args, style: nil)
+				if style and prefix = self[style]
+					@output.write(prefix)
+					@output.puts(*args)
+					@output.write(self.reset)
+				else
+					@output.puts(*args)
+				end
+			end
 		end
 	end
 end

@@ -26,7 +26,7 @@ require_relative '../error'
 require_relative 'text'
 require_relative 'xterm'
 
-module Event
+module Console
 	module Terminal
 		def self.for(io)
 			if io.isatty
@@ -51,7 +51,7 @@ module Event
 				@terminal[:error] = @terminal.style(:red)
 				@terminal[:fatal] = @terminal[:error]
 				
-				self.register_default_events(@terminal)
+				self.register_defaults(@terminal)
 			end
 			
 			attr :io
@@ -63,7 +63,7 @@ module Event
 				@verbose = value
 			end
 			
-			def register_default_events(terminal)
+			def register_defaults(terminal)
 				Shell.register(terminal)
 				Error.register(terminal)
 			end
@@ -100,9 +100,9 @@ module Event
 			def format_argument(argument, output)
 				case argument
 				when Exception
-					Error.new(argument).format_event(output, @terminal, @verbose)
+					Error.new(argument).format_console(output, @terminal, @verbose)
 				when Generic
-					argument.format_event(output, @terminal, @verbose)
+					argument.format_console(output, @terminal, @verbose)
 				else
 					format_value(argument, output)
 				end

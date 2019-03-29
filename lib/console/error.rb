@@ -20,7 +20,7 @@
 
 require_relative 'generic'
 
-module Event
+module Console
 	class Error < Generic
 		def self.for(exception)
 			self.new(exception, Dir.pwd)
@@ -40,7 +40,7 @@ module Event
 			terminal[:exception_backtrace] ||= terminal.style(:red)
 		end
 		
-		def format_event(output, terminal, verbose)
+		def format_console(output, terminal, verbose)
 			format_exception(@exception, nil, output, terminal, verbose)
 		end
 		

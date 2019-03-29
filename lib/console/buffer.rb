@@ -1,4 +1,3 @@
-
 # Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,24 +18,23 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Event
-	class Split
-		def self.[] *outputs
-			self.new(outputs)
+require 'stringio'
+
+module Console
+	class Buffer < StringIO
+		def initialize(prefix = nil)
+			@prefix = prefix
+			
+			super()
 		end
 		
-		def initialize(outputs)
-			@outputs = outputs
-		end
-		
-		def verbose!(value = true)
-			@outputs.each{|output| output.verbose!(value)}
-		end
-		
-		def call(level, subject = nil, *arguments, **options, &block)
-			@outputs.each do |output|
-				output.call(level, subject, *arguments, **options, &block)
+		def puts(*args, prefix: @prefix)
+			args.each do |arg|
+				self.write(prefix) if prefix
+				super(arg)
 			end
 		end
+		
+		alias << puts
 	end
 end

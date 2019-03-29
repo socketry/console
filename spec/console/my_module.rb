@@ -1,6 +1,6 @@
 
 module MyModule
-	extend Event::Console
+	extend Console
 	
 	def self.test_logger
 		logger.debug "1: GOTO LINE 2", "2: GOTO LINE 1"
@@ -14,6 +14,6 @@ module MyModule
 		logger.error "There be the dragons!", (raise RuntimeError, "Bits have been rotated incorrectly!" rescue $!)
 		
 		
-		logger.info(self) {Event::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"})}
+		logger.info(self) {Console::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"})}
 	end
 end

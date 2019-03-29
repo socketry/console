@@ -7,7 +7,7 @@ task :default => :spec
 
 task :console do
 	require 'pry'
-	require 'event/console'
+	require 'console'
 	
 	binding.pry
 end

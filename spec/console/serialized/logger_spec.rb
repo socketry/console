@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,50 +18,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'io/console'
+require 'console/serialized/logger'
 
-module Event
-	# Styled terminal output.
-	module Terminal
-		class Text
-			def initialize(output)
-				@output = output
-				@styles = {}
-			end
-			
-			def [] key
-				@styles[key]
-			end
-			
-			def []= key, value
-				@styles[key] = value
-			end
-			
-			def style(foreground, background = nil, *attributes)
-			end
-			
-			def reset
-			end
-			
-			def write(*args, style: nil)
-				if style and prefix = self[style]
-					@output.write(prefix)
-					@output.write(*args)
-					@output.write(self.reset)
-				else
-					@output.write(*args)
-				end
-			end
-			
-			def puts(*args, style: nil)
-				if style and prefix = self[style]
-					@output.write(prefix)
-					@output.puts(*args)
-					@output.write(self.reset)
-				else
-					@output.puts(*args)
-				end
-			end
+RSpec.describe Console::Serialized::Logger do
+	let(:io) {StringIO.new}
+	subject{described_class.new(io)}
+	
+	let(:message) {"Hello World"}
+	
+	it "can log to buffer" do
+		subject.call do |buffer|
+			buffer << message
 		end
+		
+		expect(io.string).to include message
 	end
 end

@@ -18,9 +18,9 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event/serialized/logger'
+require 'console/terminal/logger'
 
-RSpec.describe Event::Serialized::Logger do
+RSpec.describe Console::Terminal::Logger do
 	let(:io) {StringIO.new}
 	subject{described_class.new(io)}
 	

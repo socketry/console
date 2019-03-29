@@ -18,9 +18,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-module Event
-	class Generic
-		def format_event(buffer, terminal)
-		end
+require 'console'
+
+RSpec.describe Console do
+	it "has a version number" do
+		expect(Console::VERSION).not_to be nil
 	end
 end

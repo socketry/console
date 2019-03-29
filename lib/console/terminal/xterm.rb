@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,14 +18,63 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'filter'
+require 'io/console'
 
-module Event
-	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
-		def initialize(output, **options)
-			super(output, **options)
+require_relative 'text'
+
+module Console
+	# Styled terminal output.
+	module Terminal
+		class XTerm < Text
+			COLORS = {
+				black: 0,
+				red: 1,
+				green: 2,
+				yellow: 3,
+				blue: 4,
+				magenta: 5,
+				cyan: 6,
+				white: 7,
+				default: 9,
+			}
 			
-			self.info!
+			ATTRIBUTES = {
+				normal: 0,
+				bold: 1,
+				bright: 1,
+				faint: 2,
+				italic: 3,
+				underline: 4,
+				blink: 5,
+				reverse: 7,
+				hidden: 8,
+			}
+			
+			def size
+				@output.winsize
+			end
+			
+			def style(foreground, background = nil, *attributes)
+				tokens = []
+				
+				if foreground
+					tokens << 30 + COLORS.fetch(foreground)
+				end
+				
+				if background
+					tokens << 40 + COLORS.fetch(background)
+				end
+				
+				attributes.each do |attribute|
+					tokens << ATTRIBUTES.fetch(attribute){attribute.to_i}
+				end
+				
+				return "\e[#{tokens.join(';')}m"
+			end
+			
+			def reset
+				"\e[0m"
+			end
 		end
 	end
 end

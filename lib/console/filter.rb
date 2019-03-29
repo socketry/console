@@ -20,7 +20,7 @@
 
 require_relative 'buffer'
 
-module Event
+module Console
 	UNKNOWN = 'unknown'
 	
 	class Filter

@@ -18,11 +18,11 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event/logger'
-require 'event/capture'
+require 'console/logger'
+require 'console/capture'
 
-RSpec.describe Event::Logger do
-	let(:output) {Event::Capture.new}
+RSpec.describe Console::Logger do
+	let(:output) {Console::Capture.new}
 	subject{described_class.new(output)}
 	
 	let(:message) {"Hello World"}

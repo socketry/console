@@ -18,4 +18,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'event/console'
+require_relative 'console/logger'
+require_relative 'console/terminal/logger'
+
+module Console
+	class << self
+		attr_accessor :logger
+		
+		LEVELS = {
+			'debug' => Logger::DEBUG,
+			'info' => Logger::INFO,
+		}
+		
+		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
+		# You can also specify CONSOLE_LOG_LEVEL=debug or CONSOLE_LOG_LEVEL=info in environment.
+		def default_log_level(env = ENV)
+			if level = env['CONSOLE_LOG_LEVEL']
+				LEVELS[level] || Logger.warn
+			elsif $DEBUG
+				Logger::DEBUG
+			elsif $VERBOSE
+				Logger::INFO
+			else
+				Logger::WARN
+			end
+		end
+	end
+	
+	# Create the logger instance:
+	@logger = Logger.new(
+		Terminal::Logger.new($stderr),
+		level: self.default_log_level,
+	)
+	
+	def logger= logger
+		@logger = logger
+	end
+	
+	def logger
+		@logger || Console.logger
+	end
+	
+	def self.extended(klass)
+		klass.instance_variable_set(:@logger, nil)
+	end
+end

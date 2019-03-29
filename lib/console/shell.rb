@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,53 +18,48 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'logger'
-require_relative 'terminal/logger'
+require_relative 'generic'
 
-# Downstream gems often use `Logger:::LEVEL` constants, so we pull this in so they are available. That being said, the code should be fixed.
-require 'logger'
-
-module Event
-	module Console
-		class << self
-			attr_accessor :logger
-			
-			LEVELS = {
-				'debug' => Logger::DEBUG,
-				'info' => Logger::INFO,
-			}
-			
-			# Set the default log level based on `$DEBUG` and `$VERBOSE`.
-			# You can also specify EVENT_CONSOLE=debug or EVENT_CONSOLE=info in environment.
-			def default_log_level(env = ENV)
-				if level = env['EVENT_CONSOLE']
-					LEVELS[level] || Logger.warn
-				elsif $DEBUG
-					Logger::DEBUG
-				elsif $VERBOSE
-					Logger::INFO
-				else
-					Logger::WARN
-				end
+module Console
+	class Shell < Generic
+		def self.for(*arguments, **options)
+			if arguments.first.is_a?(Hash)
+				self.new(*arguments, **options)
+			else
+				self.new(nil, arguments, **options)
 			end
 		end
 		
-		# Create the logger instance:
-		@logger = Logger.new(
-			Terminal::Logger.new($stderr),
-			level: self.default_log_level,
-		)
-		
-		def logger= logger
-			@logger = logger
+		def initialize(environment, *arguments, **options)
+			@environment = environment
+			@arguments = arguments
+			@options = options
 		end
 		
-		def logger
-			@logger || Console.logger
+		attr :environment
+		attr :arguments
+		attr :options
+		
+		def chdir_string(options)
+			if options and chdir = options[:chdir]
+				" in #{chdir}"
+			end
 		end
 		
-		def self.extended(klass)
-			klass.instance_variable_set(:@logger, nil)
+		def self.register(terminal)
+			terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
+		end
+		
+		def format_console(output, terminal, verbose)
+			arguments = @arguments.flatten.collect(&:to_s)
+			
+			output.puts "  #{terminal[:shell_command]}#{arguments.join(' ')}#{terminal.reset}#{chdir_string(options)}"
+			
+			if verbose and @environment
+				@environment.each do |key, value|
+					output.puts "    export #{key}=#{value}"
+				end
+			end
 		end
 	end
 end

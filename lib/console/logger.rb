@@ -1,4 +1,4 @@
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,19 +18,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event/terminal/logger'
+require_relative 'filter'
 
-RSpec.describe Event::Terminal::Logger do
-	let(:io) {StringIO.new}
-	subject{described_class.new(io)}
-	
-	let(:message) {"Hello World"}
-	
-	it "can log to buffer" do
-		subject.call do |buffer|
-			buffer << message
+module Console
+	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
+		def initialize(output, **options)
+			super(output, **options)
+			
+			self.info!
 		end
-		
-		expect(io.string).to include message
 	end
 end

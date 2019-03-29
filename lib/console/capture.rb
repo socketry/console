@@ -1,4 +1,4 @@
-# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,33 +18,49 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require 'event/terminal/xterm'
+require_relative 'filter'
 
-RSpec.describe Event::Terminal::XTerm do
-	let(:io) {StringIO.new}
-	subject{described_class.new(io)}
-	
-	it "can generate simple style" do
-		expect(subject.style(:blue)).to be == "\e[34m"
-	end
-	
-	it "can generate complex style" do
-		expect(subject.style(:blue, nil, :underline, :bold)).to be == "\e[34;4;1m"
-	end
-	
-	it "can write text with specified style" do
-		subject[:bold] = subject.style(nil, nil, :bold)
+module Console
+	class Capture
+		def initialize
+			@events = []
+		end
 		
-		subject.write("Hello World", style: :bold)
+		attr :events
 		
-		expect(io.string).to be == "\e[1mHello World\e[0m"
-	end
-	
-	it "can puts text with specified style" do
-		subject[:bold] = subject.style(nil, nil, :bold)
+		def last
+			@events.last
+		end
 		
-		subject.puts("Hello World", style: :bold)
+		def verbose!(value = true)
+		end
 		
-		expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
+		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
+			message = {
+				time: Time.now.iso8601,
+				severity: severity,
+				**options,
+			}
+			
+			if subject
+				message[:subject] = subject
+			end
+			
+			if arguments.any?
+				message[:arguments] = arguments
+			end
+			
+			if block_given?
+				if block.arity.zero?
+					message[:message] = yield
+				else
+					buffer = StringIO.new
+					yield buffer
+					message[:message] = buffer.string
+				end
+			end
+			
+			@events << message
+		end
 	end
 end
