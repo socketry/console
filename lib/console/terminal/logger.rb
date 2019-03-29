@@ -101,7 +101,7 @@ module Console
 				case argument
 				when Exception
 					Event::Failure.new(argument).format(output, @terminal, @verbose)
-				when Event
+				when Event::Generic
 					argument.format(output, @terminal, @verbose)
 				else
 					format_value(argument, output)
