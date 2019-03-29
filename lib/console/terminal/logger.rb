@@ -35,12 +35,18 @@ module Console
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: false, **options)
+			def initialize(io = $stderr, verbose: nil, **options)
 				@io = io
-				@verbose = verbose
 				@start = Time.now
 				
 				@terminal = Terminal.for(io)
+				
+				if verbose.nil?
+					@verbose = !@terminal.colors?
+				else
+					@verbose = verbose
+				end
+				
 				@terminal[:logger_prefix] ||= @terminal.style(nil, nil, :bold)
 				@terminal[:logger_suffix] ||= @terminal.style(:white, nil, :faint)
 				@terminal[:debug] = @terminal.style(:cyan)

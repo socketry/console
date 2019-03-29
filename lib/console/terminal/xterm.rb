@@ -50,6 +50,10 @@ module Console
 				hidden: 8,
 			}
 			
+			def colors?
+				true
+			end
+			
 			def size
 				@output.winsize
 			end

@@ -37,6 +37,10 @@ module Console
 				@styles[key] = value
 			end
 			
+			def colors?
+				false
+			end
+			
 			def style(foreground, background = nil, *attributes)
 			end
 			
