@@ -100,9 +100,9 @@ module Console
 			def format_argument(argument, output)
 				case argument
 				when Exception
-					Error.new(argument).format_console(output, @terminal, @verbose)
+					Error.new(argument).format(output, @terminal, @verbose)
 				when Generic
-					argument.format_console(output, @terminal, @verbose)
+					argument.format(output, @terminal, @verbose)
 				else
 					format_value(argument, output)
 				end

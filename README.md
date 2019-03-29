@@ -83,7 +83,7 @@ Console classes are used to wrap data which can generate structured log messages
 require 'console'
 
 class MyConsole < Console::Generic
-	def format_console(output, terminal, verbose)
+	def format(output, terminal, verbose)
 		output.puts "My console text!"
 	end
 end

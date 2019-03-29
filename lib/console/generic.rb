@@ -20,7 +20,7 @@
 
 module Console
 	class Generic
-		def format_console(buffer, terminal)
+		def format(buffer, terminal)
 		end
 	end
 end

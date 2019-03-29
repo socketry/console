@@ -50,7 +50,7 @@ module Console
 			terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
 		end
 		
-		def format_console(output, terminal, verbose)
+		def format(output, terminal, verbose)
 			arguments = @arguments.flatten.collect(&:to_s)
 			
 			output.puts "  #{terminal[:shell_command]}#{arguments.join(' ')}#{terminal.reset}#{chdir_string(options)}"
