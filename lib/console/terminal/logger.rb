@@ -115,7 +115,7 @@ module Console
 					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}]#{@terminal.reset}"
 				end
 				
-				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: "#{prefix_style}#{prefix}: "
+				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: "#{prefix_style}#{prefix}:#{@terminal.reset} "
 			end
 			
 			def format_value(value, output)
