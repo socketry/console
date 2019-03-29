@@ -22,8 +22,14 @@ require_relative 'generic'
 
 module Console
 	class Error < Generic
+		def self.current_working_directory
+			Dir.getwd
+		rescue # e.g. Errno::EMFILE
+			nil
+		end
+		
 		def self.for(exception)
-			self.new(exception, Dir.pwd)
+			self.new(exception, self.current_working_directory)
 		end
 		
 		def initialize(exception, root = nil)
