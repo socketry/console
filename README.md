@@ -132,6 +132,23 @@ logger = Console::Logger.new(Console::Split[terminal, file])
 logger.info "I can go everywhere!"
 ```
 
+### Custom Logger Output
+
+`Console::Logger` provides a default interface which is a drop in replacemnet for `Logger` and other similar implementations. The only method required for output is `#call(*arguments, **options, &block)`.
+
+```ruby
+require 'console/logger'
+
+output = proc do |*arguments, **options, &block|
+	puts "arguments: #{arguments.inspect} options: #{options.inspect} block: #{block.call}"
+end
+
+logger = Console::Logger.new(output)
+
+logger.info("Hello World!", meta: "data") {"block"}
+# => arguments: ["Hello World!"] options: {:severity=>:info, :meta=>"data"} block: block
+```
+
 ## Contributing
 
 1. Fork it
