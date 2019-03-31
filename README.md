@@ -91,15 +91,13 @@ end
 Console.logger.info("My Console", MyConsole.new)
 ```
 
-#### Error Events
+#### Failure Events
 
-`Console::Error` represents an error and will log the message and backtrace recursively.
+`Console::Event::Failure` represents an exception and will log the message and backtrace recursively.
 
-#### Shell Events
+#### Spawn Events
 
-`Console::Shell` represents the execution of a shell command, and will log the environment, arguments and options used to execute it.
-
-### Multiple Loggers
+`Console::Event::Spawn` represents the execution of a command, and will log the environment, arguments and options used to execute it.
 
 ### Custom Log Levels
 
@@ -118,6 +116,8 @@ logger.broken("It's so janky.")
 
 ### Multiple Outputs
 
+Use `Console::Split` to log to multiple destinations.
+
 ```ruby
 require 'console/terminal'
 require 'console/serialized/logger'
@@ -125,7 +125,7 @@ require 'console/logger'
 require 'console/split'
 
 terminal = Console::Terminal::Logger.new
-file = Console::Serialized::Logger.new(File.open("/tmp/log.json", "w"))
+file = Console::Serialized::Logger.new(File.open("log.json", "a"))
 
 logger = Console::Logger.new(Console::Split[terminal, file])
 
