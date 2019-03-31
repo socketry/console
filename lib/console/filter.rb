@@ -34,11 +34,11 @@ module Console
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
 					
-					define_method(name) do |subject = nil, *arguments, &block|
+					define_method(name) do |subject = nil, *arguments, **options, &block|
 						enabled = @subjects[subject.class]
 						
 						if enabled == true or (enabled != false and level >= @level)
-							self.call(subject, *arguments, severity: name, **@options, &block)
+							self.call(subject, *arguments, severity: name, **options, **@options, &block)
 						end
 					end
 					
