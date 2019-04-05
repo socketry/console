@@ -47,7 +47,7 @@ module Console
 					@verbose = verbose
 				end
 				
-				@terminal[:logger_prefix] ||= @terminal.style(nil, nil, :bold)
+				@terminal[:logger_prefix] ||= @terminal.style(nil, nil, nil)
 				@terminal[:logger_suffix] ||= @terminal.style(:white, nil, :faint)
 				@terminal[:debug] = @terminal.style(:cyan)
 				@terminal[:info] = @terminal.style(:green)
