@@ -44,6 +44,15 @@ RSpec.describe Console::Logger do
 		end
 	end
 	
+	context "with level" do
+		let(:level) {0}
+		subject{described_class.new(output, level: level)}
+		
+		it "should have specified log level" do
+			expect(subject.level).to be == level
+		end
+	end
+	
 	context "default log level" do
 		it "logs info" do
 			expect(output).to receive(:call).with(message, severity: :info)

@@ -55,7 +55,7 @@ module Console
 			return klass
 		end
 		
-		def initialize(output, verbose: true, level: 0, **options)
+		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
 			@level = level
 			@verbose = verbose
 			

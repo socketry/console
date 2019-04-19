@@ -22,10 +22,10 @@ require_relative 'filter'
 
 module Console
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
+		DEFAULT_LEVEL = 1
+		
 		def initialize(output, **options)
 			super(output, **options)
-			
-			self.info!
 		end
 	end
 end
