@@ -43,6 +43,15 @@ RSpec.describe Console do
 			
 			expect(io.string).to include("GOTO LINE 1")
 		end
+		
+		it "should log nested exceptions" do
+			MyModule.logger = logger
+			MyModule.logger.verbose!
+			
+			MyModule.log_error
+			
+			expect(io.string).to include("Caused by ArgumentError: It broken!")
+		end
 	end
 	
 	describe '#default_log_level' do

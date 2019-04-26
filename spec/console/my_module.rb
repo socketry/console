@@ -2,6 +2,22 @@
 module MyModule
 	extend Console
 	
+	def self.argument_error
+		raise ArgumentError, "It broken!"
+	end
+	
+	def self.nested_error
+		argument_error
+	rescue
+		raise RuntimeError, "Magic smoke escaped!"
+	end
+	
+	def self.log_error
+		self.nested_error
+	rescue
+		logger.error(self, $!)
+	end
+	
 	def self.test_logger
 		logger.debug "1: GOTO LINE 2", "2: GOTO LINE 1"
 		
@@ -12,7 +28,6 @@ module MyModule
 		
 		logger.warn "Something didn't work as expected!"
 		logger.error "There be the dragons!", (raise RuntimeError, "Bits have been rotated incorrectly!" rescue $!)
-		
 		
 		logger.info(self) {Console::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"})}
 	end

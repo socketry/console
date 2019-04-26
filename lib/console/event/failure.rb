@@ -1,3 +1,5 @@
+# frozen_string_literals: true
+#
 # Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -51,7 +53,7 @@ module Console
 				format_exception(@exception, nil, output, terminal, verbose)
 			end
 			
-			def format_exception(exception, prefix = nil, output, terminal, verbose)
+			def format_exception(exception, prefix, output, terminal, verbose)
 				lines = exception.message.lines.map(&:chomp)
 				
 				output.puts "  #{prefix}#{terminal[:exception_title]}#{exception.class}#{terminal.reset}: #{lines.shift}"
@@ -70,7 +72,7 @@ module Console
 				end
 				
 				if exception.cause and verbose
-					format_exception(exception.cause, "Caused by ", output, terminal)
+					format_exception(exception.cause, "Caused by ", output, terminal, verbose)
 				end
 			end
 		end
