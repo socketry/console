@@ -19,5 +19,5 @@
 # THE SOFTWARE.
 
 module Console
-	VERSION = "1.2.2"
+	VERSION = "1.2.3"
 end
