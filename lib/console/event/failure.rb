@@ -71,7 +71,7 @@ module Console
 					output.puts "  #{index == 0 ? "→" : " "} #{terminal[:exception_backtrace]}#{path}:#{offset}#{terminal.reset} #{message}"
 				end
 				
-				if exception.cause and verbose
+				if exception.cause
 					format_exception(exception.cause, "Caused by ", output, terminal, verbose)
 				end
 			end
