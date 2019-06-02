@@ -56,27 +56,27 @@ module Console
 		end
 		
 		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
-			@level = level
+			@output = output
 			@verbose = verbose
+			@level = level
 			
 			@subjects = {}
 			
-			@output = output
 			@options = options
 		end
 		
-		def dup(**options)
-			super().tap do |logger|
+		def with(**options)
+			dup.tap do |logger|
 				logger.options = @options.merge(options)
 			end
 		end
 		
-		attr :level
+		attr_accessor :output
 		attr :verbose
+		attr :level
 		
 		attr :subjects
 		
-		attr_accessor :output
 		attr_accessor :options
 		
 		def level= level

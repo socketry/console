@@ -27,8 +27,8 @@ RSpec.describe Console::Logger do
 	
 	let(:message) {"Hello World"}
 	
-	describe '#dup' do
-		let(:nested) {subject.dup(name: "nested")}
+	describe '#with' do
+		let(:nested) {subject.with(name: "nested")}
 		
 		it "should change name" do
 			expect(nested.options[:name]).to be == "nested"
