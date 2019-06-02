@@ -28,7 +28,11 @@ RSpec.describe Console::Logger do
 	let(:message) {"Hello World"}
 	
 	describe '#with' do
-		let(:nested) {subject.with(name: "nested")}
+		let(:nested) {subject.with(name: "nested", level: :debug)}
+		
+		it "should change level" do
+			expect(nested.level).to be == 0
+		end
 		
 		it "should change name" do
 			expect(nested.options[:name]).to be == "nested"

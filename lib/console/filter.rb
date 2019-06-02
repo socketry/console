@@ -65,8 +65,10 @@ module Console
 			@options = options
 		end
 		
-		def with(**options)
+		def with(level: @level, verbose: @verbose, **options)
 			dup.tap do |logger|
+				logger.level = level
+				logger.verbose! if verbose
 				logger.options = @options.merge(options)
 			end
 		end
