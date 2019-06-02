@@ -4,12 +4,15 @@ cache: bundler
 
 matrix:
   include:
-    - rvm: 2.3
     - rvm: 2.4
     - rvm: 2.5
     - rvm: 2.6
     - rvm: 2.6
-      env: COVERAGE=BriefSummary,Coveralls
+      env: COVERAGE=PartialSummary,Coveralls
+    - rvm: truffleruby
+    - rvm: jruby-head
+    - rvm: ruby-head
+  allow_failures:
+    - rvm: truffleruby
     - rvm: ruby-head
     - rvm: jruby-head
-    - rvm: truffleruby
