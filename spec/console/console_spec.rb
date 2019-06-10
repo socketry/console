@@ -60,12 +60,12 @@ RSpec.describe Console do
 
 		let!(:verbose) {$VERBOSE}
 		after {$VERBOSE = verbose}
-
+		
 		it 'should set default log level' do
 			$DEBUG = false
-			$VERBOSE = false
-
-			expect(Console.default_log_level).to be == Console::Logger::WARN
+			$VERBOSE = 0
+			
+			expect(Console.default_log_level).to be == Console::Logger::INFO
 		end
 
 		it 'should set default log level based on $DEBUG' do

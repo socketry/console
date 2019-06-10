@@ -37,10 +37,10 @@ module Console
 				LEVELS[level] || Logger.warn
 			elsif $DEBUG
 				Logger::DEBUG
-			elsif $VERBOSE
-				Logger::INFO
-			else
+			elsif $VERBOSE.nil?
 				Logger::WARN
+			else
+				Logger::INFO
 			end
 		end
 	end
@@ -49,6 +49,7 @@ module Console
 	@logger = Logger.new(
 		Terminal::Logger.new($stderr),
 		level: self.default_log_level,
+		verbose: !$VERBOSE.nil?,
 	)
 	
 	def logger= logger

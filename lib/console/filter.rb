@@ -63,6 +63,8 @@ module Console
 			@subjects = {}
 			
 			@options = options
+			
+			verbose!(verbose)
 		end
 		
 		def with(level: @level, verbose: @verbose, **options)
