@@ -118,7 +118,7 @@ module Console
 				prefix_style = @terminal[severity]
 				
 				if @verbose
-					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}]#{@terminal.reset}"
+					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}] [#{Time.now}]#{@terminal.reset}"
 				end
 				
 				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: "#{prefix_style}#{prefix}:#{@terminal.reset} "
