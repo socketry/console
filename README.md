@@ -75,6 +75,26 @@ end
 MyObject.new.test_logger
 ```
 
+### Subject Logging
+
+The first argument to the log method is the subject.
+
+```ruby
+class Thing
+	def call
+		Console.logger.info(self) {"Something is going on"}
+	end
+end
+```
+
+Using this approach, you can turn on and off specific subjects by using the class name:
+
+```ruby
+$ CONSOLE_DEBUG=Thing ./script.rb
+```
+
+This will conditionally enable all log statements which have a subject of class `Thing`.
+
 ### Console Formatting
 
 Console classes are used to wrap data which can generate structured log messages:
