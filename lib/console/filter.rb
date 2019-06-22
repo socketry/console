@@ -29,15 +29,14 @@ module Console
 			
 			klass.instance_exec do
 				const_set(:LEVELS, levels)
+				const_set(:MINIMUM_LEVEL, levels.values.min)
 				const_set(:MAXIMUM_LEVEL, levels.values.max)
-			
+				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
 					
 					define_method(name) do |subject = nil, *arguments, **options, &block|
-						enabled = @subjects[subject.class]
-						
-						if enabled == true or (enabled != false and level >= @level)
+						if self.enabled?(subject, level)
 							self.call(subject, *arguments, severity: name, **options, **@options, &block)
 						end
 					end
@@ -55,7 +54,7 @@ module Console
 			return klass
 		end
 		
-		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
+		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, enabled: nil, **options)
 			@output = output
 			@verbose = verbose
 			@level = level
@@ -63,6 +62,10 @@ module Console
 			@subjects = {}
 			
 			@options = options
+			
+			if enabled
+				enabled.each{|name| enable(name)}
+			end
 			
 			verbose!(verbose)
 		end
@@ -104,16 +107,36 @@ module Console
 			@level = self.class::MAXIMUM_LEVEL
 		end
 		
-		def enabled?(subject)
-			@subjects[subject.class] == true
+		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
+		# @param subject [Object] the subject to check.
+		def enabled?(subject, level = self.class::MINIMUM_LEVEL)
+			if specific_level = @subjects[subject.class]
+				return level >= specific_level
+			end
+			
+			if level >= @level
+				return true
+			end
 		end
 		
-		def enable(subject)
-			@subjects[subject.class] = true
+		# Enable specific log level for the given class.
+		# @param name [String, Class] The class to enable.
+		def enable(subject, level = self.class::MINIMUM_LEVEL)
+			unless subject.is_a?(Class)
+				subject = subject.class
+			end
+			
+			@subjects[subject] = level
 		end
 		
+		# Disable specific logging for the specific class.
+		# @param name [String, Class] The class to disable.
 		def disable(subject)
-			@subjects[subject.class] = false
+			unless subject.is_a? Class
+				subject = subject.class
+			end
+			
+			@subjects.delete(subject)
 		end
 		
 		def call(*arguments, &block)

@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'console/logger'
+require_relative 'console/resolver'
 require_relative 'console/terminal/logger'
 
 module Console
@@ -52,6 +53,14 @@ module Console
 		level: self.default_log_level,
 		verbose: !$VERBOSE.nil?,
 	)
+	
+	if names = ENV['CONSOLE_DEBUG']&.split(',')
+		@resolver ||= Resolver.new
+		
+		@resolver.bind(names) do |klass|
+			@logger.enable(klass, Logger::DEBUG)
+		end
+	end
 	
 	def logger= logger
 		@logger = logger
