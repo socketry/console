@@ -29,7 +29,7 @@ module MyModule
 		logger.warn "Something didn't work as expected!"
 		logger.error "There be the dragons!", (raise RuntimeError, "Bits have been rotated incorrectly!" rescue $!)
 		
-		logger.info(self) {Console::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", {chdir: "/tmp/compile"})}
+		logger.info(self) {Console::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", chdir: "/tmp/compile")}
 	end
 	
 	test_logger

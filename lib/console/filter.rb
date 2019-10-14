@@ -139,8 +139,8 @@ module Console
 			@subjects.delete(subject)
 		end
 		
-		def call(*arguments, &block)
-			@output.call(*arguments, &block)
+		def call(*arguments, **options, &block)
+			@output.call(*arguments, **options, &block)
 		end
 	end
 end
