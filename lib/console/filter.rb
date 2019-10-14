@@ -100,11 +100,11 @@ module Console
 		end
 		
 		def off!
-			@level = -1
+			@level = self.class::MAXIMUM_LEVEL + 1
 		end
 		
 		def all!
-			@level = self.class::MAXIMUM_LEVEL
+			@level = -1
 		end
 		
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
