@@ -92,4 +92,30 @@ RSpec.describe Console::Logger do
 			subject.debug(object, message)
 		end
 	end
+
+	describe "#off!" do
+		before do
+			subject.off!
+		end
+
+		described_class::LEVELS.each do |name, level|
+			it "doesn't log #{name} messages" do
+				expect(output).to_not receive(:call)
+				subject.send(name, message)
+			end
+		end
+  end
+
+  describe "#all!" do
+  	before do
+			subject.all!
+		end
+
+  	described_class::LEVELS.each do |name, level|
+			it "can log #{name} messages" do
+				expect(output).to receive(:call).with(message, severity: name)
+				subject.send(name, message)
+			end
+		end
+  end
 end
