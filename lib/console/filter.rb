@@ -66,8 +66,6 @@ module Console
 			if enabled
 				enabled.each{|name| enable(name)}
 			end
-			
-			verbose!(verbose)
 		end
 		
 		def with(level: @level, verbose: @verbose, **options)
