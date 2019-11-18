@@ -31,6 +31,16 @@ Capturing structured information allows it to be used in different ways. These e
 
 Generally speaking, use `Console.logger` which is suitable for logging to the user's terminal.
 
+### Environment Variables
+
+#### `CONSOLE_LEVEL=debug`
+
+Control the default logger level. You can set it to any of the supported log levels: `debug`, `info`, `warn`, `error`, `fatal`.
+
+#### `CONSOLE_DEBUG=MyClass,MyModule::MyClass`
+
+Enable debug logging for the specified class names. You can specify one or more class names which will be resolved at runtime.
+
 ### Module Integration
 
 ```ruby
@@ -128,8 +138,8 @@ require 'console'
 
 MyLogger = Console::Filter[noise: 0, stuff: 1, broken: 2]
 
-logger = MyLogger.new(Console.logger, name: "Java")
-logger.verbose! # log severity/name/pid etc.
+# verbose: true - log severity/name/pid etc.
+logger = MyLogger.new(Console.logger, name: "Java", verbose: true)
 
 logger.broken("It's so janky.")
 ```
