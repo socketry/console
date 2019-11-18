@@ -82,7 +82,7 @@ RSpec.describe Console do
 		end
 		
 		it 'can get log level from ENV' do
-			expect(Console.default_log_level({'CONSOLE_LOG_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
+			expect(Console.default_log_level({'CONSOLE_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
 		end
 	end
 
