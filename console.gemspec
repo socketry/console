@@ -4,6 +4,7 @@ require_relative "lib/console/version"
 Gem::Specification.new do |spec|
 	spec.name = "console"
 	spec.version = Console::VERSION
+	spec.licenses = ["MIT"]
 	spec.authors = ["Samuel Williams"]
 	spec.email = ["samuel.williams@oriontransfer.co.nz"]
 	
