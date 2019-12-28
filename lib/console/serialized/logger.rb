@@ -40,31 +40,35 @@ module Console
 			def verbose!(value = true)
 			end
 			
-			def call(subject = nil, *arguments, severity: UNKNOWN, &block)
-				message = {
+			def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
+				record = {
 					time: Time.now.iso8601,
 					severity: severity,
 				}
 				
 				if subject
-					message[:subject] = subject
+					record[:subject] = subject
 				end
 				
 				if arguments.any?
-					message[:arguments] = arguments
+					record[:arguments] = arguments
+				end
+				
+				if options.any?
+					record[:options] = options
 				end
 				
 				if block_given?
 					if block.arity.zero?
-						message[:message] = yield
+						record[:message] = yield
 					else
 						buffer = StringIO.new
 						yield buffer
-						message[:message] = buffer.string
+						record[:message] = buffer.string
 					end
 				end
 				
-				@io.puts(@format.dump(message))
+				@io.puts(@format.dump(record))
 			end
 		end
 	end

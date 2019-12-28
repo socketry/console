@@ -26,11 +26,23 @@ RSpec.describe Console::Serialized::Logger do
 	
 	let(:message) {"Hello World"}
 	
+	let(:record) {JSON.parse(io.string, symbolize_names: true)}
+	
 	it "can log to buffer" do
 		subject.call do |buffer|
 			buffer << message
 		end
 		
-		expect(io.string).to include message
+		expect(record).to include :message
+		expect(record[:message]).to be == message
+	end
+	
+	it "can log options" do
+		subject.call(name: "request-id")
+		
+		record = JSON.parse(io.string, symbolize_names: true)
+		
+		expect(record).to include(:options)
+		expect(record[:options]).to be == {name: "request-id"}
 	end
 end
