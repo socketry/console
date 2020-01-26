@@ -26,12 +26,22 @@ require_relative 'xterm'
 
 module Console
 	module Terminal
-		CONSOLE_START = 'CONSOLE_START'
+		# This, and all related methods, is considered private.
+		CONSOLE_START_AT = 'CONSOLE_START_AT'
 		
-		def self.start
-			ENV.fetch('CONSOLE_START') {Time.now}
+		# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
+		def self.start_at!(environment = ENV)
+			if time_string = environment[CONSOLE_START_AT]
+				start_at = Time.parse(time_string) rescue nil
+			end
+			
+			unless start_at
+				start_at = Time.now
+				environment[CONSOLE_START_AT] = start_at.to_s
+			end
+			
+			return start_at
 		end
-		
 		
 		def self.for(io)
 			if io.isatty
@@ -42,9 +52,9 @@ module Console
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: nil, start: self.class.start, **options)
+			def initialize(io = $stderr, verbose: nil, start_at: Terminal.start_at!, **options)
 				@io = io
-				@start = start
+				@start_at = start_at
 				
 				@terminal = Terminal.for(io)
 				
@@ -131,11 +141,7 @@ module Console
 				
 				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
 				
-				unless subject.is_a?(String)
-					subject = subject.to_s.gsub(/(?<=#<)(.*?)(?=>)/){|match| "#{@terminal[:subject]}#{match}#{@terminal.reset}"}
-				end
-				
-				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: prefix
+				output.puts "#{@terminal[:subject]}#{subject}#{@terminal.reset}#{suffix}", prefix: prefix
 			end
 			
 			def format_value(value, output)
@@ -147,7 +153,7 @@ module Console
 			end
 			
 			def time_offset_prefix
-				offset = Time.now - @start
+				offset = Time.now - @start_at
 				minutes = (offset/60).floor
 				seconds = (offset - (minutes*60))
 				
