@@ -26,6 +26,13 @@ require_relative 'xterm'
 
 module Console
 	module Terminal
+		CONSOLE_START = 'CONSOLE_START'
+		
+		def self.start
+			ENV.fetch('CONSOLE_START') {Time.now}
+		end
+		
+		
 		def self.for(io)
 			if io.isatty
 				XTerm.new(io)
@@ -35,9 +42,9 @@ module Console
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: nil, **options)
+			def initialize(io = $stderr, verbose: nil, start: self.class.start, **options)
 				@io = io
-				@start = Time.now
+				@start = start
 				
 				@terminal = Terminal.for(io)
 				
