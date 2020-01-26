@@ -56,6 +56,7 @@ module Console
 				
 				@terminal[:logger_prefix] ||= @terminal.style(nil, nil, nil)
 				@terminal[:logger_suffix] ||= @terminal.style(:white, nil, :faint)
+				@terminal[:subject] ||= @terminal.style(nil, nil, :bold)
 				@terminal[:debug] = @terminal.style(:cyan)
 				@terminal[:info] = @terminal.style(:green)
 				@terminal[:warn] = @terminal.style(:yellow)
@@ -128,7 +129,13 @@ module Console
 					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}] [#{Time.now}]#{@terminal.reset}"
 				end
 				
-				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: "#{prefix_style}#{prefix}:#{@terminal.reset} "
+				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
+				
+				unless subject.is_a?(String)
+					subject = subject.to_s.gsub(/(?<=#<)(.*?)(?=>)/){|match| "#{@terminal[:subject]}#{match}#{@terminal.reset}"}
+				end
+				
+				output.puts "#{@terminal[:logger_prefix]}#{subject}#{@terminal.reset}#{suffix}", prefix: prefix
 			end
 			
 			def format_value(value, output)

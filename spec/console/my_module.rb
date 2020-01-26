@@ -30,6 +30,8 @@ module MyModule
 		logger.error "There be the dragons!", (raise RuntimeError, "Bits have been rotated incorrectly!" rescue $!)
 		
 		logger.info(self) {Console::Shell.for({LDFLAGS: "-lm"}, "gcc", "-o", "stuff.o", "stuff.c", chdir: "/tmp/compile")}
+		
+		logger.info(Object.new) {"Where would we be without Object.new?"}
 	end
 	
 	test_logger
