@@ -44,6 +44,9 @@ module Console
 				record = {
 					time: Time.now.iso8601,
 					severity: severity,
+					class: subject.class,
+					oid: subject.object_id,
+					pid: Process.pid,
 				}
 				
 				if subject
