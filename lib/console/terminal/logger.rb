@@ -132,7 +132,29 @@ module Console
 				end
 			end
 			
-			def format_subject(severity, prefix, subject, output)
+			def format_subject(severity, prefix, subject, buffer)
+				if subject.is_a?(String)
+					format_string_subject(severity, prefix, subject, buffer)
+				elsif subject.is_a?(Module)
+					format_string_subject(severity, prefix, subject.to_s, buffer)
+				else
+					format_object_subject(severity, prefix, subject, buffer)
+				end
+			end
+			
+			def format_object_subject(severity, prefix, subject, output)
+				prefix_style = @terminal[severity]
+				
+				if @verbose
+					suffix = " #{@terminal[:logger_suffix]}[oid=0x#{subject.object_id.to_s(16)}] [pid=#{Process.pid}] [#{Time.now}]#{@terminal.reset}"
+				end
+				
+				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
+				
+				output.puts "#{@terminal[:subject]}#{subject.class}#{@terminal.reset}#{suffix}", prefix: prefix
+			end
+			
+			def format_string_subject(severity, prefix, subject, output)
 				prefix_style = @terminal[severity]
 				
 				if @verbose
