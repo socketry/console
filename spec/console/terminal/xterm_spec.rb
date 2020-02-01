@@ -47,4 +47,24 @@ RSpec.describe Console::Terminal::XTerm do
 		
 		expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
 	end
+	
+	describe '#print' do
+		it "can print using the specified style" do
+			subject[:bold] = subject.style(nil, nil, :bold)
+			
+			subject.print(:bold, "Hello World")
+			
+			expect(io.string).to be == "\e[1mHello World"
+		end
+	end
+	
+	describe '#print_line' do
+		it "can print a line using the specified style" do
+			subject[:bold] = subject.style(nil, nil, :bold)
+			
+			subject.print_line(:bold, "Hello World")
+			
+			expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World\e[0m"]
+		end
+	end
 end
