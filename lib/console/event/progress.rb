@@ -63,8 +63,12 @@ module Console
 				terminal[:progress_bar] ||= terminal.style(:blue, nil, :bold)
 			end
 			
+			def as_json
+				{current: @current, total: @total}
+			end
+			
 			def format(output, terminal, verbose)
-				output.puts "█#{terminal[:progress_bar]}#{self.bar}#{terminal.reset}█ #{sprintf('%6.2f', self.value * 100)}%"
+				output.puts "#{terminal[:progress_bar]}#{self.bar}#{terminal.reset} |  #{sprintf('%6.2f', self.value * 100)}%"
 			end
 		end
 	end
