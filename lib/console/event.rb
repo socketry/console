@@ -20,3 +20,4 @@
 
 require_relative 'event/spawn'
 require_relative 'event/failure'
+require_relative 'event/progress'

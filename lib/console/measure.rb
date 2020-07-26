@@ -20,32 +20,6 @@
 
 module Console
 	class Measure
-		module Bar
-			BLOCK = [
-				" ",
-				"▏",
-				"▎",
-				"▍",
-				"▌",
-				"▋",
-				"▊",
-				"▉",
-				"█",
-			]
-			
-			def self.format(value, width)
-				blocks = width * value
-				full_blocks = blocks.floor
-				partial_block = ((blocks - full_blocks) * BLOCK.size).floor
-				
-				if partial_block.zero?
-					BLOCK.last * full_blocks
-				else
-					"#{BLOCK.last * full_blocks}#{BLOCK[partial_block]}"
-				end.ljust(width)
-			end
-		end
-		
 		def initialize(output, subject, total = 0)
 			@output = output
 			@subject = subject
@@ -58,6 +32,10 @@ module Console
 		
 		def duration
 			Time.now - @start_time
+		end
+		
+		def progress
+			@current.to_f / @total.to_f
 		end
 		
 		def remaining
@@ -79,17 +57,13 @@ module Console
 		def increment(amount = 1)
 			@current += amount
 			
-			@output.info(@subject, self) {self.formatted_progress_bar}
+			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
 			
 			return self
 		end
 		
 		def mark(*arguments)
-			@output.info(@subject, *arguments) {self.formatted_progress_bar}
-		end
-		
-		def formatted_progress_bar(width = 70)
-			"[#{Bar.format(@current.to_f / @total.to_f, width)}]"
+			@output.info(@subject, *arguments)
 		end
 		
 		def to_s
