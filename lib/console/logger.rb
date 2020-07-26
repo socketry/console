@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'filter'
+require_relative 'measure'
 
 module Console
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
@@ -26,6 +27,10 @@ module Console
 		
 		def initialize(output, **options)
 			super(output, **options)
+		end
+		
+		def measure(subject, total)
+			Measure.new(self, subject, total)
 		end
 	end
 end
