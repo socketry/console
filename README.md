@@ -2,24 +2,23 @@
 
 Provides beautiful console logging for Ruby applications. Implements fast, buffered log output.
 
-[![Build Status](https://travis-ci.com/socketry/console.svg)](http://travis-ci.com/socketry/console)
-[![Coverage Status](https://coveralls.io/repos/socketry/console/badge.svg)](https://coveralls.io/r/socketry/console)
+[![Development Status](https://github.com/socketry/console/workflows/Development/badge.svg)](https://github.com/socketry/console/actions?workflow=Development)
 
 ## Motivation
 
-When Ruby decided to reverse the order of exception backtraces, I finally gave up using the built in logging and decided restore sanity to the output of my programs once and for all!
+When Ruby decided to reverse the order of exception backtraces, I finally gave up using the built in logging and decided restore sanity to the output of my programs once and for all\!
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
-```ruby
+``` ruby
 gem 'console'
 ```
 
 And then execute:
 
-	$ bundle
+    $ bundle
 
 ## Usage
 
@@ -43,7 +42,7 @@ Enable debug logging for the specified class names. You can specify one or more 
 
 ### Module Integration
 
-```ruby
+``` ruby
 require 'console'
 
 # Set the log level:
@@ -65,7 +64,7 @@ end
 
 ### Class Integration
 
-```ruby
+``` ruby
 require 'console'
 
 # Set the log level:
@@ -89,7 +88,7 @@ MyObject.new.test_logger
 
 The first argument to the log method is the subject.
 
-```ruby
+``` ruby
 class Thing
 	def call
 		Console.logger.info(self) {"Something is going on"}
@@ -99,7 +98,7 @@ end
 
 Using this approach, you can turn on and off specific subjects by using the class name:
 
-```ruby
+``` ruby
 $ CONSOLE_DEBUG=Thing ./script.rb
 ```
 
@@ -109,7 +108,7 @@ This will conditionally enable all log statements which have a subject of class 
 
 Console classes are used to wrap data which can generate structured log messages:
 
-```ruby
+``` ruby
 require 'console'
 
 class MyConsole < Console::Generic
@@ -133,7 +132,7 @@ Console.logger.info("My Console", MyConsole.new)
 
 `Console::Filter` implements support for multiple log levels.
 
-```ruby
+``` ruby
 require 'console'
 
 MyLogger = Console::Filter[noise: 0, stuff: 1, broken: 2]
@@ -148,7 +147,7 @@ logger.broken("It's so janky.")
 
 Use `Console::Split` to log to multiple destinations.
 
-```ruby
+``` ruby
 require 'console/terminal'
 require 'console/serialized/logger'
 require 'console/logger'
@@ -166,7 +165,7 @@ logger.info "I can go everywhere!"
 
 `Console::Logger` provides a default interface which is a drop in replacemnet for `Logger` and other similar implementations. The only method required for output is `#call(*arguments, **options, &block)`.
 
-```ruby
+``` ruby
 require 'console/logger'
 
 output = proc do |*arguments, **options, &block|
@@ -181,11 +180,11 @@ logger.info("Hello World!", meta: "data") {"block"}
 
 ## Contributing
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+1.  Fork it
+2.  Create your feature branch (`git checkout -b my-new-feature`)
+3.  Commit your changes (`git commit -am 'Add some feature'`)
+4.  Push to the branch (`git push origin my-new-feature`)
+5.  Create new Pull Request
 
 ## License
 
