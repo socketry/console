@@ -30,6 +30,12 @@ module Console
 			@total = total
 		end
 		
+		attr :subject
+		
+		attr :current
+		
+		attr :total
+		
 		def duration
 			Time.now - @start_time
 		end
@@ -56,6 +62,14 @@ module Console
 		
 		def increment(amount = 1)
 			@current += amount
+			
+			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+			
+			return self
+		end
+		
+		def resize(total)
+			@total = total
 			
 			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
 			
