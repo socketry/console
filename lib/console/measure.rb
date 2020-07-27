@@ -68,7 +68,7 @@ module Console
 		
 		def to_s
 			if estimated_remaining_time = self.estimated_remaining_time
-				"#{@current}/#{@total} completed, #{self.formatted_duration estimated_remaining_time} remaining."
+				"#{@current}/#{@total} completed in #{self.formatted_duration self.duration}, #{self.formatted_duration estimated_remaining_time} remaining."
 			else
 				"#{@current}/#{@total} completed, waiting for estimate..."
 			end
