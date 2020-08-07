@@ -24,6 +24,8 @@ require_relative '../event'
 require_relative 'text'
 require_relative 'xterm'
 
+require 'json'
+
 module Console
 	module Terminal
 		# This, and all related methods, is considered private.
@@ -94,7 +96,7 @@ module Console
 			
 			UNKNOWN = 'unknown'
 			
-			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, &block)
+			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, **options, &block)
 				prefix = build_prefix(name || severity.to_s)
 				indent = " " * prefix.size
 				
@@ -102,6 +104,10 @@ module Console
 				
 				if subject
 					format_subject(severity, prefix, subject, buffer)
+				end
+				
+				if options&.any?
+					format_options(options, buffer)
 				end
 				
 				arguments.each do |argument|
@@ -120,6 +126,10 @@ module Console
 			end
 			
 			protected
+			
+			def format_options(options, output)
+				format_value(options.to_json, output)
+			end
 			
 			def format_argument(argument, output)
 				case argument
