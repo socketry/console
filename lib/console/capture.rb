@@ -21,15 +21,20 @@
 require_relative 'filter'
 
 module Console
+	# A general sink which captures all events into a buffer.
 	class Capture
 		def initialize
-			@events = []
+			@buffer = []
 		end
 		
 		attr :events
 		
 		def last
-			@events.last
+			@buffer.last
+		end
+		
+		def clear
+			@buffer.clear
 		end
 		
 		def verbose!(value = true)
@@ -37,7 +42,7 @@ module Console
 		
 		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
 			message = {
-				time: Time.now.iso8601,
+				time: ::Time.now.iso8601,
 				severity: severity,
 				**options,
 			}
@@ -60,7 +65,7 @@ module Console
 				end
 			end
 			
-			@events << message
+			@buffer << message
 		end
 	end
 end
