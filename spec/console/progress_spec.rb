@@ -19,9 +19,9 @@
 # THE SOFTWARE.
 
 require 'console'
-require 'console/measure'
+require 'console/progress'
 
-RSpec.describe Console::Measure do
+RSpec.describe Console::Progress do
 	describe '#increment' do
 		it 'can create new measurement' do
 			measure = Console.logger.measure("My Measurement", 100)
