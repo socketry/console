@@ -22,54 +22,26 @@ require_relative 'generic'
 
 module Console
 	module Event
-		class Spawn < Generic
-			def self.for(*arguments, **options)
-				# Extract out the command environment:
-				if arguments.first.is_a?(Hash)
-					self.new(*arguments, **options)
-				else
-					self.new(nil, arguments, **options)
-				end
+		class Metric < Generic
+			def self.[](**parameters)
+				parameters.map(&self.method(:new))
 			end
 			
-			def initialize(environment, *arguments, **options)
-				@environment = environment
-				@arguments = arguments
-				@options = options
+			def initialize(name, value)
+				@name = name
+				@value = value
 			end
 			
-			attr :environment
-			attr :arguments
-			attr :options
-			
-			def chdir_string(options)
-				if options and chdir = options[:chdir]
-					" in #{chdir}"
-				end
-			end
-			
-			def self.register(terminal)
-				terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
-			end
+			attr :name
+			attr :value
 			
 			def as_json
-				{environment: @environment, arguments: @arguments, options: @options}
+				{name: @name, value: @value}
 			end
 			
 			def format(output, terminal, verbose)
-				arguments = @arguments.flatten.collect(&:to_s)
-				
-				output.puts "  #{terminal[:shell_command]}#{arguments.join(' ')}#{terminal.reset}#{chdir_string(options)}"
-				
-				if verbose and @environment
-					@environment.each do |key, value|
-						output.puts "    export #{key}=#{value}"
-					end
-				end
+				output.puts "#{@name}=#{@value}"
 			end
 		end
 	end
-	
-	# Deprecated.
-	Shell = Event::Spawn
 end

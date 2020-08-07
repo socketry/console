@@ -18,7 +18,19 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'event/spawn'
-require_relative 'event/failure'
-require_relative 'event/metric'
-require_relative 'event/progress'
+require 'console'
+require 'console/capture'
+
+RSpec.describe Console::Event::Metric do
+	let(:output) {Console::Capture.new}
+	let(:logger) {Console::Logger.new(output)}
+	let(:event) {described_class.new(:x, 10)}
+	
+	it "can log event" do
+		logger.info(self, event)
+		
+		expect(output.last).to include(
+			arguments: [event],
+		)
+	end
+end
