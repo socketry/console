@@ -18,22 +18,25 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'event/progress'
+
 module Console
-	class Measure
-		def initialize(output, subject, total = 0)
+	class Progress
+		def initialize(output, subject, total = 0, gap: 0.1)
 			@output = output
 			@subject = subject
 			
 			@start_time = Time.now
+			
+			@increment_time = nil
+			@gap = gap
 			
 			@current = 0
 			@total = total
 		end
 		
 		attr :subject
-		
 		attr :current
-		
 		attr :total
 		
 		def duration
@@ -61,6 +64,7 @@ module Console
 		end
 		
 		def increment(amount = 1)
+			previous = @current
 			@current += amount
 			
 			@output.info(@subject, self) {Event::Progress.new(@current, @total)}

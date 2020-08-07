@@ -19,7 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'filter'
-require_relative 'measure'
+require_relative 'progress'
 
 module Console
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
@@ -29,8 +29,10 @@ module Console
 			super(output, **options)
 		end
 		
-		def measure(subject, total)
-			Measure.new(self, subject, total)
+		def progress(subject, total, **options)
+			Progress.new(self, subject, total, **options)
 		end
+		
+		alias measure progress
 	end
 end
