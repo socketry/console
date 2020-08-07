@@ -24,6 +24,13 @@ module Console
 			def self.register(terminal)
 			end
 			
+			def to_h
+			end
+			
+			def as_json
+				to_h
+			end
+			
 			def format(buffer, terminal)
 			end
 		end

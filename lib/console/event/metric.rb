@@ -35,7 +35,7 @@ module Console
 			attr :name
 			attr :value
 			
-			def as_json
+			def to_h
 				{name: @name, value: @value}
 			end
 			

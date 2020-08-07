@@ -63,7 +63,7 @@ module Console
 				terminal[:progress_bar] ||= terminal.style(:blue, :white)
 			end
 			
-			def as_json
+			def to_h
 				{current: @current, total: @total}
 			end
 			

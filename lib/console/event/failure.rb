@@ -49,6 +49,10 @@ module Console
 				terminal[:exception_backtrace] ||= terminal.style(:red)
 			end
 			
+			def to_h
+				{exception: @exception, root: @root}
+			end
+			
 			def format(output, terminal, verbose)
 				format_exception(@exception, nil, output, terminal, verbose)
 			end

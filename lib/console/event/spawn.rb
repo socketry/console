@@ -52,7 +52,7 @@ module Console
 				terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
 			end
 			
-			def as_json
+			def to_h
 				{environment: @environment, arguments: @arguments, options: @options}
 			end
 			
