@@ -56,55 +56,6 @@ RSpec.describe Console do
 		end
 	end
 	
-	describe '#default_log_level' do
-		let!(:debug) {$DEBUG}
-		after {$DEBUG = debug}
-
-		let!(:verbose) {$VERBOSE}
-		after {$VERBOSE = verbose}
-		
-		it 'should set default log level' do
-			$DEBUG = false
-			$VERBOSE = 0
-			
-			expect(Console.default_log_level).to be == Console::Logger::INFO
-		end
-
-		it 'should set default log level based on $DEBUG' do
-			$DEBUG = true
-
-			expect(Console.default_log_level).to be == Console::Logger::DEBUG
-		end
-
-		it 'should set default log level based on $VERBOSE' do
-			$DEBUG = false
-			$VERBOSE = true
-
-			expect(Console.default_log_level).to be == Console::Logger::INFO
-		end
-		
-		it 'can get log level from ENV' do
-			expect(Console.default_log_level({'CONSOLE_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
-		end
-	end
-	
-	describe '#default_resolver' do
-		let(:logger) { Console.logger }
-		
-		it 'can set custom log levels from ENV' do
-			expect(Console.default_resolver(logger)).to be_nil
-			expect(Console.default_resolver(logger, {'CONSOLE_WARN' => 'Acorn,Banana', 'CONSOLE_DEBUG' => 'Cat'})).to be_a Console::Resolver
-			
-			class Acorn; end
-			class Banana; end
-			class Cat; end
-			
-			expect(Console.logger.subjects[Acorn]).to be == Console::Logger::WARN
-			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
-			expect(Console.logger.subjects[Cat]).to be == Console::Logger::DEBUG
-		end
-	end
-
 	describe '#logger' do
 		let!(:original_logger) {described_class.logger}
 		

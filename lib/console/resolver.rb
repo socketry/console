@@ -22,6 +22,36 @@ require_relative 'filter'
 
 module Console
 	class Resolver
+		# You can change the log level for different classes using CONSOLE_<LEVEL> env vars.
+		#
+		# e.g. `CONSOLE_WARN=Acorn,Banana CONSOLE_DEBUG=Cat` will set the log level for the classes Acorn and Banana to `warn` and Cat to `debug`. This overrides the default log level.
+		#
+		# @parameter logger [Logger] A logger instance to set the logging levels on.
+		# @parameter env [Hash] The environment to read levels from.
+		#
+		# @returns [Nil] If there were no custom logging levels specified in the environment.
+		# @returns [Resolver] If there were custom logging levels, then the created resolver is returned.
+		def self.default_resolver(logger, env = ENV)
+			# Find all CONSOLE_<LEVEL> variables from environment:
+			levels = Logger::LEVELS
+				.map{|label, level| [level, env["CONSOLE_#{label.upcase}"]&.split(',')]}
+				.to_h
+				.compact
+			
+			# If we have any levels, then create a class resolver, and each time a class is resolved, set the log level for that class to the specified level:
+			if levels.any?
+				resolver = Resolver.new
+				
+				levels.each do |level, names|
+					resolver.bind(names) do |klass|
+						logger.enable(klass, level)
+					end
+				end
+				
+				return resolver
+			end
+		end
+		
 		def initialize
 			@names = {}
 			

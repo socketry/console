@@ -47,4 +47,24 @@ RSpec.describe Console::Resolver do
 		expect(subject).to_not be_waiting
 		expect(resolved).to be true
 	end
+	
+	describe '.default_resolver' do
+		let(:logger) {Console.logger}
+		
+		it 'has no resolver if not required by environment' do
+			expect(Console::Resolver.default_resolver(logger)).to be_nil
+		end
+		
+		it 'can set custom log levels from environment' do
+			expect(Console::Resolver.default_resolver(logger, {'CONSOLE_WARN' => 'Acorn,Banana', 'CONSOLE_DEBUG' => 'Cat'})).to be_a Console::Resolver
+			
+			class Acorn; end
+			class Banana; end
+			class Cat; end
+			
+			expect(Console.logger.subjects[Acorn]).to be == Console::Logger::WARN
+			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
+			expect(Console.logger.subjects[Cat]).to be == Console::Logger::DEBUG
+		end
+	end
 end

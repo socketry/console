@@ -6,7 +6,7 @@ Provides beautiful console logging for Ruby applications. Implements fast, buffe
 
 ## Features
 
-- Single point of entry for global state.
+- Thread safe global logger with per-fiber context.
 - Carry along context with nested loggers.
 - Enable/disable log levels per-class.
 - Detailed logging of exceptions.

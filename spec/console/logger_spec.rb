@@ -92,12 +92,12 @@ RSpec.describe Console::Logger do
 			subject.debug(object, message)
 		end
 	end
-
+	
 	describe "#off!" do
 		before do
 			subject.off!
 		end
-
+		
 		described_class::LEVELS.each do |name, level|
 			it "doesn't log #{name} messages" do
 				expect(output).to_not receive(:call)
@@ -105,19 +105,51 @@ RSpec.describe Console::Logger do
 				expect(subject.send("#{name}?")).to be == false
 			end
 		end
-  end
-
-  describe "#all!" do
-  	before do
+	end
+	
+	describe "#all!" do
+		before do
 			subject.all!
 		end
-
-  	described_class::LEVELS.each do |name, level|
+		
+		described_class::LEVELS.each do |name, level|
 			it "can log #{name} messages" do
 				expect(output).to receive(:call).with(message, severity: name)
 				subject.send(name, message)
 				expect(subject.send("#{name}?")).to be == true
 			end
 		end
-  end
+	end
+	
+	describe '.default_log_level' do
+		let!(:debug) {$DEBUG}
+		after {$DEBUG = debug}
+		
+		let!(:verbose) {$VERBOSE}
+		after {$VERBOSE = verbose}
+		
+		it 'should set default log level' do
+			$DEBUG = false
+			$VERBOSE = 0
+			
+			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
+		end
+		
+		it 'should set default log level based on $DEBUG' do
+			$DEBUG = true
+			
+			expect(Console::Logger.default_log_level).to be == Console::Logger::DEBUG
+		end
+		
+		it 'should set default log level based on $VERBOSE' do
+			$DEBUG = false
+			$VERBOSE = true
+			
+			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
+		end
+		
+		it 'can get log level from ENV' do
+			expect(Console::Logger.default_log_level({'CONSOLE_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
+		end
+	end
 end
