@@ -79,7 +79,9 @@ module Console
 			end
 			
 			attr :io
+			
 			attr_accessor :verbose
+			
 			attr :start
 			attr :terminal
 			
