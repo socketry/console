@@ -33,6 +33,11 @@ module Console
 			Progress.new(self, subject, total, **options)
 		end
 		
+		# @deprecated Please use {progress}.
 		alias measure progress
+		
+		def failure(subject, exception, *arguments, &block)
+			fatal(subject, *arguments, Event::Failure.new(exception), &block)
+		end
 	end
 end
