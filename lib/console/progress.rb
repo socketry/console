@@ -22,14 +22,18 @@ require_relative 'event/progress'
 
 module Console
 	class Progress
-		def initialize(output, subject, total = 0, gap: 0.1)
+		def self.now
+			Process.clock_gettime(Process::CLOCK_MONOTONIC)
+		end
+		
+		def initialize(output, subject, total = 0, minimum_output_duration: 1.0)
 			@output = output
 			@subject = subject
 			
-			@start_time = Time.now
+			@start_time = Progress.now
 			
-			@increment_time = nil
-			@gap = gap
+			@last_output_time = nil
+			@minimum_output_duration = 0.1
 			
 			@current = 0
 			@total = total
@@ -40,7 +44,7 @@ module Console
 		attr :total
 		
 		def duration
-			Time.now - @start_time
+			Progress.now - @start_time
 		end
 		
 		def progress
@@ -64,10 +68,12 @@ module Console
 		end
 		
 		def increment(amount = 1)
-			previous = @current
 			@current += amount
 			
-			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+			if output?
+				@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+				@last_output_time = Progress.now
+			end
 			
 			return self
 		end
@@ -76,6 +82,7 @@ module Console
 			@total = total
 			
 			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+			@last_output_time = Progress.now
 			
 			return self
 		end
@@ -93,6 +100,20 @@ module Console
 		end
 		
 		private
+		
+		def duration_since_last_output
+			if @last_output_time
+				Progress.now - @last_output_time
+			end
+		end
+		
+		def output?
+			if duration = duration_since_last_output
+				return duration > @minimum_output_duration
+			else
+				return true
+			end
+		end
 		
 		def formatted_duration(duration)
 			if duration < 60.0
