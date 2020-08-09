@@ -24,9 +24,27 @@ require_relative 'console/logger'
 require_relative 'console/resolver'
 require_relative 'console/terminal/logger'
 
+require 'fiber'
+
+class Fiber
+	attr_accessor :console_logger
+end
+
 module Console
+	extend Thread::Local
+	
+	def self.local
+		self.default_logger($stderr)
+	end
+	
 	class << self
-		attr_accessor :logger
+		def logger= logger
+			Fiber.current.console_logger = logger
+		end
+		
+		def logger
+			Fiber.current.console_logger ||= self.instance
+		end
 		
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
@@ -45,51 +63,48 @@ module Console
 		
 		# You can change the log level for different classes using CONSOLE_<LEVEL> env vars.
 		#
-		# e.g. `CONSOLE_WARN=Acorn,Banana CONSOLE_DEBUG=Cat` will set the log level for Acorn and Banana to warn and Cat to
-		# debug. This overrides the default log level.
+		# e.g. `CONSOLE_WARN=Acorn,Banana CONSOLE_DEBUG=Cat` will set the log level for the classes Acorn and Banana to `warn` and Cat to `debug`. This overrides the default log level.
 		#
-		# @param logger [Logger] A logger instance to set the logging levels on.
-		# @param env [Hash] Environment to read levels from.
+		# @parameter logger [Logger] A logger instance to set the logging levels on.
+		# @parameter env [Hash] The environment to read levels from.
 		#
-		# @return [nil] if there were no custom logging levels specified in the environment.
-		# @return [Resolver] if there were custom logging levels, then the created resolver is returned.
+		# @returns [Nil] If there were no custom logging levels specified in the environment.
+		# @returns [Resolver] If there were custom logging levels, then the created resolver is returned.
 		def default_resolver(logger, env = ENV)
-			# find all CONSOLE_<LEVEL> variables from environment
+			# Find all CONSOLE_<LEVEL> variables from environment:
 			levels = Logger::LEVELS
-			.map { |label, level| [level, env["CONSOLE_#{label.to_s.upcase}"]&.split(',')] }
-			.to_h
-			.compact
-
-			# if we have any levels, then create a class resolver, and each time a class is resolved, set the log level for
-			# that class to the specified level
+				.map{|label, level| [level, env["CONSOLE_#{label.upcase}"]&.split(',')]}
+				.to_h
+				.compact
+			
+			# If we have any levels, then create a class resolver, and each time a class is resolved, set the log level for that class to the specified level:
 			if levels.any?
 				resolver = Resolver.new
+				
 				levels.each do |level, names|
 					resolver.bind(names) do |klass|
 						logger.enable(klass, level)
 					end
 				end
+				
 				return resolver
 			end
 		end
 		
 		# Controls verbose output using `$VERBOSE`.
-		def verbose?
-			!$VERBOSE.nil?
+		def verbose?(env = ENV)
+			!$VERBOSE.nil? || env['CONSOLE_VERBOSE']
 		end
 		
-		def build(output, verbose: self.verbose?, level: self.default_log_level)
+		def default_logger(output, verbose: self.verbose?, level: self.default_log_level)
 			terminal = Terminal::Logger.new(output, verbose: verbose)
 			
 			logger = Logger.new(terminal, verbose: verbose, level: level)
+			resolver = self.default_resolver(logger)
 			
 			return logger
 		end
 	end
-	
-	# Create the logger instance:
-	@logger = self.build($stderr)
-	@resolver = self.default_resolver(@logger)
 	
 	def logger= logger
 		@logger = logger

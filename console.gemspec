@@ -15,6 +15,8 @@ Gem::Specification.new do |spec|
 	
 	spec.required_ruby_version = ">= 2.5"
 	
+	spec.add_dependency "thread-local", "~> 1.0"
+	
 	spec.add_development_dependency "bake"
 	spec.add_development_dependency "bundler"
 	spec.add_development_dependency "covered"
