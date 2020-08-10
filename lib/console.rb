@@ -25,6 +25,7 @@ require_relative 'console/resolver'
 require_relative 'console/terminal/logger'
 
 require 'fiber'
+require 'thread/local'
 
 class Fiber
 	attr_accessor :console_logger
