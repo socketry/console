@@ -27,20 +27,22 @@ module Console
 				parameters.map(&self.method(:new))
 			end
 			
-			def initialize(name, value)
+			def initialize(name, value, **tags)
 				@name = name
 				@value = value
+				@tags = tags
 			end
 			
 			attr :name
 			attr :value
+			attr :tags
 			
 			def to_h
-				{name: @name, value: @value}
+				{name: @name, value: @value, tags: @tags}
 			end
 			
 			def format(output, terminal, verbose)
-				output.puts "#{@name}=#{@value}"
+				output.puts "#{@name}=#{@value} #{@tags.inspect}"
 			end
 		end
 	end
