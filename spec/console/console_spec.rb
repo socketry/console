@@ -51,6 +51,8 @@ RSpec.describe Console do
 			MyModule.log_error
 			
 			expect(io.string).to include("Caused by ArgumentError: It broken!")
+			expect(MyModule.logger.debug?).to be == false
+			expect(MyModule.logger.info?).to be == true
 		end
 	end
 	

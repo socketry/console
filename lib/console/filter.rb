@@ -46,7 +46,7 @@ module Console
 					end
 					
 					define_method("#{name}?") do
-						@level >= level
+						@level <= level
 					end
 				end
 			end
