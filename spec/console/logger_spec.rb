@@ -102,6 +102,7 @@ RSpec.describe Console::Logger do
 			it "doesn't log #{name} messages" do
 				expect(output).to_not receive(:call)
 				subject.send(name, message)
+				expect(subject.send("#{name}?")).to be == false
 			end
 		end
   end
@@ -115,6 +116,7 @@ RSpec.describe Console::Logger do
 			it "can log #{name} messages" do
 				expect(output).to receive(:call).with(message, severity: name)
 				subject.send(name, message)
+				expect(subject.send("#{name}?")).to be == true
 			end
 		end
   end
