@@ -30,7 +30,7 @@ RSpec.describe Console::Progress do
 			expect(measure.total).to be 100
 			expect(measure.subject).to be == "My Measurement"
 			
-			expect(Console.logger).to receive(:info)
+			expect(Console.logger).to receive(:info).and_call_original
 			
 			measure.increment(50)
 		end
