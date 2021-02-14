@@ -6,11 +6,11 @@ Provides beautiful console logging for Ruby applications. Implements fast, buffe
 
 ## Features
 
-- Thread safe global logger with per-fiber context.
-- Carry along context with nested loggers.
-- Enable/disable log levels per-class.
-- Detailed logging of exceptions.
-- Beautiful logging to the terminal or structured logging using JSON.
+  - Thread safe global logger with per-fiber context.
+  - Carry along context with nested loggers.
+  - Enable/disable log levels per-class.
+  - Detailed logging of exceptions.
+  - Beautiful logging to the terminal or structured logging using JSON.
 
 ## Usage
 
