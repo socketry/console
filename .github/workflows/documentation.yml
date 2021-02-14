@@ -1,0 +1,28 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      env:
+        BUNDLE_WITH: maintenance
+      with:
+        bundler-cache: true
+
+    - name: Generate documentation
+      timeout-minutes: 5
+      run: bundle exec bake utopia:project:generate
+
+    - name: Deploy
+      uses: JamesIves/github-pages-deploy-action@4.0.0
+      with:
+        branch: gh-pages
+        folder: docs
