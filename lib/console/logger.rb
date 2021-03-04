@@ -54,7 +54,7 @@ module Console
 			terminal = Terminal::Logger.new(output, verbose: verbose)
 			
 			logger = self.new(terminal, verbose: verbose, level: level)
-			resolver = Resolver.default_resolver(logger)
+			Resolver.default_resolver(logger)
 			
 			return logger
 		end
