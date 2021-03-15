@@ -66,12 +66,14 @@ module Console
 					output.puts "  #{terminal[:exception_detail]}#{line}#{terminal.reset}"
 				end
 				
+				root_expr = /^#{@root}\// if @root
+
 				exception.backtrace&.each_with_index do |line, index|
 					path, offset, message = line.split(":")
 					
 					# Make the path a bit more readable
-					path.gsub!(/^#{@root}\//, "./") if @root
-					
+					path.sub!(root_expr, "./") if root_expr
+
 					output.puts "  #{index == 0 ? "→" : " "} #{terminal[:exception_backtrace]}#{path}:#{offset}#{terminal.reset} #{message}"
 				end
 				
