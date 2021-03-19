@@ -102,7 +102,7 @@ module Console
 		end
 		
 		def all!
-			@level = -1
+			@level = self.class::MINIMUM_LEVEL - 1
 		end
 		
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
