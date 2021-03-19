@@ -33,7 +33,7 @@ module Console
 		# @returns [Resolver] If there were custom logging levels, then the created resolver is returned.
 		def self.default_resolver(logger, env = ENV)
 			# Find all CONSOLE_<LEVEL> variables from environment:
-			levels = Logger::LEVELS
+			levels = logger.class::LEVELS
 				.map{|label, level| [level, env["CONSOLE_#{label.upcase}"]&.split(',')]}
 				.to_h
 				.compact
