@@ -38,9 +38,24 @@ module Console
 				.to_h
 				.compact
 			
+			off_klasses = env['CONSOLE_OFF']&.split(',')
+			all_klasses = env['CONSOLE_ALL']&.split(',')
+
 			# If we have any levels, then create a class resolver, and each time a class is resolved, set the log level for that class to the specified level:
-			if levels.any?
+			if levels.any? || all_klasses&.any? || off_klasses&.any?
 				resolver = Resolver.new
+
+				if all_klasses
+					resolver.bind(all_klasses) do |klass|
+						logger.enable(klass, logger.class::MINIMUM_LEVEL - 1)
+					end
+				end
+
+				if off_klasses
+					resolver.bind(off_klasses) do |klass|
+						logger.disable(klass)
+					end
+				end
 				
 				levels.each do |level, names|
 					resolver.bind(names) do |klass|

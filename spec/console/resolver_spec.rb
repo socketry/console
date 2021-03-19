@@ -66,5 +66,19 @@ RSpec.describe Console::Resolver do
 			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
 			expect(Console.logger.subjects[Cat]).to be == Console::Logger::DEBUG
 		end
+
+		it 'can set "all" and "off" by environment' do
+			expect(Console::Resolver.default_resolver(logger, {'CONSOLE_ALL' => 'Cat', 'CONSOLE_WARN' => 'Dog', 'CONSOLE_OFF' => 'Acorn,Banana'})).to be_a Console::Resolver
+
+			class Acorn; end
+			class Banana; end
+			class Cat; end
+			class Dog; end
+
+			expect(Console.logger.subjects[Acorn]).to be_nil
+			expect(Console.logger.subjects[Banana]).to be_nil
+			expect(Console.logger.subjects[Cat]).to be == Console::Logger::MINIMUM_LEVEL - 1
+			expect(Console.logger.subjects[Dog]).to be == Console::Logger::WARN
+		end
 	end
 end
