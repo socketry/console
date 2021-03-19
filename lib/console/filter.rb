@@ -26,11 +26,12 @@ module Console
 	class Filter
 		def self.[] **levels
 			klass = Class.new(self)
+			min_level, max_level = levels.values.minmax
 			
 			klass.instance_exec do
 				const_set(:LEVELS, levels)
-				const_set(:MINIMUM_LEVEL, levels.values.min)
-				const_set(:MAXIMUM_LEVEL, levels.values.max)
+				const_set(:MINIMUM_LEVEL, min_level)
+				const_set(:MAXIMUM_LEVEL, max_level)
 				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
