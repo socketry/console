@@ -24,6 +24,7 @@ require_relative 'progress'
 
 require_relative 'resolver'
 require_relative 'terminal/logger'
+require_relative 'serialized/logger'
 
 require 'fiber/local'
 
@@ -45,14 +46,47 @@ module Console
 				INFO
 			end
 		end
+
+		def self.default_output(env = ENV)
+			output = env['CONSOLE_OUTPUT']
+			case output&.upcase
+			when '-', 'STDOUT'
+				$stdout
+			when 'STDERR', nil
+				$stderr
+			end
+		end
+
+		def self.default_terminal(output = nil, env = ENV, verbose: self.verbose?)
+			logger = nil
+			format = env['CONSOLE_FORMAT']
+			output ||= default_output(env)
+
+			case format&.upcase
+			when nil
+				logger = Terminal::Logger.new(output, verbose: verbose)
+			when 'XTERM'
+				logger = Terminal::Logger.new(output, verbose: verbose, format: Terminal::XTerm)
+			when 'TEXT', 'TERM'
+				logger = Terminal::Logger.new(output, verbose: verbose, format: Terminal::Text)
+			else
+				Resolver.new.bind([format]) do |klass|
+					logger = Serialized::Logger.new(output, format: klass)
+				end
+			end
+
+			raise "No format found for #{format}" unless logger
+
+			logger
+		end
 		
 		# Controls verbose output using `$VERBOSE`.
 		def self.verbose?(env = ENV)
 			!$VERBOSE.nil? || env['CONSOLE_VERBOSE']
 		end
 		
-		def self.default_logger(output, verbose: self.verbose?, level: self.default_log_level)
-			terminal = Terminal::Logger.new(output, verbose: verbose)
+		def self.default_logger(output = self.default_output, terminal: nil, verbose: self.verbose?, level: self.default_log_level)
+			terminal ||= self.default_terminal(output, verbose: verbose)
 			
 			logger = self.new(terminal, verbose: verbose, level: level)
 			Resolver.default_resolver(logger)
