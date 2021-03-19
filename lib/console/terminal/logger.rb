@@ -54,11 +54,11 @@ module Console
 		end
 		
 		class Logger
-			def initialize(io = $stderr, verbose: nil, start_at: Terminal.start_at!, **options)
+			def initialize(io = $stderr, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
 				@io = io
 				@start_at = start_at
 				
-				@terminal = Terminal.for(io)
+				@terminal = format.nil? ? Terminal.for(io) : format.new(io)
 				
 				if verbose.nil?
 					@verbose = !@terminal.colors?
