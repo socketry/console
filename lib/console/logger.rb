@@ -56,7 +56,7 @@ module Console
 			end
 		end
 
-		def self.default_terminal(output = nil, env = ENV, verbose: self.verbose?)
+		def self.default_terminal(output = nil, env: ENV, verbose: self.verbose?)
 			logger = nil
 			format = env['CONSOLE_FORMAT']
 			output ||= default_output(env)

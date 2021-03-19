@@ -181,7 +181,7 @@ RSpec.describe Console::Logger do
 		end
 
 		it 'can set terminal to Serialized and format to JSON by ENV' do
-			terminal = Console::Logger.default_terminal(nil, {'CONSOLE_FORMAT' => 'JSON'})
+			terminal = Console::Logger.default_terminal(nil, env: {'CONSOLE_FORMAT' => 'JSON'})
 			expect(terminal).to be_a Console::Serialized::Logger
 			expect(terminal.format).to be == JSON
 		end
@@ -189,21 +189,21 @@ RSpec.describe Console::Logger do
 		it 'can set terminal to Serialized using custom format by ENV' do
 			class MySerializer
 			end
-			terminal = Console::Logger.default_terminal(nil, {'CONSOLE_FORMAT' => 'MySerializer'})
+			terminal = Console::Logger.default_terminal(nil, env: {'CONSOLE_FORMAT' => 'MySerializer'})
 			expect(terminal).to be_a Console::Serialized::Logger
 			expect(terminal.format).to be == MySerializer
 		end
 
 		it 'raises error until the given format class is available' do
 			expect {
-				Console::Logger.default_terminal(nil, {'CONSOLE_FORMAT' => 'NotThereYet'})
+				Console::Logger.default_terminal(nil, env: {'CONSOLE_FORMAT' => 'NotThereYet'})
 			}.to raise_error(RuntimeError, 'No format found for NotThereYet')
 		end
 
 		it 'can force format to XTERM for non tty output by ENV' do
 			io = StringIO.new
 			expect(Console::Terminal).not_to receive(:for).with(io)
-			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'XTERM'})
+			terminal = Console::Logger.default_terminal(io, env: {'CONSOLE_FORMAT' => 'XTERM'})
 			expect(terminal).to be_a Console::Terminal::Logger
 			expect(terminal.terminal).to be_a Console::Terminal::XTerm
 		end
@@ -211,7 +211,7 @@ RSpec.describe Console::Logger do
 		it 'can force format to TEXT for tty output by ENV using TERM' do
 			io = StringIO.new
 			expect(Console::Terminal).not_to receive(:for).with(io)
-			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TERM'})
+			terminal = Console::Logger.default_terminal(io, env: {'CONSOLE_FORMAT' => 'TERM'})
 			expect(terminal).to be_a Console::Terminal::Logger
 			expect(terminal.terminal).to be_a Console::Terminal::Text
 		end
@@ -219,7 +219,7 @@ RSpec.describe Console::Logger do
 		it 'can force format to TEXT for tty output by ENV using TEXT' do
 			io = StringIO.new
 			expect(Console::Terminal).not_to receive(:for).with(io)
-			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TEXT'})
+			terminal = Console::Logger.default_terminal(io, env: {'CONSOLE_FORMAT' => 'TEXT'})
 			expect(terminal).to be_a Console::Terminal::Logger
 			expect(terminal.terminal).to be_a Console::Terminal::Text
 		end
