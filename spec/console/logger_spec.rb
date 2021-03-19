@@ -202,25 +202,26 @@ RSpec.describe Console::Logger do
 
 		it 'can force format to XTERM for non tty output by ENV' do
 			io = StringIO.new
+			expect(Console::Terminal).not_to receive(:for).with(io)
 			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'XTERM'})
 			expect(terminal).to be_a Console::Terminal::Logger
 			expect(terminal.terminal).to be_a Console::Terminal::XTerm
 		end
 
 		it 'can force format to TEXT for tty output by ENV using TERM' do
-			File.open("/dev/tty") { |io|
-				terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TERM'})
-				expect(terminal).to be_a Console::Terminal::Logger
-				expect(terminal.terminal).to be_a Console::Terminal::Text
-			}
+			io = StringIO.new
+			expect(Console::Terminal).not_to receive(:for).with(io)
+			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TERM'})
+			expect(terminal).to be_a Console::Terminal::Logger
+			expect(terminal.terminal).to be_a Console::Terminal::Text
 		end
 
 		it 'can force format to TEXT for tty output by ENV using TEXT' do
-			File.open("/dev/tty") { |io|
-				terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TEXT'})
-				expect(terminal).to be_a Console::Terminal::Logger
-				expect(terminal.terminal).to be_a Console::Terminal::Text
-			}
+			io = StringIO.new
+			expect(Console::Terminal).not_to receive(:for).with(io)
+			terminal = Console::Logger.default_terminal(io, {'CONSOLE_FORMAT' => 'TEXT'})
+			expect(terminal).to be_a Console::Terminal::Logger
+			expect(terminal.terminal).to be_a Console::Terminal::Text
 		end
 	end
 end
