@@ -108,7 +108,9 @@ module Console
 		end
 		
 		def output?
-			if duration = duration_since_last_output
+			if remaining.zero?
+				return true
+			elsif duration = duration_since_last_output
 				return duration > @minimum_output_duration
 			else
 				return true
