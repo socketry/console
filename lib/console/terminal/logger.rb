@@ -136,7 +136,7 @@ module Console
 			def format_argument(argument, output)
 				case argument
 				when Exception
-					Event::Failure.new(argument).format(output, @terminal, @verbose)
+					Event::Failure.for(argument).format(output, @terminal, @verbose)
 				when Event::Generic
 					argument.format(output, @terminal, @verbose)
 				else
