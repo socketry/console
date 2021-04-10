@@ -154,11 +154,21 @@ module Console
 				end
 			end
 			
+			def default_suffix(object = nil)
+				buffer = +" #{@terminal[:logger_suffix]}"
+				
+				if object
+					buffer << "[oid=0x#{object.object_id.to_s(16)}] "
+				end
+				
+				buffer << "[ec=0x#{Fiber.current.object_id.to_s(16)}] [pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
+			end
+			
 			def format_object_subject(severity, prefix, subject, output)
 				prefix_style = @terminal[severity]
 				
 				if @verbose
-					suffix = " #{@terminal[:logger_suffix]}[oid=0x#{subject.object_id.to_s(16)}] [ec=0x#{Fiber.current.object_id.to_s(16)}] [pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
+					suffix = default_suffix(subject)
 				end
 				
 				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
@@ -170,7 +180,7 @@ module Console
 				prefix_style = @terminal[severity]
 				
 				if @verbose
-					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
+					suffix = default_suffix
 				end
 				
 				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
