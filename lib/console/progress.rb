@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'event/progress'
+require_relative 'clock'
 
 module Console
 	class Progress
@@ -93,7 +94,7 @@ module Console
 		
 		def to_s
 			if estimated_remaining_time = self.estimated_remaining_time
-				"#{@current}/#{@total} completed in #{formatted_duration(self.duration)}, #{formatted_duration(estimated_remaining_time)} remaining."
+				"#{@current}/#{@total} completed in #{Clock.formatted_duration(self.duration)}, #{Clock.formatted_duration(estimated_remaining_time)} remaining."
 			else
 				"#{@current}/#{@total} completed, waiting for estimate..."
 			end
@@ -115,28 +116,6 @@ module Console
 			else
 				return true
 			end
-		end
-		
-		def formatted_duration(duration)
-			if duration < 60.0
-				return "#{duration.round(2)}s"
-			end
-			
-			duration /= 60.0
-			
-			if duration < 60.0
-				return "#{duration.round}m"
-			end
-			
-			duration /= 60.0
-			
-			if duration < 60.0
-				return "#{duration.round(1)}h"
-			end
-			
-			duration /= 24.0
-			
-			return "#{duration.round(1)}d"
 		end
 	end
 end
