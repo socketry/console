@@ -25,6 +25,7 @@ require_relative 'text'
 require_relative 'xterm'
 
 require 'json'
+require 'fiber'
 
 module Console
 	module Terminal
@@ -66,7 +67,6 @@ module Console
 					@verbose = verbose
 				end
 				
-				@terminal[:logger_prefix] ||= @terminal.style(nil, nil, nil)
 				@terminal[:logger_suffix] ||= @terminal.style(:white, nil, :faint)
 				@terminal[:subject] ||= @terminal.style(nil, nil, :bold)
 				@terminal[:debug] = @terminal.style(:cyan)
@@ -158,7 +158,7 @@ module Console
 				prefix_style = @terminal[severity]
 				
 				if @verbose
-					suffix = " #{@terminal[:logger_suffix]}[oid=0x#{subject.object_id.to_s(16)}] [pid=#{Process.pid}] [#{Time.now}]#{@terminal.reset}"
+					suffix = " #{@terminal[:logger_suffix]}[oid=0x#{subject.object_id.to_s(16)}] [ec=0x#{Fiber.current.object_id.to_s(16)}] [pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
 				end
 				
 				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
@@ -170,7 +170,7 @@ module Console
 				prefix_style = @terminal[severity]
 				
 				if @verbose
-					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}] [#{Time.now}]#{@terminal.reset}"
+					suffix = " #{@terminal[:logger_suffix]}[pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
 				end
 				
 				prefix = "#{prefix_style}#{prefix}:#{@terminal.reset} "
@@ -187,15 +187,7 @@ module Console
 			end
 			
 			def time_offset_prefix
-				offset = Time.now - @start_at
-				minutes = (offset/60).floor
-				seconds = (offset - (minutes*60))
-				
-				if minutes > 0
-					"#{minutes}m#{seconds.floor}s"
-				else
-					"#{seconds.round(2)}s"
-				end.rjust(6)
+				Clock.formatted_duration(Time.now - @start_at).rjust(6)
 			end
 			
 			def build_prefix(name)

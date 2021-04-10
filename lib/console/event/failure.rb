@@ -47,6 +47,8 @@ module Console
 				terminal[:exception_title] ||= terminal.style(:red, nil, :bold)
 				terminal[:exception_detail] ||= terminal.style(:yellow)
 				terminal[:exception_backtrace] ||= terminal.style(:red)
+				terminal[:exception_backtrace_other] ||= terminal.style(:red, nil, :faint)
+				terminal[:exception_message] ||= terminal.style(:default)
 			end
 			
 			def to_h
@@ -67,14 +69,17 @@ module Console
 				end
 				
 				root_pattern = /^#{@root}\// if @root
-
+				
 				exception.backtrace&.each_with_index do |line, index|
 					path, offset, message = line.split(":")
+					style = :exception_backtrace
 					
 					# Make the path a bit more readable
-					path.sub!(root_pattern, "./") if root_pattern
-
-					output.puts "  #{index == 0 ? "→" : " "} #{terminal[:exception_backtrace]}#{path}:#{offset}#{terminal.reset} #{message}"
+					if root_pattern and path.sub!(root_pattern, "").nil?
+						style = :exception_backtrace_other
+					end
+					
+					output.puts "  #{index == 0 ? "→" : " "} #{terminal[style]}#{path}:#{offset}#{terminal[:exception_message]} #{message}#{terminal.reset}"
 				end
 				
 				if exception.cause
