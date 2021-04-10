@@ -18,41 +18,29 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'generic'
-require_relative '../clock'
+require_relative 'event/measure'
+require_relative 'clock'
 
 module Console
-	module Event
-		class Metric < Generic
-			def self.[](**parameters)
-				parameters.map(&self.method(:new))
-			end
+	class Measure
+		def initialize(output, subject)
+			@output = output
+			@subject = subject
+		end
+		
+		# Measure the execution of a block of code.
+		def duration(name, **tags, &block)
+			@output.info(@subject) {Event::Enter.new(name)}
 			
-			def initialize(name, value, **tags)
-				@name = name
-				@value = value
-				@tags = tags
-			end
+			start_time = Clock.now
 			
-			attr :name
-			attr :value
-			attr :tags
+			yield
 			
-			def to_h
-				{name: @name, value: @value, tags: @tags}
-			end
+			duration = Clock.now - start_time
 			
-			def value_string
-				"#{@name}: #{@value}"
-			end
+			@output.info(@subject) {Event::Exit.new(name, duration, **tags)}
 			
-			def format(output, terminal, verbose)
-				if @tags&.any?
-					output.puts "#{value_string} #{@tags.inspect}"
-				else
-					output.puts value_string
-				end
-			end
+			return duration
 		end
 	end
 end

@@ -18,40 +18,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'generic'
+require_relative 'metric'
 require_relative '../clock'
 
 module Console
 	module Event
-		class Metric < Generic
-			def self.[](**parameters)
-				parameters.map(&self.method(:new))
-			end
-			
-			def initialize(name, value, **tags)
+		class Enter < Generic
+			def initialize(name)
 				@name = name
-				@value = value
-				@tags = tags
-			end
-			
-			attr :name
-			attr :value
-			attr :tags
-			
-			def to_h
-				{name: @name, value: @value, tags: @tags}
-			end
-			
-			def value_string
-				"#{@name}: #{@value}"
 			end
 			
 			def format(output, terminal, verbose)
-				if @tags&.any?
-					output.puts "#{value_string} #{@tags.inspect}"
-				else
-					output.puts value_string
-				end
+				output.puts "→ #{@name}"
+			end
+		end
+		
+		class Exit < Metric
+			def value_string
+				"← #{@name} took #{Clock.formatted_duration(@value)}"
 			end
 		end
 	end

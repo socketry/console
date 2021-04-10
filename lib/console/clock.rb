@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2021, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,41 +18,33 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'generic'
-require_relative '../clock'
-
 module Console
-	module Event
-		class Metric < Generic
-			def self.[](**parameters)
-				parameters.map(&self.method(:new))
+	module Clock
+		def self.formatted_duration(duration)
+			if duration < 60.0
+				return "#{duration.round(2)}s"
 			end
 			
-			def initialize(name, value, **tags)
-				@name = name
-				@value = value
-				@tags = tags
+			duration /= 60.0
+			
+			if duration < 60.0
+				return "#{duration.round}m"
 			end
 			
-			attr :name
-			attr :value
-			attr :tags
+			duration /= 60.0
 			
-			def to_h
-				{name: @name, value: @value, tags: @tags}
+			if duration < 60.0
+				return "#{duration.round(1)}h"
 			end
 			
-			def value_string
-				"#{@name}: #{@value}"
-			end
+			duration /= 24.0
 			
-			def format(output, terminal, verbose)
-				if @tags&.any?
-					output.puts "#{value_string} #{@tags.inspect}"
-				else
-					output.puts value_string
-				end
-			end
+			return "#{duration.round(1)}d"
+		end
+		
+		# Get the current elapsed monotonic time.
+		def self.now
+			::Process.clock_gettime(::Process::CLOCK_MONOTONIC)
 		end
 	end
 end

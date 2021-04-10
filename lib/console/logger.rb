@@ -19,6 +19,7 @@
 # THE SOFTWARE.
 
 require_relative 'filter'
+require_relative 'measure'
 require_relative 'progress'
 
 require_relative 'resolver'
@@ -73,8 +74,15 @@ module Console
 			Progress.new(self, subject, total, **options)
 		end
 		
-		# @deprecated Please use {progress}.
-		alias measure progress
+		def measure(subject, name = "block", **options, &block)
+			measure = Measure.new(self, subject)
+			
+			if block_given?
+				measure.duration(name, **options, &block)
+			end
+			
+			return measure
+		end
 		
 		def failure(subject, exception, *arguments, &block)
 			fatal(subject, *arguments, Event::Failure.new(exception), &block)
