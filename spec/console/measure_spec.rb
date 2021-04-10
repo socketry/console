@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,32 +18,24 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'event/measure'
-require_relative 'clock'
+require 'console'
 
-module Console
-	class Measure
-		def initialize(output, subject, **tags)
-			@output = output
-			@subject = subject
-			@tags = tags
-		end
-		
-		attr :tags
-		
-		# Measure the execution of a block of code.
-		def duration(name, &block)
-			@output.info(@subject) {Event::Enter.new(name)}
+RSpec.describe Console::Measure do
+	describe '#increment' do
+		it 'can create new measurement' do
+			expect(Console.logger).to receive(:info) do |subject, &block|
+				expect(block.call).to be_kind_of(Console::Event::Enter)
+				
+				expect(Console.logger).to receive(:info) do |subject, &block|
+					expect(block.call).to be_kind_of(Console::Event::Exit)
+				end
+			end
 			
-			start_time = Clock.now
+			result = Console.logger.measure("My Measurement") do |measure|
+				:result
+			end
 			
-			result = yield(self)
-			
-			duration = Clock.now - start_time
-			
-			@output.info(@subject) {Event::Exit.new(name, duration, **@tags)}
-			
-			return result
+			expect(result).to be == :result
 		end
 	end
 end

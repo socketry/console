@@ -74,14 +74,14 @@ module Console
 			Progress.new(self, subject, total, **options)
 		end
 		
-		def measure(subject, name = "block", **options, &block)
-			measure = Measure.new(self, subject)
+		def measure(subject, name = "block", **tags, &block)
+			measure = Measure.new(self, subject, **tags)
 			
 			if block_given?
-				measure.duration(name, **options, &block)
+				return measure.duration(name, &block)
+			else
+				return measure
 			end
-			
-			return measure
 		end
 		
 		def failure(subject, exception, *arguments, &block)
