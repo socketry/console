@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2021, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,60 +18,22 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative '../buffer'
-require_relative '../filter'
-
-require 'time'
-require 'json'
+require_relative 'output/default'
+require_relative 'output/json'
+require_relative 'output/text'
+require_relative 'output/xterm'
 
 module Console
-	module Serialized
-		class Logger
-			def initialize(io = $stderr, format: JSON, **options)
-				@io = io
-				@start = Time.now
-				@format = format
-			end
-			
-			attr :io
-			attr :start
-			attr :format
-			
-			def verbose!(value = true)
-			end
-			
-			def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
-				record = {
-					time: Time.now.iso8601,
-					severity: severity,
-					class: subject.class,
-					oid: subject.object_id,
-					pid: Process.pid,
-				}
+	module Output
+		def self.new(output = nil, env = ENV, **options)
+			if names = env['CONSOLE_OUTPUT']
+				names = names.split(',').map(&:to_sym).reverse
 				
-				if subject
-					record[:subject] = subject
+				names.inject(output) do |output, name|
+					Output.const_get(name).new(output, **options)
 				end
-				
-				if arguments.any?
-					record[:arguments] = arguments
-				end
-				
-				if options.any?
-					record[:options] = options
-				end
-				
-				if block_given?
-					if block.arity.zero?
-						record[:message] = yield
-					else
-						buffer = StringIO.new
-						yield buffer
-						record[:message] = buffer.string
-					end
-				end
-				
-				@io.puts(@format.dump(record))
+			else
+				return Output::Default.new(output, **options)
 			end
 		end
 	end

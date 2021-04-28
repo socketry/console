@@ -18,6 +18,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+require_relative 'output'
 require_relative 'filter'
 require_relative 'measure'
 require_relative 'progress'
@@ -36,7 +37,7 @@ module Console
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
 		# https://mislav.net/2011/06/ruby-verbose-mode/ has more details about how it all fits together.
 		def self.default_log_level(env = ENV)
-			if level = (env['CONSOLE_LEVEL'] || env['CONSOLE_LOG_LEVEL'])
+			if level = env['CONSOLE_LEVEL']
 				LEVELS[level.to_sym] || level.to_i
 			elsif $DEBUG
 				DEBUG
@@ -46,56 +47,31 @@ module Console
 				INFO
 			end
 		end
-
-		def self.default_output(env = ENV)
-			output = env['CONSOLE_OUTPUT']
-			case output&.upcase
-			when '-', 'STDOUT'
-				$stdout
-			when 'STDERR', nil
-				$stderr
-			end
-		end
-
-		def self.default_terminal(output = nil, env: ENV, verbose: self.verbose?)
-			logger = nil
-			format = env['CONSOLE_FORMAT']
-			output ||= default_output(env)
-
-			case format&.upcase
-			when nil
-				logger = Terminal::Logger.new(output, verbose: verbose)
-			when 'XTERM'
-				logger = Terminal::Logger.new(output, verbose: verbose, format: Terminal::XTerm)
-			when 'TEXT', 'TERM'
-				logger = Terminal::Logger.new(output, verbose: verbose, format: Terminal::Text)
-			else
-				Resolver.new.bind([format]) do |klass|
-					logger = Serialized::Logger.new(output, format: klass)
-				end
-			end
-
-			raise "No format found for #{format}" unless logger
-
-			logger
-		end
 		
 		# Controls verbose output using `$VERBOSE`.
 		def self.verbose?(env = ENV)
 			!$VERBOSE.nil? || env['CONSOLE_VERBOSE']
 		end
 		
-		def self.default_logger(output = self.default_output, terminal: nil, verbose: self.verbose?, level: self.default_log_level)
-			terminal ||= self.default_terminal(output, verbose: verbose)
+		def self.default_logger(output = $stderr, env = ENV, **options)
+			if options[:verbose].nil?
+				options[:verbose] = self.verbose?(env)
+			end
 			
-			logger = self.new(terminal, verbose: verbose, level: level)
+			if options[:level].nil?
+				options[:level] = self.default_log_level(env)
+			end
+			
+			output = Output.new(output, env, **options)
+			logger = self.new(output, **options)
+			
 			Resolver.default_resolver(logger)
 			
 			return logger
 		end
 		
 		def self.local
-			self.default_logger($stderr)
+			self.default_logger
 		end
 		
 		DEFAULT_LEVEL = 1
