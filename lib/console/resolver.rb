@@ -26,6 +26,8 @@ module Console
 		#
 		# e.g. `CONSOLE_WARN=Acorn,Banana CONSOLE_DEBUG=Cat` will set the log level for the classes Acorn and Banana to `warn` and Cat to `debug`. This overrides the default log level.
 		#
+		# You can enable all log levels for a given class by using `CONSOLE_ON=MyClass`. Similarly you can disable all logging using `CONSOLE_OFF=MyClass`.
+		#
 		# @parameter logger [Logger] A logger instance to set the logging levels on.
 		# @parameter env [Hash] The environment to read levels from.
 		#
@@ -39,32 +41,36 @@ module Console
 				.compact
 			
 			off_klasses = env['CONSOLE_OFF']&.split(',')
-			all_klasses = env['CONSOLE_ALL']&.split(',')
-
+			on_klasses = env['CONSOLE_ON']&.split(',')
+			
+			resolver = nil
+			
 			# If we have any levels, then create a class resolver, and each time a class is resolved, set the log level for that class to the specified level:
-			if levels.any? || all_klasses&.any? || off_klasses&.any?
-				resolver = Resolver.new
-
-				if all_klasses
-					resolver.bind(all_klasses) do |klass|
-						logger.enable(klass, logger.class::MINIMUM_LEVEL - 1)
-					end
-				end
-
-				if off_klasses
-					resolver.bind(off_klasses) do |klass|
-						logger.disable(klass)
-					end
-				end
+			if on_klasses&.any?
+				resolver ||= Resolver.new
 				
-				levels.each do |level, names|
-					resolver.bind(names) do |klass|
-						logger.enable(klass, level)
-					end
+				resolver.bind(on_klasses) do |klass|
+					logger.enable(klass, logger.class::MINIMUM_LEVEL - 1)
 				end
-				
-				return resolver
 			end
+			
+			if off_klasses&.any?
+				resolver ||= Resolver.new
+				
+				resolver.bind(off_klasses) do |klass|
+					logger.disable(klass)
+				end
+			end
+			
+			levels.each do |level, names|
+				resolver ||= Resolver.new
+				
+				resolver.bind(names) do |klass|
+					logger.enable(klass, level)
+				end
+			end
+			
+			return resolver
 		end
 		
 		def initialize

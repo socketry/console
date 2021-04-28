@@ -20,6 +20,11 @@
 
 require 'console/resolver'
 
+class Acorn; end
+class Banana; end
+class Cat; end
+class Dog; end
+
 RSpec.describe Console::Resolver do
 	it "triggers when class is defined" do
 		resolved = false
@@ -58,23 +63,18 @@ RSpec.describe Console::Resolver do
 		it 'can set custom log levels from environment' do
 			expect(Console::Resolver.default_resolver(logger, {'CONSOLE_WARN' => 'Acorn,Banana', 'CONSOLE_DEBUG' => 'Cat'})).to be_a Console::Resolver
 			
-			class Acorn; end
-			class Banana; end
-			class Cat; end
-			
 			expect(Console.logger.subjects[Acorn]).to be == Console::Logger::WARN
 			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
 			expect(Console.logger.subjects[Cat]).to be == Console::Logger::DEBUG
 		end
 
 		it 'can set "all" and "off" by environment' do
-			expect(Console::Resolver.default_resolver(logger, {'CONSOLE_ALL' => 'Cat', 'CONSOLE_WARN' => 'Dog', 'CONSOLE_OFF' => 'Acorn,Banana'})).to be_a Console::Resolver
-
-			class Acorn; end
-			class Banana; end
-			class Cat; end
-			class Dog; end
-
+			expect(Console::Resolver.default_resolver(logger, {
+				'CONSOLE_ON' => 'Cat',
+				'CONSOLE_WARN' => 'Dog',
+				'CONSOLE_OFF' => 'Acorn,Banana'
+			})).to be_a Console::Resolver
+			
 			expect(Console.logger.subjects[Acorn]).to be_nil
 			expect(Console.logger.subjects[Banana]).to be_nil
 			expect(Console.logger.subjects[Cat]).to be == Console::Logger::MINIMUM_LEVEL - 1
