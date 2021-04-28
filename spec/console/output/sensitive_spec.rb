@@ -1,4 +1,4 @@
-# Copyright, 2017, by Samuel G. D. Williams. <http://www.codeotaku.com>
+# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -18,58 +18,41 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-require_relative 'filter'
+require 'console/logger'
+require 'console/capture'
 
-module Console
-	# A general sink which captures all events into a buffer.
-	class Capture
-		def initialize
-			@buffer = []
-		end
+require 'console/output/sensitive'
+
+RSpec.describe Console::Output::Sensitive do
+	let(:output) {Console::Capture.new}
+	subject{described_class.new(output)}
+	
+	it 'logs non-sensitive text' do
+		subject.call("Hello World")
 		
-		attr :buffer
+		expect(output).to include("Hello World")
+	end
+	
+	it 'redacts sensitive text' do
+		subject.call("first_name: Samuel Williams")
 		
-		def last
-			@buffer.last
-		end
-		
-		def include?(pattern)
-			JSON.dump(@buffer).include?(pattern)
-		end
-		
-		def clear
-			@buffer.clear
-		end
-		
-		def verbose!(value = true)
-		end
-		
-		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
-			message = {
-				time: ::Time.now.iso8601,
-				severity: severity,
-				**options,
-			}
+		expect(output).to_not include("Samuel Williams")
+	end
+	
+	context 'with sensitive: false' do
+		it 'bypasses redaction' do
+			subject.call("first_name: Samuel Williams", sensitive: false)
 			
-			if subject
-				message[:subject] = subject
-			end
+			expect(output).to include("Samuel Williams")
+		end
+	end
+	
+	context 'with sensitive: Hash' do
+		it 'filters specific tokens' do
+			subject.call("first_name: Samuel Williams", sensitive: {"Samuel Williams" => "[First Name]"})
 			
-			if arguments.any?
-				message[:arguments] = arguments
-			end
-			
-			if block_given?
-				if block.arity.zero?
-					message[:message] = yield
-				else
-					buffer = StringIO.new
-					yield buffer
-					message[:message] = buffer.string
-				end
-			end
-			
-			@buffer << message
+			expect(output).to include("[First Name]")
+			expect(output).to_not include("Samuel Williams")
 		end
 	end
 end
