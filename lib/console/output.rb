@@ -29,8 +29,8 @@ module Console
 			if names = env['CONSOLE_OUTPUT']
 				names = names.split(',').map(&:to_sym).reverse
 				
-				names.inject(output) do |output, name|
-					Output.const_get(name).new(output, **options)
+				names.inject(output) do |output_argument, name|
+					Output.const_get(name).new(output_argument, **options)
 				end
 			else
 				return Output::Default.new(output, **options)
