@@ -27,10 +27,11 @@ require 'json'
 module Console
 	module Serialized
 		class Logger
-			def initialize(io = $stderr, format: JSON, **options)
+			def initialize(io = $stderr, format: JSON, verbose: false, **options)
 				@io = io
 				@start = Time.now
 				@format = format
+				@verbose = verbose
 			end
 			
 			attr :io
@@ -38,6 +39,11 @@ module Console
 			attr :format
 			
 			def verbose!(value = true)
+				@verbose = true
+			end
+			
+			def dump(record)
+				@format.dump(record)
 			end
 			
 			def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
@@ -71,7 +77,7 @@ module Console
 					end
 				end
 				
-				@io.puts(@format.dump(record))
+				@io.puts(self.dump(record))
 			end
 		end
 	end
