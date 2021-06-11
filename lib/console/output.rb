@@ -27,7 +27,7 @@ module Console
 	module Output
 		def self.new(output = nil, env = ENV, **options)
 			if names = env['CONSOLE_OUTPUT']
-				names = names.split(',').map(&:to_sym).reverse
+				names = names.split(',').reverse
 				
 				names.inject(output) do |output, name|
 					Output.const_get(name).new(output, **options)
