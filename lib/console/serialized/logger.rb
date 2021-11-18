@@ -61,25 +61,44 @@ module Console
 					record[:subject] = subject
 				end
 				
-				if arguments.any?
-					record[:arguments] = arguments
-				end
-				
-				if options.any?
-					record[:options] = options
-				end
+				message = arguments
 				
 				if block_given?
 					if block.arity.zero?
-						record[:message] = yield
+						message << yield
 					else
 						buffer = StringIO.new
 						yield buffer
-						record[:message] = buffer.string
+						message << buffer.string
 					end
 				end
 				
+				if message.size == 1
+					record[:message] = message.first
+				elsif message.any?
+					record[:message] = message
+				end
+				
+				if error = find_error(message)
+					buffer = StringIO.new
+					terminal = Terminal::Text.new(buffer)
+					Event::Failure.new(error).format(buffer, terminal, @verbose)
+					
+					record[:error] = {
+						message: error.message,
+						stack: buffer.string
+					}
+				end
+				
+				record.update(options)
+				
 				@io.puts(self.dump(record))
+			end
+			
+			private
+			
+			def find_error(message)
+				message.find{|part| part.is_a?(Exception)}
 			end
 		end
 	end

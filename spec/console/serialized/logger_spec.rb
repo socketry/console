@@ -44,7 +44,20 @@ RSpec.describe Console::Serialized::Logger do
 		
 		record = JSON.parse(io.string, symbolize_names: true)
 		
-		expect(record).to include(:options)
-		expect(record[:options]).to be == {name: "request-id"}
+		expect(record).to include(:name)
+		expect(record[:name]).to be == "request-id"
+	end
+	
+	context 'with structured event' do
+		let(:event) {Console::Event::Spawn.for("ls -lah")}
+		
+		it "can log structured events" do
+			subject.call(event)
+			
+			record = JSON.parse(io.string, symbolize_names: true)
+			
+			expect(record).to include(:subject)
+			expect(record[:subject]).to be == ["Console::Event::Spawn", {:arguments => ["ls -lah"]}]
+		end
 	end
 end

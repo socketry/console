@@ -28,13 +28,14 @@ module Console
 			def self.for(*arguments, **options)
 				# Extract out the command environment:
 				if arguments.first.is_a?(Hash)
-					self.new(*arguments, **options)
+					environment = arguments.shift
+					self.new(environment, arguments, options)
 				else
-					self.new(nil, arguments, **options)
+					self.new(nil, arguments, options)
 				end
 			end
 			
-			def initialize(environment, *arguments, **options)
+			def initialize(environment, arguments, options)
 				@environment = environment
 				@arguments = arguments
 				@options = options
@@ -55,7 +56,11 @@ module Console
 			end
 			
 			def to_h
-				{environment: @environment, arguments: @arguments, options: @options}
+				Hash.new.tap do |hash|
+					hash[:environment] = @environment if @environment&.any?
+					hash[:arguments] = @arguments if @arguments&.any?
+					hash[:options] = @options if @options&.any?
+				end
 			end
 			
 			def format(output, terminal, verbose)
