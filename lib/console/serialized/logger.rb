@@ -79,15 +79,11 @@ module Console
 					record[:message] = message
 				end
 				
-				if error = find_error(message)
-					buffer = StringIO.new
-					terminal = Terminal::Text.new(buffer)
-					Event::Failure.new(error).format(buffer, terminal, @verbose)
-					
+				if exception = find_exception(message)
 					record[:error] = {
-						class: error.class,
-						message: error.message,
-						stack: buffer.string
+						kind: exception.class,
+						message: exception.message,
+						stack: format_stack(exception)
 					}
 				end
 				
@@ -98,8 +94,25 @@ module Console
 			
 			private
 			
-			def find_error(message)
+			def find_exception(message)
 				message.find{|part| part.is_a?(Exception)}
+			end
+			
+			def format_stack(exception)
+				buffer = StringIO.new
+				format_backtrace(exception, buffer)
+				return buffer.string
+			end
+			
+			def format_backtrace(exception, buffer)
+				buffer.puts exception.backtrace
+				
+				if exception = exception.cause
+					buffer.puts
+					buffer.puts "Caused by: #{exception.class} #{exception.message}"
+
+					format_backtrace(exception, buffer)
+				end
 			end
 		end
 	end
