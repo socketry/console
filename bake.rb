@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 
 def sample_progress_bar
 	require_relative 'lib/console'

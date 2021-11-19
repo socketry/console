@@ -1,4 +1,5 @@
-# frozen_string_literals: true
+# frozen_string_literal: true
+
 #
 # Copyright, 2019, by Samuel G. D. Williams. <http://www.codeotaku.com>
 # 
