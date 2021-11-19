@@ -85,6 +85,7 @@ module Console
 					Event::Failure.new(error).format(buffer, terminal, @verbose)
 					
 					record[:error] = {
+						class: error.class,
 						message: error.message,
 						stack: buffer.string
 					}
