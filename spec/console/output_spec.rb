@@ -32,6 +32,7 @@ RSpec.describe Console::Output do
 	describe '.new' do
 		context 'when output to $stderr' do
 			it 'should set the default to Terminal::Logger' do
+				expect($stderr).to receive(:tty?).and_return(true)
 				expect(Console::Output.new($stderr)).to be_a Console::Terminal::Logger
 			end
 		end
