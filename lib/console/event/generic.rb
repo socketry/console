@@ -29,8 +29,8 @@ module Console
 			def to_h
 			end
 			
-			def to_json(**options)
-				JSON.generate([self.class, to_h], **options)
+			def to_json(*arguments)
+				JSON.generate([self.class, to_h], *arguments)
 			end
 			
 			def format(buffer, terminal)
