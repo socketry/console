@@ -98,7 +98,7 @@ module Console
 				end
 			end
 			
-			UNKNOWN = 'unknown'
+			UNKNOWN = :unknown
 			
 			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, **options, &block)
 				prefix = build_prefix(name || severity.to_s)

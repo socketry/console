@@ -34,6 +34,6 @@ RSpec.describe Console::Compatible::Logger do
 	end
 	
 	it "formats lower case severity string" do
-		expect(logger.format_severity(1)).to be == "info"
+		expect(logger.format_severity(1)).to be == :info
 	end
 end

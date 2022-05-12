@@ -82,7 +82,7 @@ module Console
 			end
 			
 			def format_severity(value)
-				super.downcase
+				super.downcase.to_sym
 			end
 		end
 	end
