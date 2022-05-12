@@ -32,4 +32,8 @@ RSpec.describe Console::Compatible::Logger do
 		
 		expect(io.string).to include("Hello World")
 	end
+	
+	it "formats lower case severity string" do
+		expect(logger.format_severity(1)).to be == "info"
+	end
 end

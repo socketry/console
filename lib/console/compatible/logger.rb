@@ -50,20 +50,20 @@ module Console
 				super(nil)
 				
 				@progname = subject
-				@logdev = LogDevice.new(@subject, output)
+				@logdev = LogDevice.new(subject, output)
 			end
 			
 			def add(severity, message = nil, progname = nil)
 				severity ||= UNKNOWN
-
+				
 				if @logdev.nil? or severity < level
 					return true
 				end
-
+				
 				if progname.nil?
 					progname = @progname
 				end
-
+				
 				if message.nil?
 					if block_given?
 						message = yield
@@ -72,13 +72,17 @@ module Console
 						progname = @progname
 					end
 				end
-
+				
 				@logdev.call(
 					progname, message,
 					severity: format_severity(severity)
 				)
-
+				
 				return true
+			end
+			
+			def format_severity(value)
+				super.downcase
 			end
 		end
 	end
