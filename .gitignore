@@ -1,13 +1,5 @@
 /.bundle/
-/.yardoc
-/_yardoc/
-/coverage/
-/doc/
 /pkg/
-/spec/reports/
-/tmp/
-/vendor/
-
 /gems.locked
-.rspec_status
-.covered.db
+/.covered.db
+/external

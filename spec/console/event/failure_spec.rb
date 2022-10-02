@@ -1,5 +1,9 @@
 # frozen_string_literal: true
 
+# Released under the MIT License.
+# Copyright, 2021, by Robert Schulze.
+# Copyright, 2021, by Samuel Williams.
+
 require 'console'
 require 'console/capture'
 
