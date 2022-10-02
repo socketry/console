@@ -6,9 +6,9 @@
 require 'console/logger'
 require 'console/capture'
 
-RSpec.describe Console::Output::Default do
+describe Console::Output::Default do
 	let(:output) {Console::Capture.new}
-	subject{described_class.new(output)}
+	let(:logger) {subject.new(output)}
 	
 	def final_output(output)
 		if output.respond_to?(:output)
@@ -18,11 +18,11 @@ RSpec.describe Console::Output::Default do
 		end
 	end
 	
-	context 'with unspecified output' do
+	with 'unspecified output' do
 		let(:output) {nil}
 		
 		it 'should output to $stderr by default' do
-			expect(final_output(subject).io).to be $stderr
+			expect(final_output(logger).io).to be == $stderr
 		end
 	end
 end

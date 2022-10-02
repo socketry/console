@@ -6,16 +6,16 @@
 require 'console'
 require 'console/capture'
 
-RSpec.describe Console::Event::Metric do
+describe Console::Event::Metric do
 	let(:output) {Console::Capture.new}
 	let(:logger) {Console::Logger.new(output)}
-	let(:event) {described_class.new(:x, 10)}
+	let(:event) {subject.new(:x, 10)}
 	
 	it "can log event" do
 		logger.info(self, event)
 		
-		expect(output.last).to include(
-			arguments: [event],
+		expect(output.last).to have_keys(
+			arguments: be == [event],
 		)
 	end
 end

@@ -5,17 +5,17 @@
 
 require 'console/terminal/logger'
 
-RSpec.describe Console::Terminal::Logger do
+describe Console::Terminal::Logger do
 	let(:io) {StringIO.new}
-	subject{described_class.new(io)}
+	let(:logger) {subject.new(io)}
 	
 	let(:message) {"Hello World"}
 	
 	it "can log to buffer" do
-		subject.call do |buffer|
+		logger.call do |buffer|
 			buffer << message
 		end
 		
-		expect(io.string).to include message
+		expect(io.string).to be(:include?, message)
 	end
 end

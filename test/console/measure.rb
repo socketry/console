@@ -5,14 +5,14 @@
 
 require 'console'
 
-RSpec.describe Console::Measure do
-	describe '#increment' do
+describe Console::Measure do
+	with '#increment' do
 		it 'can create new measurement' do
-			expect(Console.logger).to receive(:info) do |subject, &block|
-				expect(block.call).to be_kind_of(Console::Event::Enter)
-				
-				expect(Console.logger).to receive(:info) do |subject, &block|
-					expect(block.call).to be_kind_of(Console::Event::Exit)
+			events = []
+			
+			mock(Console.logger) do |mock|
+				mock.replace(:info) do |subject, &block|
+					events << block.call
 				end
 			end
 			
@@ -21,6 +21,8 @@ RSpec.describe Console::Measure do
 			end
 			
 			expect(result).to be == :result
+			expect(events[0]).to be_a(Console::Event::Enter)
+			expect(events[1]).to be_a(Console::Event::Exit)
 		end
 	end
 end

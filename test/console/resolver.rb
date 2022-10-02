@@ -5,38 +5,36 @@
 # Copyright, 2021, by Robert Schulze.
 
 require 'console/resolver'
+require 'resolver_classes'
 
-class Acorn; end
-class Banana; end
-class Cat; end
-class Dog; end
-
-RSpec.describe Console::Resolver do
+describe Console::Resolver do
+	let(:resolver) {subject.new}
+	
 	it "triggers when class is defined" do
 		resolved = false
 		
-		subject.bind(["Console::Resolver::Foobar"]) do |klass|
+		resolver.bind(["Console::Resolver::Foobar"]) do |klass|
 			resolved = true
 		end
 		
-		expect(subject).to be_waiting
+		expect(resolver).to be(:waiting?)
 		
 		class Console::Resolver::Foobar
 		end
 		
-		expect(subject).to_not be_waiting
-		expect(resolved).to be true
+		expect(resolver).not.to be(:waiting?)
+		expect(resolved).to be == true
 	end
 	
 	it "triggers immediately if class is already defined" do
 		resolved = false
 		
-		subject.bind(["Console::Resolver"]) do |klass|
+		resolver.bind(["Console::Resolver"]) do |klass|
 			resolved = true
 		end
 		
-		expect(subject).to_not be_waiting
-		expect(resolved).to be true
+		expect(resolver).not.to be(:waiting?)
+		expect(resolved).to be == true
 	end
 	
 	describe '.default_resolver' do
@@ -61,8 +59,8 @@ RSpec.describe Console::Resolver do
 				'CONSOLE_OFF' => 'Acorn,Banana'
 			})).to be_a Console::Resolver
 			
-			expect(Console.logger.subjects[Acorn]).to be_nil
-			expect(Console.logger.subjects[Banana]).to be_nil
+			expect(Console.logger.subjects[Acorn]).to be == nil
+			expect(Console.logger.subjects[Banana]).to be == nil
 			expect(Console.logger.subjects[Cat]).to be == Console::Logger::MINIMUM_LEVEL - 1
 			expect(Console.logger.subjects[Dog]).to be == Console::Logger::WARN
 		end

@@ -5,17 +5,13 @@
 
 require 'console/logger'
 require 'console/capture'
+require 'my_custom_output'
 
-class MyCustomOutput
-	def initialize(output, **options)
-	end
-end
-
-RSpec.describe Console::Output do
+describe Console::Output do
 	describe '.new' do
-		context 'when output to $stderr' do
+	 with 'output to $stderr' do
 			it 'should set the default to Terminal::Logger' do
-				allow($stderr).to receive(:tty?).and_return(true)
+				expect($stderr).to receive(:tty?).and_return(true)
 				expect(Console::Output.new($stderr)).to be_a Console::Terminal::Logger
 			end
 		end
@@ -36,12 +32,12 @@ RSpec.describe Console::Output do
 		it 'raises error until the given format class is available' do
 			expect {
 				Console::Output.new(nil, {'CONSOLE_OUTPUT' => 'InvalidOutput'})
-			}.to raise_error(NameError, /Console::Output::InvalidOutput/)
+			}.to raise_exception(NameError, message: be =~ /Console::Output::InvalidOutput/)
 		end
 		
 		it 'can force format to XTerm for non tty output by ENV' do
 			io = StringIO.new
-			expect(Console::Terminal).not_to receive(:for).with(io)
+			expect(Console::Terminal).not.to receive(:for)
 			output = Console::Output.new(io, {'CONSOLE_OUTPUT' => 'XTerm'})
 			expect(output).to be_a Console::Terminal::Logger
 			expect(output.terminal).to be_a Console::Terminal::XTerm
@@ -49,7 +45,7 @@ RSpec.describe Console::Output do
 		
 		it 'can force format to text for tty output by ENV using Text' do
 			io = StringIO.new
-			expect(Console::Terminal).not_to receive(:for).with(io)
+			expect(Console::Terminal).not.to receive(:for)
 			output = Console::Output.new(io, {'CONSOLE_OUTPUT' => 'Text'})
 			expect(output).to be_a Console::Terminal::Logger
 			expect(output.terminal).to be_a Console::Terminal::Text

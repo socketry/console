@@ -7,7 +7,7 @@
 require 'console'
 require 'console/capture'
 
-RSpec.describe Console::Event::Failure do
+describe Console::Event::Failure do
 	let(:output) {StringIO.new}
 	let(:terminal) {Console::Terminal.for(output)}
 	let(:error) {
@@ -41,6 +41,8 @@ RSpec.describe Console::Event::Failure do
 	it "formats exception removing root path" do
 		event = Console::Event::Failure.new(error, "/path/to/root")
 		event.format(output, terminal, true)
-		expect(output.string.lines[3..-1]).to all match(/^\s+\.gem/)
+		expect(output.string.lines[3..-1]).to have(
+			Sus::Have::Value.new(be =~ /^\s+\.gem/)
+		)
 	end
 end

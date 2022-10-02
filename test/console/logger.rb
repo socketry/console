@@ -9,14 +9,14 @@
 require 'console/logger'
 require 'console/capture'
 
-RSpec.describe Console::Logger do
+describe Console::Logger do
 	let(:output) {Console::Capture.new}
-	subject{described_class.new(output)}
+	let(:logger) {subject.new(output)}
 	
 	let(:message) {"Hello World"}
 	
-	describe '#with' do
-		let(:nested) {subject.with(name: "nested", level: :debug)}
+	with '#with' do
+		let(:nested) {logger.with(name: "nested", level: :debug)}
 		
 		it "should change level" do
 			expect(nested.level).to be == 0
@@ -29,92 +29,94 @@ RSpec.describe Console::Logger do
 		it "logs message with name" do
 			nested.error(message)
 			
-			expect(output.last).to include(
-				name: "nested",
-				subject: message,
+			expect(output.last).to have_keys(
+				name: be == "nested",
+				subject: be == message,
 			)
 		end
 	end
 	
-	context "with level" do
+	with "level" do
 		let(:level) {0}
-		subject{described_class.new(output, level: level)}
+		let(:logger) {subject.new(output, level: level)}
 		
 		it "should have specified log level" do
-			expect(subject.level).to be == level
+			expect(logger.level).to be == level
 		end
 	end
 	
-	context "default log level" do
+	with "default log level" do
 		it "logs info" do
 			expect(output).to receive(:call).with(message, severity: :info)
 			
-			subject.info(message)
+			logger.info(message)
 		end
 		
 		it "doesn't log debug" do
-			expect(output).to_not receive(:call)
-			subject.debug(message)
+			expect(output).not.to receive(:call)
+			logger.debug(message)
 		end
 	end
 	
-	described_class::LEVELS.each do |name, level|
+	Console::Logger::LEVELS.each do |name, level|
 		it "can log #{name} messages" do
 			expect(output).to receive(:call).with(message, severity: name)
 			
-			subject.level = level
-			subject.send(name, message)
+			logger.level = level
+			logger.send(name, message)
 		end
 	end
 	
-	describe '#enable' do
+	with '#enable' do
 		let(:object) {Object.new}
 		
 		it "can enable specific subjects" do
-			subject.warn!
+			logger.warn!
 			
-			subject.enable(object)
-			expect(subject).to be_enabled(object)
+			logger.enable(object)
+			expect(logger).to be(:enabled?, object)
 			
 			expect(output).to receive(:call).with(object, message, severity: :debug)
-			subject.debug(object, message)
+			logger.debug(object, message)
 		end
 	end
 	
-	describe "#off!" do
-		before do
-			subject.off!
-		end
-		
-		described_class::LEVELS.each do |name, level|
+	with '#off!' do
+		Console::Logger::LEVELS.each do |name, level|
 			it "doesn't log #{name} messages" do
-				expect(output).to_not receive(:call)
-				subject.send(name, message)
-				expect(subject.send("#{name}?")).to be == false
+				logger.off!
+				
+				expect(output).not.to receive(:call)
+				logger.send(name, message)
+				expect(logger.send("#{name}?")).to be == false
 			end
 		end
 	end
 	
-	describe "#all!" do
-		before do
-			subject.all!
-		end
-		
-		described_class::LEVELS.each do |name, level|
+	with '#all!' do
+		Console::Logger::LEVELS.each do |name, level|
 			it "can log #{name} messages" do
+				logger.all!
+				
 				expect(output).to receive(:call).with(message, severity: name)
-				subject.send(name, message)
-				expect(subject.send("#{name}?")).to be == true
+				logger.send(name, message)
+				expect(logger.send("#{name}?")).to be == true
 			end
 		end
 	end
 	
 	describe '.default_log_level' do
-		let!(:debug) {$DEBUG}
-		after {$DEBUG = debug}
+		def before
+			@debug = $DEBUG
+			@verbose = $VERBOSE
+			super
+		end
 		
-		let!(:verbose) {$VERBOSE}
-		after {$VERBOSE = verbose}
+		def after
+			$DEBUG = @debug
+			$VERBOSE = @verbose
+			super
+		end
 		
 		it 'should set default log level' do
 			$DEBUG = false

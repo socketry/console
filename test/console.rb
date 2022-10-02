@@ -2,15 +2,16 @@
 
 # Released under the MIT License.
 # Copyright, 2019-2021, by Samuel Williams.
-# Copyright, 2019, by Bryan Powell.
-# Copyright, 2020, by Michael Adams.
 
 require 'console'
+require 'my_module'
 
-require_relative 'my_module'
-
-RSpec.describe Console do
-	context MyModule do
+describe Console do
+	it "has a version number" do
+		expect(Console::VERSION).not.to be nil
+	end
+	
+	with MyModule do
 		let(:io) {StringIO.new}
 		let(:logger) {Console::Logger.new(Console::Terminal::Logger.new(io))}
 		
@@ -18,8 +19,8 @@ RSpec.describe Console do
 			MyModule.logger = logger
 			MyModule.test_logger
 			
-			expect(io.string).to_not include("GOTO LINE 1")
-			expect(io.string).to include("There be the dragons!")
+			expect(io.string).not.to be(:include?, "GOTO LINE 1")
+			expect(io.string).to be(:include?, "There be the dragons!")
 		end
 		
 		it "should show debug messages" do
@@ -28,7 +29,7 @@ RSpec.describe Console do
 			
 			MyModule.test_logger
 			
-			expect(io.string).to include("GOTO LINE 1")
+			expect(io.string).to be(:include?, "GOTO LINE 1")
 		end
 		
 		it "should log nested exceptions" do
@@ -37,23 +38,30 @@ RSpec.describe Console do
 			
 			MyModule.log_error
 			
-			expect(io.string).to include("Caused by ArgumentError: It broken!")
+			expect(io.string).to be(:include?, "Caused by ArgumentError: It broken!")
 			expect(MyModule.logger.debug?).to be == false
 			expect(MyModule.logger.info?).to be == true
 		end
 	end
 	
-	describe '#logger' do
-		let!(:original_logger) {described_class.logger}
+	with '#logger' do
+		def before
+			@original_logger = subject.logger
+			
+			super
+		end
 		
-		after do
-			described_class.logger = original_logger
+		def after
+			subject.logger = @original_logger
+			
+			super
 		end
 		
 		it 'sets and returns a logger' do
-			logger = double(:logger)
-			described_class.logger = logger
-			expect(described_class.logger).to be(logger)
+			logger = Console::Logger.new(subject.logger.output)
+			subject.logger = logger
+			expect(subject.logger).to be(:eql?, logger)
 		end
 	end
 end
+
