@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2021, by Samuel Williams.
+# Copyright, 2020-2022, by Samuel Williams.
 
 def sample_progress_bar
 	require_relative 'lib/console'
