@@ -15,7 +15,7 @@ describe Console::Progress do
 			expect(progress.total).to be == 100
 			expect(progress.subject).to be == "My Measurement"
 			
-			expect(Console.logger).to receive(:info)
+			expect(Console.logger).to receive(:info).and_return(nil)
 			
 			progress.increment(50)
 		end
