@@ -81,8 +81,8 @@ describe Console::Logger do
 		end
 	end
 	
-	with '#off!' do
-		Console::Logger::LEVELS.each do |name, level|
+	Console::Logger::LEVELS.each do |name, level|
+		with '#off!', unique: name do
 			it "doesn't log #{name} messages" do
 				logger.off!
 				
@@ -91,10 +91,8 @@ describe Console::Logger do
 				expect(logger.send("#{name}?")).to be == false
 			end
 		end
-	end
-	
-	with '#all!' do
-		Console::Logger::LEVELS.each do |name, level|
+		
+		with '#all!', unique: name do
 			it "can log #{name} messages" do
 				logger.all!
 				
