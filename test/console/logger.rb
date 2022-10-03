@@ -36,6 +36,18 @@ describe Console::Logger do
 		end
 	end
 	
+	with '#failure' do
+		it "logs error message" do
+			logger.failure(self, StandardError.new("It failed!"))
+			
+			last = output.last
+			expect(last).to have_keys(
+				severity: be == :fatal,
+			)
+			expect(last[:arguments].first).to be_a(Console::Event::Failure)
+		end
+	end
+	
 	with "level" do
 		let(:level) {0}
 		let(:logger) {subject.new(output, level: level)}
