@@ -7,7 +7,6 @@
 
 require_relative 'output'
 require_relative 'filter'
-require_relative 'measure'
 require_relative 'progress'
 
 require_relative 'resolver'
@@ -69,16 +68,6 @@ module Console
 		
 		def progress(subject, total, **options)
 			Progress.new(self, subject, total, **options)
-		end
-		
-		def measure(subject, name = "block", **tags, &block)
-			measure = Measure.new(self, subject, **tags)
-			
-			if block_given?
-				return measure.duration(name, &block)
-			else
-				return measure
-			end
 		end
 		
 		def failure(subject, exception, *arguments, &block)
