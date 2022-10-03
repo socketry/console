@@ -10,9 +10,11 @@ module Console
 	class Capture
 		def initialize
 			@buffer = []
+			@verbose = false
 		end
 		
 		attr :buffer
+		attr :verbose
 		
 		def last
 			@buffer.last
@@ -31,6 +33,11 @@ module Console
 		end
 		
 		def verbose!(value = true)
+			@verbose = value
+		end
+		
+		def verbose?
+			@verbose
 		end
 		
 		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
