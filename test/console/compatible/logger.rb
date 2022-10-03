@@ -19,4 +19,16 @@ describe Console::Compatible::Logger do
 	it "formats lower case severity string" do
 		expect(logger.format_severity(1)).to be == :info
 	end
+	
+	it "can write a message" do
+		logger << "Hello World"
+		
+		expect(io.string).to be(:include?, "Hello World")
+	end
+	
+	it "can override progname" do
+		logger.add(Logger::INFO, "Hello World")
+		
+		expect(io.string).to be(:include?, "Hello World")
+	end
 end

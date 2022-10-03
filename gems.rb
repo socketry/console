@@ -8,8 +8,6 @@ source "https://rubygems.org"
 # Specify your gem's dependencies in console.gemspec
 gemspec
 
-gem "sus", path: "../../ioquatix/sus"
-
 group :maintenance, optional: true do
 	gem "bake-gem"
 	gem "bake-modernize"

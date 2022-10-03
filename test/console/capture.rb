@@ -9,6 +9,15 @@ describe Console::Capture do
 	let(:capture) {subject.new}
 	let(:logger) {Console::Logger.new(capture)}
 	
+	with '#clear' do
+		it 'can clear log buffer' do
+			logger.info("Hello World!")
+			capture.clear
+			
+			expect(capture).to be(:empty?)
+		end
+	end
+	
 	with '#buffer' do
 		it 'can access log buffer' do
 			logger.info("Hello World!")

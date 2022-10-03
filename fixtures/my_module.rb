@@ -38,5 +38,5 @@ module MyModule
 		logger.info(Object.new) {"Where would we be without Object.new?"}
 	end
 	
-	test_logger
+	# test_logger
 end

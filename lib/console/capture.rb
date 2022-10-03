@@ -26,6 +26,10 @@ module Console
 			@buffer.clear
 		end
 		
+		def empty?
+			@buffer.empty?
+		end
+		
 		def verbose!(value = true)
 		end
 		

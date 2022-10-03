@@ -6,11 +6,11 @@
 def sample_progress_bar
 	require_relative 'lib/console'
 	
-	measure = Console.logger.measure("Progress Bar", 10000)
+	progress = Console.logger.progress("Progress Bar", 10)
 	
-	10000.times do |i|
-		sleep 0.001
+	10.times do |i|
+		sleep 1
 		
-		measure.increment
+		progress.increment
 	end
 end
