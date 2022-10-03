@@ -52,4 +52,11 @@ describe Console::Terminal::XTerm do
 			expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World\e[0m"]
 		end
 	end
+	
+	with '#size' do
+		it "can determine the size of the terminal" do
+			expect(io).to receive(:winsize).and_return([24, 80])
+			expect(terminal.size).to be == [24, 80]
+		end
+	end
 end

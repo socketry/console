@@ -9,11 +9,23 @@ require 'my_custom_output'
 
 describe Console::Output do
 	describe '.new' do
-	 with 'output to $stderr' do
+		with 'output to a file' do
 			let(:env) {Hash.new}
+			let(:output) {File.open('/tmp/console.log', 'w')}
 			
-			it 'should set the default to Terminal::Logger' do
+			it 'should use a serialized format' do
+				# Force the options on Ruby 2.x:
+				expect(Console::Output.new(output, env, **{})).to be_a(Console::Serialized::Logger)
+			end
+		end
+		
+		with 'output to $stderr' do
+			let(:env) {Hash.new}
+			let(:output) {$stderr}
+			
+			it 'should use a terminal format' do
 				expect($stderr).to receive(:tty?).and_return(true)
+				
 				# Force the options on Ruby 2.x:
 				expect(Console::Output.new($stderr, env, **{})).to be_a Console::Terminal::Logger
 			end

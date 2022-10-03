@@ -13,18 +13,18 @@ module Console
 			duration /= 60.0
 			
 			if duration < 60.0
-				return "#{duration.round}m"
+				return "#{duration.floor}m"
 			end
 			
 			duration /= 60.0
 			
-			if duration < 60.0
-				return "#{duration.round(1)}h"
+			if duration < 24.0
+				return "#{duration.floor}h"
 			end
 			
 			duration /= 24.0
 			
-			return "#{duration.round(1)}d"
+			return "#{duration.floor}d"
 		end
 		
 		# Get the current elapsed monotonic time.

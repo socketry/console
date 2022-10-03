@@ -73,7 +73,7 @@ describe Console::Logger do
 		it "can enable specific subjects" do
 			logger.warn!
 			
-			logger.enable(object)
+			logger.enable(Object)
 			expect(logger).to be(:enabled?, object)
 			
 			expect(output).to receive(:call).with(object, message, severity: :debug)

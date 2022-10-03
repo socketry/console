@@ -107,20 +107,20 @@ module Console
 		end
 		
 		# Enable specific log level for the given class.
-		# @param name [String, Class] The class to enable.
+		# @parameter name [Class] The class to enable.
 		def enable(subject, level = self.class::MINIMUM_LEVEL)
 			unless subject.is_a?(Class)
-				subject = subject.class
+				raise ArgumentError, "Expected a class, got #{subject.inspect}"
 			end
 			
 			@subjects[subject] = level
 		end
 		
 		# Disable specific logging for the specific class.
-		# @param name [String, Class] The class to disable.
+		# @parameter name [Class] The class to disable.
 		def disable(subject)
-			unless subject.is_a? Class
-				subject = subject.class
+			unless subject.is_a?(Class)
+				raise ArgumentError, "Expected a class, got #{subject.inspect}"
 			end
 			
 			@subjects.delete(subject)

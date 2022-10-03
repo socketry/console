@@ -31,4 +31,10 @@ describe Console::Compatible::Logger do
 		
 		expect(io.string).to be(:include?, "Hello World")
 	end
+	
+	it "can generate message from block" do
+		logger.info{"Hello World"}
+		
+		expect(io.string).to be(:include?, "Hello World")
+	end
 end

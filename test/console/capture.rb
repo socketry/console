@@ -29,4 +29,28 @@ describe Console::Capture do
 			)
 		end
 	end
+	
+	with 'block' do
+		it "can capture log output" do
+			logger.info(self) {"Hello World!"}
+			
+			last = capture.last
+			expect(last).to have_keys(
+				severity: be == :info,
+				message: be == "Hello World!"
+			)
+		end
+		
+		it "can capture log output with buffer" do
+			logger.info(self) do |buffer|
+				buffer << "Hello World!"
+			end
+			
+			last = capture.last
+			expect(last).to have_keys(
+				severity: be == :info,
+				message: be == "Hello World!"
+			)
+		end
+	end
 end
