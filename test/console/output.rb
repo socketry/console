@@ -10,9 +10,12 @@ require 'my_custom_output'
 describe Console::Output do
 	describe '.new' do
 	 with 'output to $stderr' do
+			let(:env) {Hash.new}
+			
 			it 'should set the default to Terminal::Logger' do
 				expect($stderr).to receive(:tty?).and_return(true)
-				expect(Console::Output.new($stderr)).to be_a Console::Terminal::Logger
+				# Force the options on Ruby 2.x:
+				expect(Console::Output.new($stderr, env, **{})).to be_a Console::Terminal::Logger
 			end
 		end
 		
