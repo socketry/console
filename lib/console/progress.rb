@@ -33,8 +33,8 @@ module Console
 			Progress.now - @start_time
 		end
 		
-		def progress
-			@current.to_f / @total.to_f
+		def ratio
+			Rational(@current.to_f, @total.to_f)
 		end
 		
 		def remaining
@@ -73,8 +73,8 @@ module Console
 			return self
 		end
 		
-		def mark(*arguments)
-			@output.info(@subject, *arguments)
+		def mark(...)
+			@output.info(@subject, ...)
 		end
 		
 		def to_s
