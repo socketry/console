@@ -12,14 +12,14 @@ module Console
 			Process.clock_gettime(Process::CLOCK_MONOTONIC)
 		end
 		
-		def initialize(output, subject, total = 0, minimum_output_duration: 1.0)
+		def initialize(output, subject, total = 0, minimum_output_duration: 0.1)
 			@output = output
 			@subject = subject
 			
 			@start_time = Progress.now
 			
 			@last_output_time = nil
-			@minimum_output_duration = 0.1
+			@minimum_output_duration = minimum_output_duration
 			
 			@current = 0
 			@total = total
