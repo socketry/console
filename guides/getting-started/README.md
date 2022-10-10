@@ -128,12 +128,6 @@ This will produce the following output:
 
 ## Program Structure
 
-Generally, all programs should use the global `Console.logger` instance.
+Generally, programs should use the global `Console.logger` instance.
 
-The per-class `include Console` allows you to 
-
-All programs should generally use the global `Console.logger` instance.
-
-Generally, individual classes should not be catching and logging exceptions.
-
-Generally, individual classes should not be catching and logging exceptions. It makes for simpler code if this is handled in a few places near the top of your program. Exceptions should collect enough information such that logging them produces a detailed backtrace leading to the failure.
+Individual classes should not be catching and logging exceptions. It makes for simpler code if this is handled in a few places near the top of your program. Exceptions should collect enough information such that logging them produces a detailed backtrace leading to the failure.
