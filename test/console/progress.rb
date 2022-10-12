@@ -37,9 +37,9 @@ describe Console::Progress do
 		it "can generate a brief summary" do
 			expect(progress.to_s).to be == "0/100 completed, waiting for estimate..."
 			progress.increment(1)
-			expect(progress.to_s).to be =~ /1\/100 completed in 0\.\ds, \d.\d+s remaining/
+			expect(progress.to_s).to be =~ /1\/100 completed in 0\.\d+s, \d.\d+s remaining/
 			progress.increment(1)
-			expect(progress.to_s).to be =~ /2\/100 completed in 0\.\ds, \d.\d+s remaining/
+			expect(progress.to_s).to be =~ /2\/100 completed in 0\.\d+s, \d.\d+s remaining/
 		end
 	end
 	
