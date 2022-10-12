@@ -1,6 +1,6 @@
 # Integration
 
-This guide explains how to redirect the `console` log messages to different backends.
+This guide explains how to integrate the `console` output into different systems.
 
 ## Output Redirection
 

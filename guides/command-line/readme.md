@@ -1,6 +1,6 @@
 # Command Line
 
-The `console` gem can be controlled using the command line by specifying environment varaibles.
+This guide explains how the `console` gem can be controlled using environment variables.
 
 ## Environment Variables
 
