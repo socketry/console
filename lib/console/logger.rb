@@ -16,7 +16,7 @@ require_relative 'serialized/logger'
 require 'fiber/local'
 
 module Console
-	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
+	class Logger < Filter[debug: 0, info: 1, audit: 2, warn: 3, error: 4, fatal: 5]
 		extend Fiber::Local
 		
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
