@@ -59,6 +59,15 @@ $ CONSOLE_LEVEL=warn ./machine
 
 If otherwise unspecified, Ruby's standard `$DEBUG` and `$VERBOSE` global variables will be checked and adjust the log level appropriately.
 
+## Metadata
+
+You can add any options you like to a log message and they will be included as part of the log output:
+
+~~~ ruby
+duration = measure{...}
+Console.logger.info("Execution completed!", duration: duration)
+~~~
+
 ## Subject Logging
 
 The first argument to the log statement becomes the implicit subject of the log message.
@@ -131,3 +140,60 @@ This will produce the following output:
 Generally, programs should use the global `Console.logger` instance.
 
 Individual classes should not be catching and logging exceptions. It makes for simpler code if this is handled in a few places near the top of your program. Exceptions should collect enough information such that logging them produces a detailed backtrace leading to the failure.
+
+### Multiple Outputs
+
+Use `Console::Split` to log to multiple destinations.
+
+``` ruby
+require 'console/terminal'
+require 'console/serialized/logger'
+require 'console/logger'
+require 'console/split'
+
+terminal = Console::Terminal::Logger.new
+file = Console::Serialized::Logger.new(File.open("log.json", "a"))
+
+logger = Console::Logger.new(Console::Split[terminal, file])
+
+logger.info "I can go everywhere!"
+```
+
+### Console Formatting
+
+Console classes are used to wrap data which can generate structured log messages:
+
+``` ruby
+require 'console'
+
+class MyConsole < Console::Generic
+	def format(output, terminal, verbose)
+		output.puts "My console text!"
+	end
+end
+
+Console.logger.info("My Console", MyConsole.new)
+```
+
+#### Failure Events
+
+`Console::Event::Failure` represents an exception and will log the message and backtrace recursively.
+
+#### Spawn Events
+
+`Console::Event::Spawn` represents the execution of a command, and will log the environment, arguments and options used to execute it.
+
+### Custom Log Levels
+
+`Console::Filter` implements support for multiple log levels.
+
+``` ruby
+require 'console'
+
+MyLogger = Console::Filter[noise: 0, stuff: 1, broken: 2]
+
+# verbose: true - log severity/name/pid etc.
+logger = MyLogger.new(Console.logger, name: "Java", verbose: true)
+
+logger.broken("It's so janky.")
+```

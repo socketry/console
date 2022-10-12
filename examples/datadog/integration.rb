@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+# Run this using `systemd-cat bundle exec ./integration.rb`
+# This will send logs to datadog using the standard systemd journal.
+
 ENV['TRACES_BACKEND'] ||= 'traces/backend/datadog'
 ENV['CONSOLE_OUTPUT'] ||= 'Console::Output::Datadog,Console::Output::Default'
 

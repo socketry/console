@@ -1,7 +1,7 @@
 PATH
   remote: ../..
   specs:
-    console (1.16.0)
+    console (1.16.1)
       fiber-local
 
 GEM

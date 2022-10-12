@@ -4,6 +4,10 @@ Provides beautiful console logging for Ruby applications. Implements fast, buffe
 
 [![Development Status](https://github.com/socketry/console/workflows/Test/badge.svg)](https://github.com/socketry/console/actions?workflow=Test)
 
+## Motivation
+
+When Ruby decided to reverse the order of exception backtraces, I finally gave up using the built in logging and decided restore sanity to the output of my programs once and for all!
+
 ## Features
 
   - Thread safe global logger with per-fiber context.
