@@ -1,0 +1,40 @@
+PATH
+  remote: ../..
+  specs:
+    console (1.16.0)
+      fiber-local
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    console-output-datadog (0.2.0)
+      console
+      ddtrace (~> 1.0)
+    ddtrace (1.5.0)
+      debase-ruby_core_source (>= 0.10.16, <= 0.10.17)
+      libdatadog (~> 0.7.0.1.1)
+      libddwaf (~> 1.3.0.2.0)
+      msgpack
+    debase-ruby_core_source (0.10.17)
+    ffi (1.15.5)
+    fiber-local (1.0.0)
+    libdatadog (0.7.0.1.1-x86_64-linux)
+    libddwaf (1.3.0.2.0-x86_64-linux)
+      ffi (~> 1.0)
+    msgpack (1.6.0)
+    traces (0.6.1)
+    traces-backend-datadog (0.4.1)
+      ddtrace (~> 1.0)
+      traces (~> 0.6.0)
+
+PLATFORMS
+  x86_64-linux
+
+DEPENDENCIES
+  console!
+  console-output-datadog
+  traces
+  traces-backend-datadog
+
+BUNDLED WITH
+   2.3.22
