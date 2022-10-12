@@ -166,13 +166,13 @@ Console classes are used to wrap data which can generate structured log messages
 ``` ruby
 require 'console'
 
-class MyConsole < Console::Generic
+class MyEvent < Console::Event::Generic
 	def format(output, terminal, verbose)
-		output.puts "My console text!"
+		output.puts "My event message!"
 	end
 end
 
-Console.logger.info("My Console", MyConsole.new)
+Console.logger.info("It finally happened.", MyEvent.new)
 ```
 
 #### Failure Events

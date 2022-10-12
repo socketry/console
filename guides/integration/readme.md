@@ -10,8 +10,8 @@ The `console` is primarily an interface for logging, with a general purpose impl
 
 This output wrapper augments log messages with trace metadata so that the log messages can be correlated with spans. Note that the default output is still used `Console::Output::Default`.
 
-~~~ ruby
-CONSOLE_OUTPUT='Console::Output::Datadog,Console::Output::Default' ./app.rb
+~~~ bash
+$ CONSOLE_OUTPUT='Console::Output::Datadog,Console::Output::Default' ./app.rb
 ~~~
 
 The `Console::Output::Datadog` is a wrapper that augments the metadata of the log message with the `trace_id` and `span_id`.
