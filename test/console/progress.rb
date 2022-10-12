@@ -18,7 +18,7 @@ describe Console::Progress do
 			
 			last = capture.last
 			expect(last).to have_keys(
-				severity: be == :info,
+				level: be == :info,
 				subject: be == "My Measurement",
 				arguments: be == ["Hello World!"],
 			)
@@ -62,7 +62,7 @@ describe Console::Progress do
 			
 			last = capture.last
 			expect(last).to have_keys(
-				severity: be == :info,
+				level: be == :info,
 				subject: be == "My Measurement",
 				message: be_a(Console::Event::Progress),
 			)

@@ -131,7 +131,7 @@ require 'console'
 
 MyLogger = Console::Filter[noise: 0, stuff: 1, broken: 2]
 
-# verbose: true - log severity/name/pid etc.
+# verbose: true - log level/name/pid etc.
 logger = MyLogger.new(Console.logger, name: "Java", verbose: true)
 
 logger.broken("It's so janky.")
@@ -169,7 +169,7 @@ end
 logger = Console::Logger.new(output)
 
 logger.info("Hello World!", meta: "data") {"block"}
-# => arguments: ["Hello World!"] options: {:severity=>:info, :meta=>"data"} block: block
+# => arguments: ["Hello World!"] options: {:level=>:info, :meta=>"data"} block: block
 ```
 
 ## Contributing

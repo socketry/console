@@ -36,10 +36,10 @@ module Console
 				@logdev = LogDevice.new(subject, output)
 			end
 			
-			def add(severity, message = nil, progname = nil)
-				severity ||= UNKNOWN
+			def add(level, message = nil, progname = nil)
+				level ||= UNKNOWN
 				
-				if @logdev.nil? or severity < level
+				if @logdev.nil? or level < level
 					return true
 				end
 				
@@ -58,14 +58,14 @@ module Console
 				
 				@logdev.call(
 					progname, message,
-					severity: format_severity(severity)
+					level: format_level(level)
 				)
 				
 				return true
 			end
 			
-			def format_severity(value)
-				super.downcase.to_sym
+			def format_level(value)
+				format_severity(value).downcase.to_sym
 			end
 		end
 	end

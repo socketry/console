@@ -40,10 +40,10 @@ module Console
 			@verbose
 		end
 		
-		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
+		def call(subject = nil, *arguments, level: UNKNOWN, **options, &block)
 			message = {
 				time: ::Time.now.iso8601,
-				severity: severity,
+				level: level,
 				**options,
 			}
 			

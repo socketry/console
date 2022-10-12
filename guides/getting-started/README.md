@@ -14,7 +14,7 @@ $ bundle add console
 
 `console` has several core concepts:
 
-- A log message which consists of a set of arguments and options, which includes a timestamp, severity, and other structured data.
+- A log message which consists of a set of arguments and options, which includes a timestamp, level, and other structured data.
 - A {ruby Console::Logger} instance which is the main entry point for logging for a specific system and writes data to a given output formatter.
 - An output instance such as {ruby Console::XTerm}, {ruby Console::Serialized::Logger} which formats these log messages and writes them to a specific output device.
 - An event instance, such as {ruby Console::Event::Progress} or {ruby Console::Event::Spawn} which represents a structured event within a system, which can be formatted in a specific way.
@@ -33,13 +33,14 @@ Console.logger.info("Hello World")
 <font color="#00AA00">  0.0s     info:</font> <b>Hello World</b> <font color="#717171">[pid=219113] [2020-08-08 12:21:26 +1200]</font>
 </pre>
 
-The method name `info` indicates the severity level of the log message. You can filter out severity levels, and by default, `debug` messages are filtered out. Here are some examples of the different log levels:
+The method name `info` indicates the level of the log message. You can filter out levels, and by default, `debug` messages are filtered out. Here are some examples of the different log levels:
 
 ~~~ ruby
 require 'console'
 
 Console.logger.debug("The input voltage has stabilized.")
 Console.logger.info("Making a request to the machine.")
+Console.logger.audit("The user has logged in!")
 Console.logger.warn("The machine has detected a temperature anomaly.")
 Console.logger.error("The machine was unable to complete the request!")
 Console.logger.fatal("Depressurisation detected, evacuate the area!")
@@ -91,7 +92,7 @@ If you want to disable log messages which come from this particular class, you c
 $ CONSOLE_FATAL=Machine ./machine
 ~~~
 
-This will prevent any log message which has a subject of class `Machine` from logging messages of a severity less than `fatal`.
+This will prevent any log message which has a subject of class `Machine` from logging messages of a level less than `fatal`.
 
 ## Exception Logging
 

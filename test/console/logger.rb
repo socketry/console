@@ -42,7 +42,7 @@ describe Console::Logger do
 			
 			last = output.last
 			expect(last).to have_keys(
-				severity: be == :fatal,
+				level: be == :fatal,
 			)
 			expect(last[:arguments].first).to be_a(StandardError)
 		end
@@ -59,7 +59,7 @@ describe Console::Logger do
 	
 	with "default log level" do
 		it "logs info" do
-			expect(output).to receive(:call).with(message, severity: :info)
+			expect(output).to receive(:call).with(message, level: :info)
 			
 			logger.info(message)
 		end
@@ -72,7 +72,7 @@ describe Console::Logger do
 	
 	Console::Logger::LEVELS.each do |name, level|
 		it "can log #{name} messages" do
-			expect(output).to receive(:call).with(message, severity: name)
+			expect(output).to receive(:call).with(message, level: name)
 			
 			logger.level = level
 			logger.send(name, message)
@@ -88,7 +88,7 @@ describe Console::Logger do
 			logger.enable(Object)
 			expect(logger).to be(:enabled?, object)
 			
-			expect(output).to receive(:call).with(object, message, severity: :debug)
+			expect(output).to receive(:call).with(object, message, level: :debug)
 			logger.debug(object, message)
 		end
 	end
@@ -108,7 +108,7 @@ describe Console::Logger do
 			it "can log #{name} messages" do
 				logger.all!
 				
-				expect(output).to receive(:call).with(message, severity: name)
+				expect(output).to receive(:call).with(message, level: name)
 				logger.send(name, message)
 				expect(logger.send("#{name}?")).to be == true
 			end

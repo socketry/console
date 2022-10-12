@@ -24,7 +24,7 @@ describe Console::Capture do
 			
 			last = capture.last
 			expect(last).to have_keys(
-				severity: be == :info,
+				level: be == :info,
 				subject: be == "Hello World!"
 			)
 		end
@@ -36,7 +36,7 @@ describe Console::Capture do
 			
 			last = capture.last
 			expect(last).to have_keys(
-				severity: be == :info,
+				level: be == :info,
 				message: be == "Hello World!"
 			)
 		end
@@ -48,7 +48,7 @@ describe Console::Capture do
 			
 			last = capture.last
 			expect(last).to have_keys(
-				severity: be == :info,
+				level: be == :info,
 				message: be == "Hello World!"
 			)
 		end

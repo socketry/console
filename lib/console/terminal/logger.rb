@@ -84,14 +84,14 @@ module Console
 			
 			UNKNOWN = :unknown
 			
-			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, **options, &block)
-				prefix = build_prefix(name || severity.to_s)
+			def call(subject = nil, *arguments, name: nil, level: UNKNOWN, **options, &block)
+				prefix = build_prefix(name || level.to_s)
 				indent = " " * prefix.size
 				
 				buffer = Buffer.new("#{indent}| ")
 				
 				if subject
-					format_subject(severity, prefix, subject, buffer)
+					format_subject(level, prefix, subject, buffer)
 				end
 				
 				if options&.any?
@@ -130,13 +130,13 @@ module Console
 				end
 			end
 			
-			def format_subject(severity, prefix, subject, buffer)
+			def format_subject(level, prefix, subject, buffer)
 				if subject.is_a?(String)
-					format_string_subject(severity, prefix, subject, buffer)
+					format_string_subject(level, prefix, subject, buffer)
 				elsif subject.is_a?(Module)
-					format_string_subject(severity, prefix, subject.to_s, buffer)
+					format_string_subject(level, prefix, subject.to_s, buffer)
 				else
-					format_object_subject(severity, prefix, subject, buffer)
+					format_object_subject(level, prefix, subject, buffer)
 				end
 			end
 			
@@ -150,8 +150,8 @@ module Console
 				buffer << "[ec=0x#{Fiber.current.object_id.to_s(16)}] [pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
 			end
 			
-			def format_object_subject(severity, prefix, subject, output)
-				prefix_style = @terminal[severity]
+			def format_object_subject(level, prefix, subject, output)
+				prefix_style = @terminal[level]
 				
 				if @verbose
 					suffix = default_suffix(subject)
@@ -162,8 +162,8 @@ module Console
 				output.puts "#{@terminal[:subject]}#{subject.class}#{@terminal.reset}#{suffix}", prefix: prefix
 			end
 			
-			def format_string_subject(severity, prefix, subject, output)
-				prefix_style = @terminal[severity]
+			def format_string_subject(level, prefix, subject, output)
+				prefix_style = @terminal[level]
 				
 				if @verbose
 					suffix = default_suffix

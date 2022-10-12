@@ -31,10 +31,10 @@ module Console
 				@format.dump(record)
 			end
 			
-			def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
+			def call(subject = nil, *arguments, level: UNKNOWN, **options, &block)
 				record = {
 					time: Time.now.iso8601,
-					severity: severity,
+					level: level,
 					class: subject.class,
 					oid: subject.object_id,
 					pid: Process.pid,

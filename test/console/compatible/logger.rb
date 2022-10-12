@@ -16,8 +16,8 @@ describe Console::Compatible::Logger do
 		expect(io.string).to be(:include?, "Hello World")
 	end
 	
-	it "formats lower case severity string" do
-		expect(logger.format_severity(1)).to be == :info
+	it "formats lower case level string" do
+		expect(logger.format_level(1)).to be == :info
 	end
 	
 	it "can write a message" do
