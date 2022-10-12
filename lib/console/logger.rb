@@ -70,8 +70,9 @@ module Console
 			Progress.new(self, subject, total, **options)
 		end
 		
+		# @deprecated Use `fatal` instead.
 		def failure(subject, exception, *arguments, &block)
-			fatal(subject, *arguments, Event::Failure.new(exception), &block)
+			self.fatal(subject, exception, *arguments, &block)
 		end
 	end
 end

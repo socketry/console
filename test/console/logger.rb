@@ -44,7 +44,7 @@ describe Console::Logger do
 			expect(last).to have_keys(
 				severity: be == :fatal,
 			)
-			expect(last[:arguments].first).to be_a(Console::Event::Failure)
+			expect(last[:arguments].first).to be_a(StandardError)
 		end
 	end
 	
