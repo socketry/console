@@ -73,8 +73,14 @@ module Console
 			return self
 		end
 		
-		def mark(...)
-			@output.info(@subject, ...)
+		if RUBY_VERSION >= '2.7.3'
+			def mark(...)
+				@output.info(@subject, ...)
+			end
+		else
+			def mark(*arguments, **options, &block)
+				@output.info(@subject, *arguments, **options, &block)
+			end
 		end
 		
 		def to_s
