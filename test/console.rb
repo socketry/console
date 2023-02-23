@@ -10,7 +10,7 @@ require 'my_module'
 
 describe Console do
 	it "has a version number" do
-		expect(Console::VERSION).not.to be nil
+		expect(Console::VERSION).to be =~ /\d+\.\d+\.\d+/
 	end
 	
 	with MyModule do

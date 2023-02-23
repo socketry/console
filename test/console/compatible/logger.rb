@@ -37,4 +37,9 @@ describe Console::Compatible::Logger do
 		
 		expect(io.string).to be(:include?, "Hello World")
 	end
+	
+	it "has a default log level" do
+		expect(logger.level).to be_a(Integer)
+		expect(logger.level).to be == ::Logger::DEBUG
+	end
 end
