@@ -70,15 +70,6 @@ describe Console::Logger do
 		end
 	end
 	
-	Console::Logger::LEVELS.each do |name, level|
-		it "can log #{name} messages" do
-			expect(output).to receive(:call).with(message, severity: name)
-			
-			logger.level = level
-			logger.send(name, message)
-		end
-	end
-	
 	with '#enable' do
 		let(:object) {Object.new}
 		
@@ -94,23 +85,34 @@ describe Console::Logger do
 	end
 	
 	Console::Logger::LEVELS.each do |name, level|
-		with '#off!', unique: name do
-			it "doesn't log #{name} messages" do
-				logger.off!
+		with "log level #{name}", unique: name do
+			with "#send" do
+				it "can log #{name} messages" do
+					expect(output).to receive(:call).with(message, severity: name)
 				
-				expect(output).not.to receive(:call)
-				logger.send(name, message)
-				expect(logger.send("#{name}?")).to be == false
+					logger.level = level
+					logger.send(name, message)
+				end
 			end
-		end
-		
-		with '#all!', unique: name do
-			it "can log #{name} messages" do
-				logger.all!
-				
-				expect(output).to receive(:call).with(message, severity: name)
-				logger.send(name, message)
-				expect(logger.send("#{name}?")).to be == true
+			
+			with '#off!' do
+				it "doesn't log #{name} messages" do
+					logger.off!
+					
+					expect(output).not.to receive(:call)
+					logger.send(name, message)
+					expect(logger.send("#{name}?")).to be == false
+				end
+			end
+			
+			with '#all!' do
+				it "can log #{name} messages" do
+					logger.all!
+					
+					expect(output).to receive(:call).with(message, severity: name)
+					logger.send(name, message)
+					expect(logger.send("#{name}?")).to be == true
+				end
 			end
 		end
 	end

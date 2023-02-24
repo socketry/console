@@ -4,6 +4,7 @@
 # Copyright, 2019-2022, by Samuel Williams.
 
 require 'console/serialized/logger'
+require 'console/event/spawn'
 
 describe Console::Serialized::Logger do
 	let(:io) {StringIO.new}

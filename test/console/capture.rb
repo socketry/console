@@ -4,6 +4,7 @@
 # Copyright, 2020-2022, by Samuel Williams.
 
 require 'console/capture'
+require 'console/logger'
 
 describe Console::Capture do
 	let(:capture) {subject.new}

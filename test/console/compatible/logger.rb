@@ -4,6 +4,7 @@
 # Copyright, 2022, by Samuel Williams.
 
 require 'console/compatible/logger'
+require 'console/terminal/logger'
 
 describe Console::Compatible::Logger do
 	let(:io) {StringIO.new}

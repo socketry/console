@@ -4,6 +4,7 @@
 # Copyright, 2019-2022, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
+require 'console'
 require 'console/resolver'
 require 'resolver_classes'
 

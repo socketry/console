@@ -6,6 +6,7 @@
 
 require_relative '../buffer'
 require_relative '../event'
+require_relative '../clock'
 
 require_relative 'text'
 require_relative 'xterm'
