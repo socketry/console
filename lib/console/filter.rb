@@ -17,7 +17,7 @@ module Console
 			min_level, max_level = levels.values.minmax
 			
 			klass.instance_exec do
-				const_set(:LEVELS, levels)
+				const_set(:LEVELS, levels.freeze)
 				const_set(:MINIMUM_LEVEL, min_level)
 				const_set(:MAXIMUM_LEVEL, max_level)
 				

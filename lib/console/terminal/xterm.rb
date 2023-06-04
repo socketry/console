@@ -21,7 +21,7 @@ module Console
 				cyan: 6,
 				white: 7,
 				default: 9,
-			}
+			}.freeze
 			
 			ATTRIBUTES = {
 				normal: 0,
@@ -33,7 +33,7 @@ module Console
 				blink: 5,
 				reverse: 7,
 				hidden: 8,
-			}
+			}.freeze
 			
 			def colors?
 				true
