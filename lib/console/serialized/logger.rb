@@ -9,6 +9,8 @@ require_relative '../filter'
 require 'time'
 require 'json'
 
+require 'fiber/annotation'
+
 module Console
 	module Serialized
 		class Logger
@@ -42,6 +44,10 @@ module Console
 				
 				if subject
 					record[:subject] = subject
+				end
+				
+				if annotation = Fiber.current.annotation
+					record[:annotation] = annotation
 				end
 				
 				message = arguments

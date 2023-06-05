@@ -13,6 +13,7 @@ require_relative 'xterm'
 
 require 'json'
 require 'fiber'
+require 'fiber/annotation'
 
 module Console
 	module Terminal
@@ -62,6 +63,9 @@ module Console
 				@terminal[:error] = @terminal.style(:red)
 				@terminal[:fatal] = @terminal[:error]
 				
+				@terminal[:annotation] = @terminal.style(:blue)
+				@terminal[:value] = @terminal.style(:blue)
+				
 				self.register_defaults(@terminal)
 			end
 			
@@ -91,16 +95,14 @@ module Console
 				
 				buffer = Buffer.new("#{indent}| ")
 				
-				if subject
-					format_subject(severity, prefix, subject, buffer)
+				format_subject(severity, prefix, subject, buffer)
+				
+				arguments.each do |argument|
+					format_argument(argument, buffer)
 				end
 				
 				if options&.any?
 					format_options(options, buffer)
-				end
-				
-				arguments.each do |argument|
-					format_argument(argument, buffer)
 				end
 				
 				if block_given?
@@ -127,7 +129,9 @@ module Console
 				when Event::Generic
 					argument.format(output, @terminal, @verbose)
 				else
-					format_value(argument, output)
+					argument.to_s.each_line do |line|
+						output.puts line
+					end
 				end
 			end
 			
@@ -142,13 +146,23 @@ module Console
 			end
 			
 			def default_suffix(object = nil)
-				buffer = +" #{@terminal[:logger_suffix]}"
+				buffer = +" "
+				
+				if @verbose
+					if annotation = Fiber.current.annotation and annotation.size > 0
+						buffer << "(#{@terminal[:annotation]}#{annotation})#{@terminal.reset} "
+					end
+				end
+				
+				buffer << @terminal[:logger_suffix].to_s
 				
 				if object
 					buffer << "[oid=0x#{object.object_id.to_s(16)}] "
 				end
 				
 				buffer << "[ec=0x#{Fiber.current.object_id.to_s(16)}] [pid=#{Process.pid}] [#{::Time.now}]#{@terminal.reset}"
+				
+				return buffer
 			end
 			
 			def format_object_subject(severity, prefix, subject, output)
@@ -179,7 +193,7 @@ module Console
 				string = value.to_s
 				
 				string.each_line do |line|
-					output.puts "#{line}"
+					output.puts "#{@terminal[:value]}#{line}#{@terminal.reset}"
 				end
 			end
 			
