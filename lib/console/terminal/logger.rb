@@ -63,7 +63,7 @@ module Console
 				@terminal[:error] = @terminal.style(:red)
 				@terminal[:fatal] = @terminal[:error]
 				
-				@terminal[:annotation] = @terminal.style(:blue)
+				@terminal[:annotation] = @terminal.reset
 				@terminal[:value] = @terminal.style(:blue)
 				
 				self.register_defaults(@terminal)
@@ -146,15 +146,15 @@ module Console
 			end
 			
 			def default_suffix(object = nil)
-				buffer = +" "
+				buffer = +""
 				
 				if @verbose
 					if annotation = Fiber.current.annotation and annotation.size > 0
-						buffer << "(#{@terminal[:annotation]}#{annotation})#{@terminal.reset} "
+						buffer << ": #{@terminal[:annotation]}#{annotation}#{@terminal.reset}"
 					end
 				end
 				
-				buffer << @terminal[:logger_suffix].to_s
+				buffer << " #{@terminal[:logger_suffix]}"
 				
 				if object
 					buffer << "[oid=0x#{object.object_id.to_s(16)}] "
