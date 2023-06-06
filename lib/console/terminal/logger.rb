@@ -101,16 +101,16 @@ module Console
 					format_argument(argument, buffer)
 				end
 				
-				if options&.any?
-					format_options(options, buffer)
-				end
-				
 				if block_given?
 					if block.arity.zero?
 						format_argument(yield, buffer)
 					else
 						yield(buffer, @terminal)
 					end
+				end
+				
+				if options&.any?
+					format_options(options, buffer)
 				end
 				
 				@io.write buffer.string
