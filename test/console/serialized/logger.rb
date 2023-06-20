@@ -47,7 +47,7 @@ describe Console::Serialized::Logger do
 	with 'exception' do
 		let(:error_message) {record[:error]}
 		
-		it "can log excepion message" do
+		it "can log exception message" do
 			begin
 				raise "Boom"
 			rescue => error
