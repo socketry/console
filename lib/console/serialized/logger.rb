@@ -43,7 +43,7 @@ module Console
 				}
 				
 				if subject
-					record[:subject] = subject
+					record[:subject] = subject.class.name
 				end
 				
 				if annotation = Fiber.current.annotation
