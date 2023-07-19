@@ -97,7 +97,9 @@ module Console
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
 		# @param subject [Object] the subject to check.
 		def enabled?(subject, level = self.class::MINIMUM_LEVEL)
-			if specific_level = @subjects[subject.class]
+			subject = subject.class unless subject.is_a?(Module)
+			
+			if specific_level = @subjects[subject]
 				return level >= specific_level
 			end
 			
@@ -109,17 +111,21 @@ module Console
 		# Enable specific log level for the given class.
 		# @parameter name [Class] The class to enable.
 		def enable(subject, level = self.class::MINIMUM_LEVEL)
-			unless subject.is_a?(Class)
+			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
 			end
 			
 			@subjects[subject] = level
 		end
 		
+		def disable(subject)
+			enable(subject, self.class::MAXIMUM_LEVEL + 1)
+		end
+		
 		# Disable specific logging for the specific class.
 		# @parameter name [Class] The class to disable.
-		def disable(subject)
-			unless subject.is_a?(Class)
+		def clear(subject)
+			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
 			end
 			
