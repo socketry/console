@@ -36,10 +36,11 @@ describe Console::Serialized::Logger do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		
 		it "can log structured events" do
-			logger.call(event)
+			logger.call(subject, event)
 			
 			expect(record).to have_keys(
-				subject: be == ["Console::Event::Spawn", {:arguments => ["ls -lah"]}]
+				subject: be == subject.name,
+				message: be == ["Console::Event::Spawn", {:arguments => ["ls -lah"]}]
 			)
 		end
 	end

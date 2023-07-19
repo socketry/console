@@ -42,8 +42,13 @@ module Console
 					pid: Process.pid,
 				}
 				
-				if subject
+				# We want to log just a brief subject:
+				if subject.is_a?(String)
 					record[:subject] = subject
+				elsif subject.is_a?(Module)
+					record[:subject] = subject.name
+				else
+					record[:subject] = subject.class.name
 				end
 				
 				if annotation = Fiber.current.annotation
