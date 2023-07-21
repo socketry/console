@@ -14,12 +14,12 @@ module Console
 	class Filter
 		def self.[] **levels
 			klass = Class.new(self)
-			min_level, max_level = levels.values.minmax
+			minimum_level, maximum_level = levels.values.minmax
 			
 			klass.instance_exec do
 				const_set(:LEVELS, levels.freeze)
-				const_set(:MINIMUM_LEVEL, min_level)
-				const_set(:MAXIMUM_LEVEL, max_level)
+				const_set(:MINIMUM_LEVEL, minimum_level)
+				const_set(:MAXIMUM_LEVEL, maximum_level)
 				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
@@ -94,6 +94,14 @@ module Console
 			@level = self.class::MINIMUM_LEVEL - 1
 		end
 		
+		def filter(subject, level)
+			unless subject.is_a?(Module)
+				raise ArgumentError, "Expected a class, got #{subject.inspect}"
+			end
+			
+			@subjects[subject] = level
+		end
+		
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
 		# @param subject [Object] the subject to check.
 		def enabled?(subject, level = self.class::MINIMUM_LEVEL)
@@ -109,21 +117,19 @@ module Console
 		end
 		
 		# Enable specific log level for the given class.
-		# @parameter name [Class] The class to enable.
+		# @parameter name [Module] The class to enable.
 		def enable(subject, level = self.class::MINIMUM_LEVEL)
-			unless subject.is_a?(Module)
-				raise ArgumentError, "Expected a class, got #{subject.inspect}"
-			end
-			
-			@subjects[subject] = level
+			# Set the filter level of logging for a given subject which passes all log messages:
+			filter(subject, level)
 		end
 		
 		def disable(subject)
-			enable(subject, self.class::MAXIMUM_LEVEL + 1)
+			# Set the filter level of the logging for a given subject which filters all log messages:
+			filter(subject, self.class::MAXIMUM_LEVEL + 1)
 		end
 		
-		# Disable specific logging for the specific class.
-		# @parameter name [Class] The class to disable.
+		# Clear any specific filters for the given class.
+		# @parameter name [Module] The class to disable.
 		def clear(subject)
 			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
