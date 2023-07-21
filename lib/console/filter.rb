@@ -43,7 +43,7 @@ module Console
 			return klass
 		end
 		
-		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, enabled: nil, **options)
+		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
 			@output = output
 			@verbose = verbose
 			@level = level
@@ -51,10 +51,6 @@ module Console
 			@subjects = {}
 			
 			@options = options
-			
-			if enabled
-				enabled.each{|name| enable(name)}
-			end
 		end
 		
 		def with(level: @level, verbose: @verbose, **options)
