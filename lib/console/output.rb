@@ -7,6 +7,7 @@ require_relative 'output/default'
 require_relative 'output/json'
 require_relative 'output/text'
 require_relative 'output/xterm'
+require_relative 'output/null'
 
 module Console
 	module Output
