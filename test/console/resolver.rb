@@ -60,9 +60,9 @@ describe Console::Resolver do
 				'CONSOLE_OFF' => 'Acorn,Banana'
 			})).to be_a Console::Resolver
 			
-			expect(Console.logger.subjects[Acorn]).to be == nil
-			expect(Console.logger.subjects[Banana]).to be == nil
-			expect(Console.logger.subjects[Cat]).to be == Console::Logger::MINIMUM_LEVEL - 1
+			expect(Console.logger.subjects[Acorn]).to be == (Console::Logger::MAXIMUM_LEVEL + 1)
+			expect(Console.logger.subjects[Banana]).to be == (Console::Logger::MAXIMUM_LEVEL + 1)
+			expect(Console.logger.subjects[Cat]).to be == (Console::Logger::MINIMUM_LEVEL - 1)
 			expect(Console.logger.subjects[Dog]).to be == Console::Logger::WARN
 		end
 	end

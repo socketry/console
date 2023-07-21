@@ -14,12 +14,12 @@ module Console
 	class Filter
 		def self.[] **levels
 			klass = Class.new(self)
-			min_level, max_level = levels.values.minmax
+			minimum_level, maximum_level = levels.values.minmax
 			
 			klass.instance_exec do
 				const_set(:LEVELS, levels.freeze)
-				const_set(:MINIMUM_LEVEL, min_level)
-				const_set(:MAXIMUM_LEVEL, max_level)
+				const_set(:MINIMUM_LEVEL, minimum_level)
+				const_set(:MAXIMUM_LEVEL, maximum_level)
 				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
@@ -43,7 +43,7 @@ module Console
 			return klass
 		end
 		
-		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, enabled: nil, **options)
+		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
 			@output = output
 			@verbose = verbose
 			@level = level
@@ -51,10 +51,6 @@ module Console
 			@subjects = {}
 			
 			@options = options
-			
-			if enabled
-				enabled.each{|name| enable(name)}
-			end
 		end
 		
 		def with(level: @level, verbose: @verbose, **options)
@@ -94,10 +90,20 @@ module Console
 			@level = self.class::MINIMUM_LEVEL - 1
 		end
 		
+		def filter(subject, level)
+			unless subject.is_a?(Module)
+				raise ArgumentError, "Expected a class, got #{subject.inspect}"
+			end
+			
+			@subjects[subject] = level
+		end
+		
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
 		# @param subject [Object] the subject to check.
 		def enabled?(subject, level = self.class::MINIMUM_LEVEL)
-			if specific_level = @subjects[subject.class]
+			subject = subject.class unless subject.is_a?(Module)
+			
+			if specific_level = @subjects[subject]
 				return level >= specific_level
 			end
 			
@@ -107,19 +113,21 @@ module Console
 		end
 		
 		# Enable specific log level for the given class.
-		# @parameter name [Class] The class to enable.
+		# @parameter name [Module] The class to enable.
 		def enable(subject, level = self.class::MINIMUM_LEVEL)
-			unless subject.is_a?(Class)
-				raise ArgumentError, "Expected a class, got #{subject.inspect}"
-			end
-			
-			@subjects[subject] = level
+			# Set the filter level of logging for a given subject which passes all log messages:
+			filter(subject, level)
 		end
 		
-		# Disable specific logging for the specific class.
-		# @parameter name [Class] The class to disable.
 		def disable(subject)
-			unless subject.is_a?(Class)
+			# Set the filter level of the logging for a given subject which filters all log messages:
+			filter(subject, self.class::MAXIMUM_LEVEL + 1)
+		end
+		
+		# Clear any specific filters for the given class.
+		# @parameter name [Module] The class to disable.
+		def clear(subject)
+			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
 			end
 			
