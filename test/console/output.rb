@@ -76,7 +76,7 @@ describe Console::Output do
 			output.call("Hello \xFF")
 			
 			message = JSON.parse(capture.string)
-			expect(message['subject']).to be == "Hello \uFFFD"
+			expect(message['subject'].inspect).to be == "Hello \uFFFD".inspect
 		end
 	end
 end
