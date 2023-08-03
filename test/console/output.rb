@@ -71,6 +71,7 @@ describe Console::Output do
 		let(:capture) {StringIO.new}
 		
 		it "should replace invalid characters" do
+			expect(capture).to receive(:tty?).and_return(false)
 			output = Console::Output.new(capture, {})
 			
 			output.call("Hello \xFF")
