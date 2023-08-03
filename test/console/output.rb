@@ -14,7 +14,7 @@ describe Console::Output do
 			let(:output) {File.open('/tmp/console.log', 'w')}
 			
 			it 'should use a serialized format' do
-				expect(Console::Output.new(output, env)).to be_a(Console::Serialized::Logger)
+				expect(Console::Output.new(output, env).output).to be_a(Console::Serialized::Logger)
 			end
 		end
 		
@@ -31,7 +31,9 @@ describe Console::Output do
 		
 		it 'can set output to Serialized and format to JSON by ENV' do
 			output = Console::Output.new(StringIO.new, {'CONSOLE_OUTPUT' => 'JSON'})
+			expect(output).to be_a(Console::Output::Encoder)
 			
+			output = output.output
 			expect(output).to be_a Console::Serialized::Logger
 			expect(output.format).to be == JSON
 		end
@@ -62,6 +64,19 @@ describe Console::Output do
 			output = Console::Output.new(io, {'CONSOLE_OUTPUT' => 'Text'})
 			expect(output).to be_a Console::Terminal::Logger
 			expect(output.terminal).to be_a Console::Terminal::Text
+		end
+	end
+	
+	with "invalid UTF-8" do
+		let(:capture) {StringIO.new}
+		
+		it "should replace invalid characters" do
+			output = Console::Output.new(capture, {})
+			
+			output.call("Hello \xFF")
+			
+			message = JSON.parse(capture.string)
+			expect(message['subject']).to be == "Hello \uFFFD"
 		end
 	end
 end
