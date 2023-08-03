@@ -1,4 +1,8 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2022-2023, by Samuel Williams.
 
 # Run this using `systemd-cat bundle exec ./integration.rb`
 # This will send logs to datadog using the standard systemd journal.
