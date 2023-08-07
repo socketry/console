@@ -15,6 +15,7 @@ $ bundle add console
 `console` has several core concepts:
 
 - A log message which consists of a set of arguments and options, which includes a timestamp, severity, and other structured data.
+- The {ruby Console} module which provides an abstract interface for logging.
 - A {ruby Console::Logger} instance which is the main entry point for logging for a specific system and writes data to a given output formatter.
 - An output instance such as {ruby Console::XTerm}, {ruby Console::Serialized::Logger} which formats these log messages and writes them to a specific output device.
 - An event instance, such as {ruby Console::Event::Progress} or {ruby Console::Event::Spawn} which represents a structured event within a system, which can be formatted in a specific way.
@@ -26,7 +27,7 @@ Out of the box, {ruby Console.logger} is a globally shared logger that outputs t
 ~~~ ruby
 require 'console'
 
-Console.logger.info("Hello World")
+Console.info("Hello World")
 ~~~
 
 <pre>
@@ -38,11 +39,11 @@ The method name `info` indicates the severity level of the log message. You can 
 ~~~ ruby
 require 'console'
 
-Console.logger.debug("The input voltage has stabilized.")
-Console.logger.info("Making a request to the machine.")
-Console.logger.warn("The machine has detected a temperature anomaly.")
-Console.logger.error("The machine was unable to complete the request!")
-Console.logger.fatal("Depressurisation detected, evacuate the area!")
+Console.debug("The input voltage has stabilized.")
+Console.info("Making a request to the machine.")
+Console.warn("The machine has detected a temperature anomaly.")
+Console.error("The machine was unable to complete the request!")
+Console.fatal("Depressurisation detected, evacuate the area!")
 ~~~
 
 From the terminal, you can control the log level using the `CONSOLE_LEVEL` environment variable. To log all messages including `debug`:
@@ -65,7 +66,7 @@ You can add any options you like to a log message and they will be included as p
 
 ~~~ ruby
 duration = measure{...}
-Console.logger.info("Execution completed!", duration: duration)
+Console.info("Execution completed!", duration: duration)
 ~~~
 
 ## Subject Logging
@@ -76,11 +77,9 @@ The first argument to the log statement becomes the implicit subject of the log 
 require 'console'
 
 class Machine
-	include Console
-	
 	def initialize(voltage)
 		@voltage = voltage.floor
-		logger.info(self, "The input voltage has stabilized.")
+		Console.info(self, "The input voltage has stabilized.")
 	end
 end
 
@@ -110,8 +109,6 @@ If your code has an unhandled exception, you may wish to log it. In order to log
 require 'console'
 
 class Cache
-	include Console
-	
 	def initialize
 		@entries = {}
 	end
@@ -119,7 +116,7 @@ class Cache
 	def fetch(key)
 		@entries.fetch(key)
 	rescue => error
-		logger.failure(self, error)
+		Console.error(self, error)
 	end
 end
 
@@ -137,7 +134,7 @@ This will produce the following output:
 
 ## Program Structure
 
-Generally, programs should use the global `Console.logger` instance.
+Generally, programs should use the global `Console` interface to log messages.
 
 Individual classes should not be catching and logging exceptions. It makes for simpler code if this is handled in a few places near the top of your program. Exceptions should collect enough information such that logging them produces a detailed backtrace leading to the failure.
 
@@ -172,7 +169,7 @@ class MyEvent < Console::Event::Generic
 	end
 end
 
-Console.logger.info("It finally happened.", MyEvent.new)
+Console.info("It finally happened.", MyEvent.new)
 ```
 
 #### Failure Events
