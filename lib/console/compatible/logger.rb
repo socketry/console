@@ -29,7 +29,7 @@ module Console
 				end
 			end
 
-			def initialize(subject, output)
+			def initialize(subject, output = Console)
 				super(nil)
 				
 				@progname = subject
