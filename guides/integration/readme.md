@@ -34,3 +34,4 @@ end
 ## Adapters
 
 - [Console::Adapter::Rails](https://github.com/socketry/console-adapter-rails)
+- [Console::Adapter::Sidekiq](https://github.com/socketry/console-adapter-sidekiq)
