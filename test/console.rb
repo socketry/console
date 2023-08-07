@@ -13,36 +13,47 @@ describe Console do
 		expect(Console::VERSION).to be =~ /\d+\.\d+\.\d+/
 	end
 	
+	it "has interface methods for all log levels" do
+		Console::Logger::LEVELS.each do |name, level|
+			expect(Console).to be(:respond_to?, name)
+		end
+	end
+	
 	with MyModule do
 		let(:io) {StringIO.new}
 		let(:logger) {Console::Logger.new(Console::Terminal::Logger.new(io))}
 		
 		it "should log some messages" do
-			MyModule.logger = logger
-			MyModule.test_logger
+			Fiber.new do
+				Console.logger = logger
+				MyModule.test_logger
+			end.resume
 			
 			expect(io.string).not.to be(:include?, "GOTO LINE 1")
 			expect(io.string).to be(:include?, "There be the dragons!")
 		end
 		
 		it "should show debug messages" do
-			MyModule.logger = logger
-			MyModule.logger.debug!
-			
-			MyModule.test_logger
+			Fiber.new do
+				Console.logger = logger
+				MyModule.logger.debug!
+				MyModule.test_logger
+			end.resume
 			
 			expect(io.string).to be(:include?, "GOTO LINE 1")
 		end
 		
 		it "should log nested exceptions" do
-			MyModule.logger = logger
-			MyModule.logger.verbose!
+			expect(logger.debug?).to be == false
+			expect(logger.info?).to be == true
 			
-			MyModule.log_error
+			Fiber.new do
+				Console.logger = logger
+				logger.verbose!
+				MyModule.log_error
+			end.resume
 			
 			expect(io.string).to be(:include?, "Caused by ArgumentError: It broken!")
-			expect(MyModule.logger.debug?).to be == false
-			expect(MyModule.logger.info?).to be == true
 		end
 	end
 	
