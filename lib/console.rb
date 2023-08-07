@@ -19,10 +19,24 @@ module Console
 			Logger.instance= instance
 		end
 		
-		Logger::LEVELS.each do |name, level|
-			define_method(name) do |*arguments, **options, &block|
-				Logger.instance.send(name, *arguments, **options, &block)
-			end
+		def debug(...)
+			Logger.instance.debug(...)
+		end
+		
+		def info(...)
+			Logger.instance.info(...)
+		end
+		
+		def warn(...)
+			Logger.instance.warn(...)
+		end
+		
+		def error(...)
+			Logger.instance.error(...)
+		end
+		
+		def fatal(...)
+			Logger.instance.fatal(...)
 		end
 		
 		def call(...)
@@ -31,7 +45,7 @@ module Console
 	end
 	
 	def logger= logger
-		warn "Setting logger on #{self} is deprecated. Use Console.logger= instead."
+		warn "Setting logger on #{self} is deprecated. Use Console.logger= instead.", uplevel: 1
 	end
 	
 	def logger
