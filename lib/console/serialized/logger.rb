@@ -5,16 +5,16 @@
 
 require_relative '../buffer'
 require_relative '../filter'
+require_relative '../format'
 
 require 'time'
-require 'json'
 
 require 'fiber/annotation'
 
 module Console
 	module Serialized
 		class Logger
-			def initialize(io = $stderr, format: JSON, verbose: false, **options)
+			def initialize(io = $stderr, format: Format.default, verbose: false, **options)
 				@io = io
 				@start = Time.now
 				@format = format

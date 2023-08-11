@@ -34,7 +34,7 @@ describe Console::Output do
 		with env: {'CONSOLE_OUTPUT' => 'JSON'} do
 			it 'can set output to Serialized and format to JSON' do
 				expect(output).to be_a Console::Serialized::Logger
-				expect(output.format).to be_a(Console::Output::JSON::Safe)
+				expect(output.format).to be_a(Console::Format::Safe)
 			end
 		end
 		
