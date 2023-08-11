@@ -5,6 +5,7 @@
 
 module Console
 	module Output
+		# @deprecated With no replacement.
 		class Encoder
 			def initialize(output, encoding = ::Encoding::UTF_8)
 				@output = output

@@ -8,76 +8,97 @@ require 'console/capture'
 require 'my_custom_output'
 
 describe Console::Output do
+	let(:capture) {StringIO.new}
+	let(:env) {Hash.new}
+	let(:output) {Console::Output.new(capture, env)}
+	
 	describe '.new' do
 		with 'output to a file' do
-			let(:env) {Hash.new}
-			let(:output) {File.open('/tmp/console.log', 'w')}
+			let(:capture) {File.open('/tmp/console.log', 'w')}
 			
 			it 'should use a serialized format' do
-				expect(Console::Output.new(output, env).output).to be_a(Console::Serialized::Logger)
+				expect(output).to be_a(Console::Serialized::Logger)
 			end
 		end
 		
 		with 'output to $stderr' do
-			let(:env) {Hash.new}
-			let(:output) {$stderr}
+			let(:capture) {$stderr}
 			
 			it 'should use a terminal format' do
 				expect($stderr).to receive(:tty?).and_return(true)
 				
-				expect(Console::Output.new($stderr, env)).to be_a Console::Terminal::Logger
+				expect(output).to be_a Console::Terminal::Logger
 			end
 		end
 		
-		it 'can set output to Serialized and format to JSON by ENV' do
-			output = Console::Output.new(StringIO.new, {'CONSOLE_OUTPUT' => 'JSON'})
-			expect(output).to be_a(Console::Output::Encoder)
-			
-			output = output.output
-			expect(output).to be_a Console::Serialized::Logger
-			expect(output.format).to be == JSON
+		with env: {'CONSOLE_OUTPUT' => 'JSON'} do
+			it 'can set output to Serialized and format to JSON' do
+				expect(output).to be_a Console::Serialized::Logger
+				expect(output.format).to be_a(Console::Output::JSON::Safe)
+			end
 		end
 		
-		it 'can set output to Serialized using custom format by ENV' do
-			output = Console::Output.new(StringIO.new, {'CONSOLE_OUTPUT' => 'MyCustomOutput'})
-			
-			expect(output).to be_a MyCustomOutput
+		with env: {'CONSOLE_OUTPUT' => 'MyCustomOutput'} do
+			it 'can set output to Serialized using custom format by ENV' do
+				expect(output).to be_a MyCustomOutput
+			end
 		end
 		
-		it 'raises error until the given format class is available' do
-			expect {
-				Console::Output.new(nil, {'CONSOLE_OUTPUT' => 'InvalidOutput'})
-			}.to raise_exception(NameError, message: be =~ /Console::Output::InvalidOutput/)
+		with env: {'CONSOLE_OUTPUT' => 'InvalidOutput'} do
+			it 'raises error until the given format class is available' do
+				expect{output}.to raise_exception(NameError, message: be =~ /Console::Output::InvalidOutput/)
+			end
 		end
 		
-		it 'can force format to XTerm for non tty output by ENV' do
-			io = StringIO.new
-			expect(Console::Terminal).not.to receive(:for)
-			output = Console::Output.new(io, {'CONSOLE_OUTPUT' => 'XTerm'})
-			expect(output).to be_a Console::Terminal::Logger
-			expect(output.terminal).to be_a Console::Terminal::XTerm
+		with env: {'CONSOLE_OUTPUT' => 'XTerm'} do
+			it 'can force format to XTerm for non tty output by ENV' do
+				expect(Console::Terminal).not.to receive(:for)
+				expect(output).to be_a Console::Terminal::Logger
+				expect(output.terminal).to be_a Console::Terminal::XTerm
+			end
 		end
 		
-		it 'can force format to text for tty output by ENV using Text' do
-			io = StringIO.new
-			expect(Console::Terminal).not.to receive(:for)
-			output = Console::Output.new(io, {'CONSOLE_OUTPUT' => 'Text'})
-			expect(output).to be_a Console::Terminal::Logger
-			expect(output.terminal).to be_a Console::Terminal::Text
+		with env: {'CONSOLE_OUTPUT' => 'Text'} do
+			it 'can force format to text for tty output by ENV using Text' do
+				expect(Console::Terminal).not.to receive(:for)
+				expect(output).to be_a Console::Terminal::Logger
+				expect(output.terminal).to be_a Console::Terminal::Text
+			end
 		end
 	end
 	
 	with "invalid UTF-8" do
-		let(:capture) {StringIO.new}
-		
 		it "should replace invalid characters" do
 			expect(capture).to receive(:tty?).and_return(false)
-			output = Console::Output.new(capture, {})
 			
 			output.call("Hello \xFF")
 			
 			message = JSON.parse(capture.string)
 			expect(message['subject']).to be == "Hello \uFFFD"
+		end
+	end
+	
+	with "recursive arguments" do
+		it "should replace top level recursion" do
+			arguments = []
+			arguments << arguments
+			
+			output.call("Hello", arguments)
+			
+			message = JSON.parse(capture.string)
+			expect(message['truncated']).to be == true
+			expect(message['message']).to be == ["[...]"]
+		end
+		
+		it "should replace nested recursion" do
+			arguments = {}
+			arguments[:arguments] = arguments
+			
+			output.call("Hello", arguments)
+			
+			message = JSON.parse(capture.string)
+			expect(message['truncated']).to be == true
+			expect(message['message']).to be == {"arguments"=>"{...}"}
 		end
 	end
 end
