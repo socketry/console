@@ -18,7 +18,7 @@ module Console
 			
 			def dump(object)
 				@format.dump(object, @limit)
-			rescue => error
+			rescue SystemStackError, StandardError => error
 				@format.dump(safe_dump(object, error))
 			end
 			
@@ -28,6 +28,23 @@ module Console
 				Hash.new.compare_by_identity
 			end
 			
+			# The first N frames, noting that the last frame is a placeholder for all the skipped frames:
+			FIRST_N_FRAMES = 10 + 1
+			LAST_N_FRAMES = 20
+			MAXIMUM_FRAMES = FIRST_N_FRAMES + LAST_N_FRAMES
+			
+			def filter_backtrace(error)
+				frames = error.backtrace
+				
+				# Select only the first and last few frames:
+				if frames.size > MAXIMUM_FRAMES
+					frames[FIRST_N_FRAMES-1] = "[... #{frames.size - (MAXIMUM_FRAMES-1)} frames ...]"
+					frames.slice!(FIRST_N_FRAMES...-LAST_N_FRAMES)
+				end
+				
+				return frames
+			end
+			
 			def safe_dump(object, error)
 				object = safe_dump_recurse(object)
 				
@@ -35,6 +52,7 @@ module Console
 				object[:error] = {
 					class: safe_dump_recurse(error.class.name),
 					message: safe_dump_recurse(error.message),
+					backtrace: safe_dump_recurse(filter_backtrace(error)),
 				}
 				
 				return object
