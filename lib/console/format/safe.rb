@@ -28,21 +28,19 @@ module Console
 				Hash.new.compare_by_identity
 			end
 			
-			# The first N frames, noting that the last frame is a placeholder for all the skipped frames:
-			FIRST_N_FRAMES = 10 + 1
-			LAST_N_FRAMES = 20
-			MAXIMUM_FRAMES = FIRST_N_FRAMES + LAST_N_FRAMES
-			
 			def filter_backtrace(error)
 				frames = error.backtrace
+				filtered = {}
 				
-				# Select only the first and last few frames:
-				if frames.size > MAXIMUM_FRAMES
-					frames[FIRST_N_FRAMES-1] = "[... #{frames.size - (MAXIMUM_FRAMES-1)} frames ...]"
-					frames.slice!(FIRST_N_FRAMES...-LAST_N_FRAMES)
+				frames.filter_map do |frame|
+					if filtered[frame]
+						nil
+					else
+						filtered[frame] = true
+						
+						frame
+					end
 				end
-				
-				return frames
 			end
 			
 			def safe_dump(object, error)

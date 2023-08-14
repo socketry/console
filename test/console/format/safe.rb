@@ -16,11 +16,27 @@ end
 describe Console::Format::Safe do
 	let(:format) {subject.new}
 	let(:object) {JSONHash.new}
+	let(:frames) {[
+		"frame 0",
+		"frame 1",
+		"frame 2",
+		"frame 3",
+		"frame 2",
+		"frame 3",
+		"frame 2",
+		"frame 3",
+		"frame 4",
+		"frame 5",
+		"frame 6",
+		"frame 7",
+		"frame 8",
+		"frame 9",
+	]}
 	
 	it "can handle as_json raising SystemStackError" do
 		mock(object) do |mock|
 			mock.replace(:to_json) do
-				raise SystemStackError, "stack level too deep", 32.times.map{|i| "frame #{i}"}
+				raise SystemStackError, "stack level too deep", frames
 			end
 		end
 		
@@ -38,7 +54,6 @@ describe Console::Format::Safe do
 		
 		backtrace = message['error']['backtrace']
 		expect(backtrace).to be_a(Array)
-		expect(backtrace.size).to be == Console::Format::Safe::MAXIMUM_FRAMES
-		inform(backtrace)
+		expect(frames).to have_attributes(size: be == 10)
 	end
 end
