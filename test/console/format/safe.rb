@@ -17,20 +17,13 @@ describe Console::Format::Safe do
 	let(:format) {subject.new}
 	let(:object) {JSONHash.new}
 	let(:frames) {[
-		"frame 0",
-		"frame 1",
-		"frame 2",
-		"frame 3",
-		"frame 2",
-		"frame 3",
-		"frame 2",
-		"frame 3",
-		"frame 4",
-		"frame 5",
-		"frame 6",
-		"frame 7",
-		"frame 8",
-		"frame 9",
+		"A",
+		"B",
+		"C",
+		"B",
+		"C",
+		"D",
+		"D",
 	]}
 	
 	it "can handle as_json raising SystemStackError" do
@@ -54,6 +47,13 @@ describe Console::Format::Safe do
 		
 		backtrace = message['error']['backtrace']
 		expect(backtrace).to be_a(Array)
-		expect(frames).to have_attributes(size: be == 10)
+		expect(backtrace).to be == [
+			"A",
+			"B",
+			"C",
+			"[... 2 skipped ...]",
+			"D",
+			"[... 1 skipped ...]",
+		]
 	end
 end

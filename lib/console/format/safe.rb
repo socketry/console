@@ -31,16 +31,35 @@ module Console
 			def filter_backtrace(error)
 				frames = error.backtrace
 				filtered = {}
+				filtered_count = nil
+				skipped = nil
 				
-				frames.filter_map do |frame|
+				frames = frames.filter_map do |frame|
 					if filtered[frame]
-						nil
+						if filtered_count == nil
+							filtered_count = 1
+							skipped = String.new
+						else
+							filtered_count += 1
+							nil
+						end
 					else
-						filtered[frame] = true
+						if skipped
+							skipped.replace("[... #{filtered_count} skipped ...]")
+							filtered_count = nil
+							skipped = nil
+						end
 						
+						filtered[frame] = true
 						frame
 					end
 				end
+				
+				if skipped
+					skipped.replace("[... #{filtered_count} skipped ...]")
+				end
+				
+				return frames
 			end
 			
 			def safe_dump(object, error)
