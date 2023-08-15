@@ -24,22 +24,38 @@ module Console
 			
 			private
 			
-			def default_objects
-				Hash.new.compare_by_identity
-			end
-			
-			# The first N frames, noting that the last frame is a placeholder for all the skipped frames:
-			FIRST_N_FRAMES = 10 + 1
-			LAST_N_FRAMES = 20
-			MAXIMUM_FRAMES = FIRST_N_FRAMES + LAST_N_FRAMES
-			
 			def filter_backtrace(error)
 				frames = error.backtrace
+				filtered = {}
+				filtered_count = nil
+				skipped = nil
 				
-				# Select only the first and last few frames:
-				if frames.size > MAXIMUM_FRAMES
-					frames[FIRST_N_FRAMES-1] = "[... #{frames.size - (MAXIMUM_FRAMES-1)} frames ...]"
-					frames.slice!(FIRST_N_FRAMES...-LAST_N_FRAMES)
+				frames = frames.filter_map do |frame|
+					if filtered[frame]
+						if filtered_count == nil
+							filtered_count = 1
+							skipped = frame.dup
+						else
+							filtered_count += 1
+							nil
+						end
+					else
+						if skipped
+							if filtered_count > 1
+								skipped.replace("[... #{filtered_count} frames skipped ...]")
+							end
+							
+							filtered_count = nil
+							skipped = nil
+						end
+						
+						filtered[frame] = true
+						frame
+					end
+				end
+				
+				if skipped && filtered_count > 1
+					skipped.replace("[... #{filtered_count} frames skipped ...]")
 				end
 				
 				return frames
@@ -67,6 +83,10 @@ module Console
 				else
 					"..."
 				end
+			end
+			
+			def default_objects
+				Hash.new.compare_by_identity
 			end
 			
 			# This will recursively generate a safe version of the object.

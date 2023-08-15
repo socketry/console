@@ -17,28 +17,71 @@ describe Console::Format::Safe do
 	let(:format) {subject.new}
 	let(:object) {JSONHash.new}
 	
-	it "can handle as_json raising SystemStackError" do
-		mock(object) do |mock|
-			mock.replace(:to_json) do
-				raise SystemStackError, "stack level too deep", 32.times.map{|i| "frame #{i}"}
+	with SystemStackError do
+		let(:frames) {[
+			"A",
+			"B",
+			"C",
+			"B",
+			"C",
+			"D",
+			"D",
+			"D",
+		]}
+		
+		it "can handle as_json raising SystemStackError" do
+			mock(object) do |mock|
+				mock.replace(:to_json) do
+					raise SystemStackError, "stack level too deep", frames
+				end
 			end
-		end
-		
-		message = JSON.parse(
-			format.dump(object)
-		)
-		
-		expect(message).to have_keys(
-			'truncated' => be == true,
-			'error' => have_keys(
-				'class' => be == 'SystemStackError',
-				'message' => be =~ /stack level too deep/,
+			
+			message = JSON.parse(
+				format.dump(object)
 			)
-		)
-		
-		backtrace = message['error']['backtrace']
-		expect(backtrace).to be_a(Array)
-		expect(backtrace.size).to be == Console::Format::Safe::MAXIMUM_FRAMES
-		inform(backtrace)
+			
+			expect(message).to have_keys(
+				'truncated' => be == true,
+				'error' => have_keys(
+					'class' => be == 'SystemStackError',
+					'message' => be =~ /stack level too deep/,
+				)
+			)
+			
+			backtrace = message['error']['backtrace']
+			expect(backtrace).to be_a(Array)
+			expect(backtrace).to be == [
+				"A",
+				"B",
+				"C",
+				"[... 2 frames skipped ...]",
+				"D",
+				"[... 2 frames skipped ...]",
+			]
+		end
+	end
+	
+	with StandardError do
+		it "can handle as_json raising StandardError" do
+			mock(object) do |mock|
+				mock.replace(:to_json) do
+					raise StandardError, "something went wrong"
+				end
+			end
+			
+			message = JSON.parse(
+				format.dump(object)
+			)
+			
+			expect(message).to have_keys(
+				'truncated' => be == true,
+				'error' => have_keys(
+					'class' => be == 'StandardError',
+					'message' => be =~ /something went wrong/,
+				)
+			)
+			
+			backtrace = message['error']['backtrace']
+		end
 	end
 end
