@@ -24,10 +24,6 @@ module Console
 			
 			private
 			
-			def default_objects
-				Hash.new.compare_by_identity
-			end
-			
 			def filter_backtrace(error)
 				frames = error.backtrace
 				filtered = {}
@@ -38,14 +34,17 @@ module Console
 					if filtered[frame]
 						if filtered_count == nil
 							filtered_count = 1
-							skipped = String.new
+							skipped = frame.dup
 						else
 							filtered_count += 1
 							nil
 						end
 					else
 						if skipped
-							skipped.replace("[... #{filtered_count} skipped ...]")
+							if filtered_count > 1
+								skipped.replace("[... #{filtered_count} frames skipped ...]")
+							end
+							
 							filtered_count = nil
 							skipped = nil
 						end
@@ -55,8 +54,8 @@ module Console
 					end
 				end
 				
-				if skipped
-					skipped.replace("[... #{filtered_count} skipped ...]")
+				if skipped && filtered_count > 1
+					skipped.replace("[... #{filtered_count} frames skipped ...]")
 				end
 				
 				return frames
@@ -84,6 +83,10 @@ module Console
 				else
 					"..."
 				end
+			end
+			
+			def default_objects
+				Hash.new.compare_by_identity
 			end
 			
 			# This will recursively generate a safe version of the object.
