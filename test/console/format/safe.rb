@@ -82,6 +82,7 @@ describe Console::Format::Safe do
 			)
 			
 			backtrace = message['error']['backtrace']
+			expect(backtrace).to be_a(Array)
 		end
 	end
 end
