@@ -37,3 +37,9 @@ This project uses the [Developer Certificate of Origin](https://developercertifi
 ### Contributor Covenant
 
 This project is governed by [Contributor Covenant](https://www.contributor-covenant.org/). All contributors and participants agree to abide by its terms.
+
+## See Also
+
+- [console-adapter-rails](https://github.com/socketry/console-adapter-rails)
+- [console-adapter-sidekiq](https://github.com/socketry/console-adapter-sidekiq)
+- [console-output-datadog](https://github.com/socketry/console-output-datadog)
