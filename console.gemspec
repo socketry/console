@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
 	spec.cert_chain  = ['release.cert']
 	spec.signing_key = File.expand_path('~/.gem/release.pem')
 	
-	spec.homepage = "https://github.com/socketry/console"
+	spec.homepage = "https://socketry.github.io/console/"
 	
 	spec.files = Dir.glob(['{bake,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	

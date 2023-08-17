@@ -18,7 +18,13 @@ When Ruby decided to reverse the order of exception backtraces, I finally gave u
 
 ## Usage
 
-Please see the [project documentation](https://socketry.github.io/console).
+Please see the [project documentation](https://socketry.github.io/console/) for more details.
+
+  - [Getting Started](https://socketry.github.io/console/guides/getting-started/index) - This guide explains how to use `console` for logging.
+
+  - [Command Line](https://socketry.github.io/console/guides/command-line/index) - This guide explains how the `console` gem can be controlled using environment variables.
+
+  - [Integration](https://socketry.github.io/console/guides/integration/index) - This guide explains how to integrate the `console` output into different systems.
 
 ## Contributing
 
@@ -40,6 +46,6 @@ This project is governed by [Contributor Covenant](https://www.contributor-coven
 
 ## See Also
 
-- [console-adapter-rails](https://github.com/socketry/console-adapter-rails)
-- [console-adapter-sidekiq](https://github.com/socketry/console-adapter-sidekiq)
-- [console-output-datadog](https://github.com/socketry/console-output-datadog)
+  - [console-adapter-rails](https://github.com/socketry/console-adapter-rails)
+  - [console-adapter-sidekiq](https://github.com/socketry/console-adapter-sidekiq)
+  - [console-output-datadog](https://github.com/socketry/console-output-datadog)
