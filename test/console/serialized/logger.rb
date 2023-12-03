@@ -59,4 +59,34 @@ describe Console::Serialized::Logger do
 			expect(error_message).to have_keys(:kind, :message, :stack)
 		end
 	end
+	
+	with "Fiber annotation" do
+		it "logs fiber annotations" do
+			Fiber.new do
+				Fiber.annotate("Running in a fiber.")
+				
+				logger.call(message)
+			end.resume
+			
+			expect(record).to have_keys(
+				annotation: be == "Running in a fiber.",
+				subject: be == "Hello World",
+			)
+		end
+		
+		it "logs fiber annotations when it isn't a string" do
+			thing = ["Running in a fiber."]
+			
+			Fiber.new do
+				Fiber.annotate(thing)
+				
+				logger.call(message)
+			end.resume
+			
+			expect(record).to have_keys(
+				annotation: be == thing,
+				subject: be == "Hello World",
+			)
+		end
+	end
 end

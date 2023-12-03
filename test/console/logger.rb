@@ -154,4 +154,19 @@ describe Console::Logger do
 			expect(Console::Logger.default_log_level({'CONSOLE_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
 		end
 	end
+	
+	with "Fiber annotation" do
+		it "logs fiber annotations" do
+			Fiber.new do
+				Fiber.annotate("Running in a fiber.")
+				
+				logger.info(message)
+			end.resume
+			
+			expect(output.last).to have_keys(
+				annotation: be == "Running in a fiber.",
+				subject: be == "Hello World",
+			)
+		end
+	end
 end
