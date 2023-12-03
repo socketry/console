@@ -55,6 +55,10 @@ module Console
 				message[:arguments] = arguments
 			end
 			
+			if annotation = Fiber.current.annotation
+				message[:annotation] = annotation
+			end
+			
 			if block_given?
 				if block.arity.zero?
 					message[:message] = yield

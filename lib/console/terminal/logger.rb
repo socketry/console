@@ -149,8 +149,14 @@ module Console
 				buffer = +""
 				
 				if @verbose
-					if annotation = Fiber.current.annotation and annotation.size > 0
-						buffer << ": #{@terminal[:annotation]}#{annotation}#{@terminal.reset}"
+					if annotation = Fiber.current.annotation
+						# While typically annotations should be strings, that is not always the case.
+						annotation = annotation.to_s
+						
+						# If the annotation is empty, we don't want to print it, as it will look like a formatting bug.
+						if annotation.size > 0
+							buffer << ": #{@terminal[:annotation]}#{annotation}#{@terminal.reset}"
+						end
 					end
 				end
 				
