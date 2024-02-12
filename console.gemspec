@@ -21,4 +21,5 @@ Gem::Specification.new do |spec|
 	
 	spec.add_dependency "fiber-annotation"
 	spec.add_dependency "fiber-local"
+	spec.add_dependency "json"
 end
