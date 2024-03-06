@@ -12,6 +12,17 @@ module Console
 	UNKNOWN = 'unknown'
 	
 	class Filter
+		if Object.const_defined?(:Ractor)
+			def self.define_immutable_method(name, &block)
+				block = Ractor.make_shareable(block)
+				self.define_method(name, &block)
+			end
+		else
+			def self.define_immutable_method(name, &block)
+				define_method(name, &block)
+			end
+		end
+		
 		def self.[] **levels
 			klass = Class.new(self)
 			minimum_level, maximum_level = levels.values.minmax
@@ -24,17 +35,17 @@ module Console
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
 					
-					define_method(name) do |subject = nil, *arguments, **options, &block|
+					define_immutable_method(name) do |subject = nil, *arguments, **options, &block|
 						if self.enabled?(subject, level)
 							self.call(subject, *arguments, severity: name, **options, **@options, &block)
 						end
 					end
 					
-					define_method("#{name}!") do
+					define_immutable_method("#{name}!") do
 						@level = level
 					end
 					
-					define_method("#{name}?") do
+					define_immutable_method("#{name}?") do
 						@level <= level
 					end
 				end
