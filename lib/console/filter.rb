@@ -12,7 +12,7 @@ module Console
 	UNKNOWN = 'unknown'
 	
 	class Filter
-		if Object.const_defined?(:Ractor)
+		if Object.const_defined?(:Ractor) and RUBY_VERSION >= '3.1'
 			def self.define_immutable_method(name, &block)
 				block = Ractor.make_shareable(block)
 				self.define_method(name, &block)
