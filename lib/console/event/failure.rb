@@ -55,7 +55,7 @@ module Console
 				root_pattern = /^#{@root}\// if @root
 				
 				exception.backtrace&.each_with_index do |line, index|
-					path, offset, message = line.split(":")
+					path, offset, message = line.split(":", 3)
 					style = :exception_backtrace
 					
 					# Make the path a bit more readable
