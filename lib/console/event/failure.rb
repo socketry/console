@@ -43,8 +43,18 @@ module Console
 				format_exception(@exception, nil, output, terminal, verbose)
 			end
 			
+			if Exception.method_defined?(:detailed_message)
+				def detailed_message(exception)
+					exception.detailed_message
+				end
+			else
+				def detailed_message(exception)
+					exception.message
+				end
+			end
+			
 			def format_exception(exception, prefix, output, terminal, verbose)
-				lines = exception.message.lines.map(&:chomp)
+				lines = detailed_message(exception).lines.map(&:chomp)
 				
 				output.puts "  #{prefix}#{terminal[:exception_title]}#{exception.class}#{terminal.reset}: #{lines.shift}"
 				
