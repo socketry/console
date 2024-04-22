@@ -119,7 +119,7 @@ module Console
 			protected
 			
 			def format_options(options, output)
-				format_value(options.to_json, output)
+				format_value(::JSON.pretty_generate(options), output)
 			end
 			
 			def format_argument(argument, output)
@@ -199,6 +199,7 @@ module Console
 				string = value.to_s
 				
 				string.each_line do |line|
+					line.chomp!
 					output.puts "#{@terminal[:value]}#{line}#{@terminal.reset}"
 				end
 			end

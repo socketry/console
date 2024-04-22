@@ -24,7 +24,7 @@ describe Console::Terminal::Logger do
 		
 		logger.call("Hello World", **options)
 		
-		expect(io.string).to be(:include?, JSON.dump(options))
+		expect(io.string).to be =~ /"foo": "bar"/
 	end
 	
 	with "verbose: false" do
