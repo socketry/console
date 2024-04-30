@@ -4,6 +4,7 @@
 # Copyright, 2023, by Samuel Williams.
 
 module Console
+	# This namespace is reserved for logging adapters provided by other gems.
 	module Adapter
 	end
 end
