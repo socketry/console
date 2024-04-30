@@ -7,7 +7,7 @@
 
 require_relative 'output'
 require_relative 'filter'
-require_relative 'progress'
+require_relative 'event'
 
 require_relative 'resolver'
 require_relative 'terminal/logger'
@@ -69,12 +69,22 @@ module Console
 		end
 		
 		def progress(subject, total, **options)
-			Progress.new(self, subject, total, **options)
+			options[:severity] ||= :info
+			
+			Event::Progress.new(self, subject, total, **options)
 		end
 		
-		# @deprecated Use `fatal` instead.
-		def failure(subject, exception, *arguments, &block)
-			self.fatal(subject, exception, *arguments, &block)
+		def error(subject, *arguments, **options, &block)
+			if arguments.first.is_a?(Exception)
+				exception = arguments.shift
+				options.merge!(Event::Failure.for(exception))
+			end
+			
+			super
+		end
+		
+		def failure(subject, exception, *arguments, **options, &block)
+			self.error(subject, *arguments, **options, **Event::Failure.for(exception), &block)
 		end
 	end
 end

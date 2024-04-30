@@ -7,6 +7,7 @@ require 'logger'
 
 module Console
 	module Compatible
+		# A compatible interface for {::Logger} which can be used with {Console}.
 		class Logger < ::Logger
 			class LogDevice
 				def initialize(subject, output)

@@ -1,59 +1,116 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2022, by Samuel Williams.
+# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2022, by Anton Sozontov.
 
-require_relative 'generic'
+require_relative '../clock'
 
 module Console
 	module Event
-		class Progress < Generic
-			BLOCK = [
-				" ",
-				"▏",
-				"▎",
-				"▍",
-				"▌",
-				"▋",
-				"▊",
-				"▉",
-				"█",
-			]
+		class Progress
+			def self.now
+				Process.clock_gettime(Process::CLOCK_MONOTONIC)
+			end
 			
-			def initialize(current, total)
-				@current = current
+			def initialize(output, subject, total = 0, minimum_output_duration: 0.1, **options)
+				@output = output
+				@subject = subject
+				@options = options
+				
+				@start_time = Progress.now
+				
+				@last_output_time = nil
+				@minimum_output_duration = minimum_output_duration
+				
+				@current = 0
 				@total = total
 			end
 			
+			attr :subject
 			attr :current
 			attr :total
 			
-			def value
-				@current.to_f / @total.to_f
+			def duration
+				Progress.now - @start_time
 			end
 			
-			def bar(value = self.value, width = 70)
-				blocks = width * value
-				full_blocks = blocks.floor
-				partial_block = ((blocks - full_blocks) * BLOCK.size).floor
+			def ratio
+				Rational(@current.to_f, @total.to_f)
+			end
+			
+			def remaining
+				@total - @current
+			end
+			
+			def average_duration
+				if @current > 0
+					duration / @current
+				end
+			end
+			
+			def estimated_remaining_time
+				if average_duration = self.average_duration
+					average_duration * remaining
+				end
+			end
+			
+			def to_hash
+				Hash.new.tap do |hash|
+					hash[:event] = :progress
+					hash[:current] = @current
+					hash[:total] = @total
+				end
+			end
+			
+			def increment(amount = 1)
+				@current += amount
 				
-				if partial_block.zero?
-					BLOCK.last * full_blocks
+				if output?
+					@output.info(@subject, self.to_s, **@options, **self)
+					@last_output_time = Progress.now
+				end
+				
+				return self
+			end
+			
+			def resize(total)
+				@total = total
+				
+				@output.call(@subject, self.to_s, **@options, **self)
+				@last_output_time = Progress.now
+				
+				return self
+			end
+			
+			def mark(...)
+				@output.call(@subject, ...)
+			end
+			
+			def to_s
+				if estimated_remaining_time = self.estimated_remaining_time
+					"#{@current}/#{@total} completed in #{Clock.formatted_duration(self.duration)}, #{Clock.formatted_duration(estimated_remaining_time)} remaining."
 				else
-					"#{BLOCK.last * full_blocks}#{BLOCK[partial_block]}"
-				end.ljust(width)
+					"#{@current}/#{@total} completed, waiting for estimate..."
+				end
 			end
 			
-			def self.register(terminal)
-				terminal[:progress_bar] ||= terminal.style(:blue, :white)
+			private
+			
+			def duration_since_last_output
+				if @last_output_time
+					Progress.now - @last_output_time
+				end
 			end
 			
-			def to_h
-				{current: @current, total: @total}
-			end
-			
-			def format(output, terminal, verbose)
-				output.puts "#{terminal[:progress_bar]}#{self.bar}#{terminal.reset} #{sprintf('%6.2f', self.value * 100)}%"
+			def output?
+				if remaining.zero?
+					return true
+				elsif duration = duration_since_last_output
+					return duration > @minimum_output_duration
+				else
+					return true
+				end
 			end
 		end
 	end

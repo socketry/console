@@ -26,6 +26,10 @@ module Console
 				false
 			end
 			
+			def width
+				80
+			end
+			
 			def style(foreground, background = nil, *attributes)
 			end
 			

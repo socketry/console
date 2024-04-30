@@ -4,8 +4,7 @@
 # Copyright, 2019-2023, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative '../buffer'
-require_relative '../event'
+require_relative 'buffer'
 require_relative '../clock'
 
 require_relative 'text'
@@ -14,6 +13,10 @@ require_relative 'xterm'
 require 'json'
 require 'fiber'
 require 'fiber/annotation'
+
+require_relative 'formatter/progress'
+require_relative 'formatter/failure'
+require_relative 'formatter/spawn'
 
 module Console
 	module Terminal
@@ -66,7 +69,8 @@ module Console
 				@terminal[:annotation] = @terminal.reset
 				@terminal[:value] = @terminal.style(:blue)
 				
-				self.register_defaults(@terminal)
+				@formatters = {}
+				self.register_defaults
 			end
 			
 			attr :io
@@ -80,20 +84,23 @@ module Console
 				@verbose = value
 			end
 			
-			def register_defaults(terminal)
-				Event.constants.each do |constant|
-					klass = Event.const_get(constant)
-					klass.register(terminal)
+			def register_defaults
+				Formatter.constants.each do |formatter|
+					formatter = Formatter.const_get(formatter)
+					@formatters[formatter::KEY] = formatter.new(@terminal)
 				end
 			end
 			
 			UNKNOWN = :unknown
 			
-			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, **options, &block)
+			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, event: nil, **options, &block)
+				width = @terminal.width
+				
 				prefix = build_prefix(name || severity.to_s)
 				indent = " " * prefix.size
 				
 				buffer = Buffer.new("#{indent}| ")
+				indent_size = buffer.prefix.size
 				
 				format_subject(severity, prefix, subject, buffer)
 				
@@ -109,7 +116,9 @@ module Console
 					end
 				end
 				
-				if options&.any?
+				if event and formatter = @formatters[event]
+					formatter.format(options, buffer, verbose: @verbose, width: width - indent_size)
+				elsif options&.any?
 					format_options(options, buffer)
 				end
 				
@@ -123,15 +132,8 @@ module Console
 			end
 			
 			def format_argument(argument, output)
-				case argument
-				when Exception
-					Event::Failure.for(argument).format(output, @terminal, @verbose)
-				when Event::Generic
-					argument.format(output, @terminal, @verbose)
-				else
-					argument.to_s.each_line do |line|
-						output.puts line
-					end
+				argument.to_s.each_line do |line|
+					output.puts line
 				end
 			end
 			

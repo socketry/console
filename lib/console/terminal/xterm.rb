@@ -43,6 +43,10 @@ module Console
 				@output.winsize
 			end
 			
+			def width
+				size.last
+			end
+			
 			def style(foreground, background = nil, *attributes)
 				tokens = []
 				

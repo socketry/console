@@ -3,7 +3,6 @@
 # Released under the MIT License.
 # Copyright, 2019-2023, by Samuel Williams.
 
-require_relative '../buffer'
 require_relative '../filter'
 require_relative '../format'
 

@@ -6,8 +6,6 @@
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative 'buffer'
-
 module Console
 	UNKNOWN = 'unknown'
 	
