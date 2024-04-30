@@ -13,12 +13,10 @@ require_relative 'resolver'
 require_relative 'terminal/logger'
 require_relative 'serialized/logger'
 
-require 'fiber/local'
+require 'fiber/storage'
 
 module Console
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
-		extend Fiber::Local
-		
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
 		# https://mislav.net/2011/06/ruby-verbose-mode/ has more details about how it all fits together.
@@ -56,8 +54,12 @@ module Console
 			return logger
 		end
 		
-		def self.local
-			self.default_logger
+		def self.instance
+			Fiber[:console_logger] ||= self.default_logger
+		end
+		
+		def self.instance=(logger)
+			Fiber[:console_logger] = logger
 		end
 		
 		DEFAULT_LEVEL = 1
