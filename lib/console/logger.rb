@@ -84,7 +84,9 @@ module Console
 		end
 		
 		def failure(subject, exception, *arguments, **options, &block)
-			self.error(subject, *arguments, **options, **Event::Failure.for(exception), &block)
+			if self.enabled?(subject, ERROR)
+				self.call(subject, *arguments, severity: :error, **options, **Event::Failure.for(exception), &block)
+			end
 		end
 	end
 end
