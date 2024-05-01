@@ -25,7 +25,7 @@ describe Console::Output do
 			let(:capture) {$stderr}
 			
 			it 'should use a terminal format' do
-				expect($stderr).to receive(:tty?).and_return(true)
+				expect($stderr).to receive(:tty?).twice.and_return(true)
 				
 				expect(output).to be_a Console::Output::Terminal
 			end

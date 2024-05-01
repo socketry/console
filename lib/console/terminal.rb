@@ -14,7 +14,7 @@ require_relative 'terminal/formatter/spawn'
 module Console
 	module Terminal
 		def self.for(io)
-			if io.isatty
+			if io.tty?
 				XTerm.new(io)
 			else
 				Text.new(io)

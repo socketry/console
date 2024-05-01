@@ -42,5 +42,9 @@ module Console
 		def failure(...)
 			Logger.instance.failure(...)
 		end
+		
+		def call(...)
+			Logger.instance.call(...)
+		end
 	end
 end
