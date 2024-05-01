@@ -3,11 +3,12 @@
 # Released under the MIT License.
 # Copyright, 2020-2022, by Samuel Williams.
 
+require 'console/event/progress'
+
 require 'console'
-require 'console/progress'
 require 'console/capture'
 
-describe Console::Progress do
+describe Console::Event::Progress do
 	let(:capture) {Console::Capture.new}
 	let(:logger) {Console::Logger.new(capture)}
 	let(:progress) {logger.progress("My Measurement", 100)}
@@ -64,21 +65,11 @@ describe Console::Progress do
 			expect(last).to have_keys(
 				severity: be == :info,
 				subject: be == "My Measurement",
-				message: be_a(Console::Event::Progress),
+				event: be == :progress,
+				current: be == 100,
+				total: be == 100,
+				arguments: be == ["100/100 completed in 0.0s, 0.0s remaining."]
 			)
-		end
-		
-		it 'can generate a progress bar' do
-			progress.increment(50)
-			
-			last = capture.last
-			message = last[:message]
-			
-			terminal = Console::Terminal::Text.new($stderr)
-			output = StringIO.new
-			message.format(output, terminal, true)
-			
-			expect(output.string).to be == "███████████████████████████████████                                     50.00%\n"
 		end
 	end
 end

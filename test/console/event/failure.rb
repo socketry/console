@@ -45,12 +45,6 @@ describe Console::Event::Failure do
 				])
 			end
 		end
-		
-		it "formats exception removing root path" do
-			event = Console::Event::Failure.new(error, "/path/to/root")
-			event.format(output, terminal, true)
-			expect(output.string.lines[3..-1]).to have_value(be =~ /^\s+\.gem/)
-		end
 	end
 	
 	with 'test error' do
@@ -68,9 +62,10 @@ describe Console::Event::Failure do
 			expect(error.detailed_message).to be =~ /with details/
 			
 			event = Console::Event::Failure.new(error)
-			event.format(output, terminal, true)
-			expect(output.string).to be =~ /Test error!/
-			expect(output.string).to be =~ /with details/
+			
+			expect(event.to_hash).to have_keys(
+				message: be =~ /Test error!\nwith details/
+			)
 		end
 	end
 end

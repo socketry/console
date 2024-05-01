@@ -3,6 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2019-2022, by Samuel Williams.
 
+require_relative 'generic'
+
 module Console
 	module Event
 		# Represents a spawn event.
@@ -10,7 +12,7 @@ module Console
 		# ```ruby
 		# Console.info(self, **Console::Event::Spawn.for("ls", "-l"))
 		# ```
-		class Spawn
+		class Spawn < Generic
 			def self.for(*arguments, **options)
 				# Extract out the command environment:
 				if arguments.first.is_a?(Hash)

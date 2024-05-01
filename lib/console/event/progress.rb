@@ -6,9 +6,11 @@
 
 require_relative '../clock'
 
+require_relative 'generic'
+
 module Console
 	module Event
-		class Progress
+		class Progress < Generic
 			def self.now
 				Process.clock_gettime(Process::CLOCK_MONOTONIC)
 			end
@@ -83,8 +85,8 @@ module Console
 				return self
 			end
 			
-			def mark(...)
-				@output.call(@subject, ...)
+			def mark(*arguments, **options)
+				@output.call(@subject, *arguments, **options, **@options)
 			end
 			
 			def to_s

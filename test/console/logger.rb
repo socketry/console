@@ -54,13 +54,22 @@ describe Console::Logger do
 	
 	with '#failure' do
 		it "logs error message" do
-			logger.failure(self, StandardError.new("It failed!"))
+			begin
+				raise StandardError, "It failed!"
+			rescue => error
+				logger.failure(self, error)
+			end
 			
 			last = output.last
 			expect(last).to have_keys(
-				severity: be == :fatal,
+				severity: be == :error,
+				event: be == :failure,
+				root: be_a(String),
+				class: be == "StandardError",
+				message: be == "It failed!",
+				backtrace: be_a(Array),
+				subject: be == self
 			)
-			expect(last[:arguments].first).to be_a(StandardError)
 		end
 	end
 	

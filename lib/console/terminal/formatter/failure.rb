@@ -10,9 +10,8 @@ module Console
 			class Failure
 				KEY = :failure
 				
-				def initialize(terminal, root: Dir.pwd)
+				def initialize(terminal)
 					@terminal = terminal
-					@root = root
 					
 					@terminal[:exception_title] ||= @terminal.style(:red, nil, :bold)
 					@terminal[:exception_detail] ||= @terminal.style(:yellow)
@@ -22,9 +21,10 @@ module Console
 				end
 				
 				def format(event, output, prefix: nil, verbose: false, width: 80)
-					title = event[:title]
+					title = event[:class]
 					message = event[:message]
 					backtrace = event[:backtrace]
+					root = event[:root]
 					
 					lines = message.lines.map(&:chomp)
 					
@@ -34,7 +34,7 @@ module Console
 						output.puts "  #{@terminal[:exception_detail]}#{line}#{@terminal.reset}"
 					end
 					
-					root_pattern = /^#{@root}\// if @root
+					root_pattern = /^#{root}\// if root
 					
 					backtrace&.each_with_index do |line, index|
 						path, offset, message = line.split(":", 3)

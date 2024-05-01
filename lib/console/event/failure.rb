@@ -4,6 +4,8 @@
 # Copyright, 2019-2022, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
+require_relative 'generic'
+
 module Console
 	module Event
 		# Represents a failure event.
@@ -11,7 +13,7 @@ module Console
 		# ```ruby
 		# Console.error(self, **Console::Event::Failure.for(exception))
 		# ````
-		class Failure
+		class Failure < Generic
 			def self.default_root
 				Dir.getwd
 			rescue # e.g. Errno::EMFILE
@@ -22,7 +24,7 @@ module Console
 				self.new(exception, self.default_root)
 			end
 			
-			def initialize(exception, root)
+			def initialize(exception, root = Dir.getwd)
 				@exception = exception
 				@root = root
 			end
@@ -38,10 +40,15 @@ module Console
 			private
 			
 			def extract(exception, hash)
-				hash[:title] = exception.class
+				hash[:class] = exception.class.name
 				
 				if exception.respond_to?(:detailed_message)
-					hash[:message] = exception.detailed_message
+					message = exception.detailed_message
+					
+					# We want to remove the trailling exception class as we format it differently:
+					message.sub!(/\s*\(.*?\)$/, '')
+					
+					hash[:message] = message
 				else
 					hash[:message] = exception.message
 				end
