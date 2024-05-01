@@ -33,7 +33,7 @@ describe Console::Output do
 		
 		with env: {'CONSOLE_OUTPUT' => 'JSON'} do
 			it 'can set output to Serialized and format to JSON' do
-				expect(output).to be_a Console::Serialized::Logger
+				expect(output).to be_a Console::Output::Serialized
 				expect(output.format).to be_a(Console::Format::Safe)
 			end
 		end
@@ -53,7 +53,7 @@ describe Console::Output do
 		with env: {'CONSOLE_OUTPUT' => 'XTerm'} do
 			it 'can force format to XTerm for non tty output by ENV' do
 				expect(Console::Terminal).not.to receive(:for)
-				expect(output).to be_a Console::Terminal::Logger
+				expect(output).to be_a Console::Output::Terminal
 				expect(output.terminal).to be_a Console::Terminal::XTerm
 			end
 		end
@@ -61,7 +61,7 @@ describe Console::Output do
 		with env: {'CONSOLE_OUTPUT' => 'Text'} do
 			it 'can force format to text for tty output by ENV using Text' do
 				expect(Console::Terminal).not.to receive(:for)
-				expect(output).to be_a Console::Terminal::Logger
+				expect(output).to be_a Console::Output::Terminal
 				expect(output.terminal).to be_a Console::Terminal::Text
 			end
 		end

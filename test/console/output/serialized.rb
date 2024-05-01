@@ -9,7 +9,7 @@ require 'console/event/spawn'
 
 describe Console::Output::Serialized do
 	let(:io) {StringIO.new}
-	let(:logger) {subject.new(io: io)}
+	let(:logger) {subject.new(io)}
 	
 	let(:message) {"Hello World"}
 	

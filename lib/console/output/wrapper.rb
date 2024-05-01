@@ -5,7 +5,7 @@
 
 module Console
 	module Output
-		class Generic
+		class Wrapper
 			def initialize(delegate, **options)
 				@delegate = delegate
 			end

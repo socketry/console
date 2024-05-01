@@ -10,8 +10,8 @@ require 'fiber/annotation'
 module Console
 	module Output
 		class Serialized
-			def initialize(io: $stderr, format: Format.default, **options)
-				@io = io
+			def initialize(output, format: Format.default, **options)
+				@io = output
 				@format = format
 			end
 			
@@ -66,5 +66,7 @@ module Console
 				@io.puts(self.dump(record))
 			end
 		end
+		
+		JSON = Serialized
 	end
 end

@@ -7,7 +7,7 @@ require 'console/output/terminal'
 
 describe Console::Output::Terminal do
 	let(:io) {StringIO.new}
-	let(:logger) {subject.new(io: io, verbose: true)}
+	let(:logger) {subject.new(io, verbose: true)}
 	
 	let(:message) {"Hello World"}
 	

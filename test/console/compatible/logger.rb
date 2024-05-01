@@ -8,7 +8,7 @@ require 'console/output/terminal'
 
 describe Console::Compatible::Logger do
 	let(:io) {StringIO.new}
-	let(:output) {Console::Output::Terminal.new(io: io)}
+	let(:output) {Console::Output::Terminal.new(io)}
 	let(:logger) {Console::Compatible::Logger.new("Test", output)}
 	
 	it "should log messages" do

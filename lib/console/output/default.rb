@@ -9,11 +9,13 @@ require_relative 'serialized'
 module Console
 	module Output
 		module Default
-			def self.new(output, io: $stderr, **options)
-				if io.tty?
-					Terminal.new(io: io, **options)
+			def self.new(output, **options)
+				output ||= $stderr
+				
+				if output.tty?
+					Terminal.new(output, **options)
 				else
-					Serialized.new(io: io, **options)
+					Serialized.new(output, **options)
 				end
 			end
 		end

@@ -7,7 +7,7 @@ require 'console/logger'
 require 'console/capture'
 
 describe Console::Output::Default do
-	let(:output) {Console::Capture.new}
+	let(:output) {nil}
 	let(:logger) {subject.new(output)}
 	
 	def final_output(output)
@@ -18,11 +18,7 @@ describe Console::Output::Default do
 		end
 	end
 	
-	with 'unspecified output' do
-		let(:output) {nil}
-		
-		it 'should output to $stderr by default' do
-			expect(final_output(logger).io).to be == $stderr
-		end
+	it 'should output to $stderr by default' do
+		expect(final_output(logger).io).to be == $stderr
 	end
 end

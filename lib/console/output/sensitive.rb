@@ -3,11 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2021-2022, by Samuel Williams.
 
-require_relative 'generic'
+require_relative 'wrapper'
 
 module Console
 	module Output
-		class Sensitive < Generic
+		class Sensitive < Wrapper
 			REDACT = /
 				  phone
 				| email

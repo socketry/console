@@ -51,11 +51,11 @@ module Console
 				return start_at
 			end
 			
-			def initialize(io: $stderr, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
-				@io = io
+			def initialize(output, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
+				@io = output
 				@start_at = start_at
 				
-				@terminal = format.nil? ? Console::Terminal.for(io) : format.new(io)
+				@terminal = format.nil? ? Console::Terminal.for(@io) : format.new(@io)
 				
 				if verbose.nil?
 					@verbose = !@terminal.colors?
@@ -226,13 +226,13 @@ module Console
 		
 		module Text
 			def self.new(output, **options)
-				Terminal.new(format: Console::Terminal::Text, **options)
+				Terminal.new(output, format: Console::Terminal::Text, **options)
 			end
 		end
 		
 		module XTerm
 			def self.new(output, **options)
-				Terminal.new(format: Console::Terminal::XTerm, **options)
+				Terminal.new(output, format: Console::Terminal::XTerm, **options)
 			end
 		end
 	end
