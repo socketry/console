@@ -39,16 +39,8 @@ module Console
 			Logger.instance.fatal(...)
 		end
 		
-		def call(...)
-			Logger.instance.call(...)
+		def failure(...)
+			Logger.instance.failure(...)
 		end
-	end
-	
-	def logger= logger
-		warn "Setting logger on #{self} is deprecated. Use Console.logger= instead.", uplevel: 1
-	end
-	
-	def logger
-		Logger.instance
 	end
 end

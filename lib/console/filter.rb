@@ -35,7 +35,7 @@ module Console
 					
 					define_immutable_method(name) do |subject = nil, *arguments, **options, &block|
 						if self.enabled?(subject, level)
-							self.call(subject, *arguments, severity: name, **options, **@options, &block)
+							self.call(subject, *arguments, severity: name, **@options, **options, &block)
 						end
 					end
 					

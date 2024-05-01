@@ -4,53 +4,58 @@
 # Copyright, 2019-2023, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative 'buffer'
 require_relative '../clock'
-
-require_relative 'text'
-require_relative 'xterm'
+require_relative '../terminal'
 
 require 'json'
 require 'fiber'
 require 'fiber/annotation'
-
-require_relative 'formatter/progress'
-require_relative 'formatter/failure'
-require_relative 'formatter/spawn'
+require 'stringio'
 
 module Console
-	module Terminal
-		# This, and all related methods, is considered private.
-		CONSOLE_START_AT = 'CONSOLE_START_AT'
-		
-		# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
-		def self.start_at!(environment = ENV)
-			if time_string = environment[CONSOLE_START_AT]
-				start_at = Time.parse(time_string) rescue nil
+	module Output
+		class Terminal
+			class Buffer < StringIO
+				def initialize(prefix = nil)
+					@prefix = prefix
+					
+					super()
+				end
+				
+				attr :prefix
+				
+				def puts(*args, prefix: @prefix)
+					args.each do |arg|
+						self.write(prefix) if prefix
+						super(arg)
+					end
+				end
+				
+				alias << puts
 			end
 			
-			unless start_at
-				start_at = Time.now
-				environment[CONSOLE_START_AT] = start_at.to_s
+			# This, and all related methods, is considered private.
+			CONSOLE_START_AT = 'CONSOLE_START_AT'
+			
+			# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
+			def self.start_at!(environment = ENV)
+				if time_string = environment[CONSOLE_START_AT]
+					start_at = Time.parse(time_string) rescue nil
+				end
+				
+				unless start_at
+					start_at = Time.now
+					environment[CONSOLE_START_AT] = start_at.to_s
+				end
+				
+				return start_at
 			end
 			
-			return start_at
-		end
-		
-		def self.for(io)
-			if io.isatty
-				XTerm.new(io)
-			else
-				Text.new(io)
-			end
-		end
-		
-		class Logger
-			def initialize(io = $stderr, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
+			def initialize(io: $stderr, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
 				@io = io
 				@start_at = start_at
 				
-				@terminal = format.nil? ? Terminal.for(io) : format.new(io)
+				@terminal = format.nil? ? Console::Terminal.for(io) : format.new(io)
 				
 				if verbose.nil?
 					@verbose = !@terminal.colors?
@@ -70,7 +75,7 @@ module Console
 				@terminal[:value] = @terminal.style(:blue)
 				
 				@formatters = {}
-				self.register_defaults
+				self.register_formatters
 			end
 			
 			attr :io
@@ -84,9 +89,9 @@ module Console
 				@verbose = value
 			end
 			
-			def register_defaults
-				Formatter.constants.each do |formatter|
-					formatter = Formatter.const_get(formatter)
+			def register_formatters(namespace = Console::Terminal::Formatter)
+				namespace.constants.each do |name|
+					formatter = namespace.const_get(name)
 					@formatters[formatter::KEY] = formatter.new(@terminal)
 				end
 			end
@@ -216,6 +221,18 @@ module Console
 				else
 					time_offset_prefix
 				end
+			end
+		end
+		
+		module Text
+			def self.new(output, **options)
+				Terminal.new(format: Console::Terminal::Text, **options)
+			end
+		end
+		
+		module XTerm
+			def self.new(output, **options)
+				Terminal.new(format: Console::Terminal::XTerm, **options)
 			end
 		end
 	end

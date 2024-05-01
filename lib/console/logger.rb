@@ -8,10 +8,7 @@
 require_relative 'output'
 require_relative 'filter'
 require_relative 'event'
-
 require_relative 'resolver'
-require_relative 'terminal/logger'
-require_relative 'serialized/logger'
 
 require 'fiber/storage'
 
@@ -75,17 +72,20 @@ module Console
 		end
 		
 		def error(subject, *arguments, **options, &block)
-			if arguments.first.is_a?(Exception)
-				exception = arguments.shift
-				options.merge!(Event::Failure.for(exception))
+			if self.enabled?(subject, ERROR)
+				if arguments.first.is_a?(Exception)
+					# It's better to use `failure`.
+					exception = arguments.shift
+					options.merge!(Event::Failure.for(exception))
+				end
+				
+				self.call(subject, *arguments, severity: :error, **@options, **options, &block)
 			end
-			
-			super
 		end
 		
 		def failure(subject, exception, *arguments, **options, &block)
 			if self.enabled?(subject, ERROR)
-				self.call(subject, *arguments, severity: :error, **options, **Event::Failure.for(exception), &block)
+				self.call(subject, *arguments, severity: :error, **@options, **options, **Event::Failure.for(exception), &block)
 			end
 		end
 	end

@@ -3,15 +3,11 @@
 # Released under the MIT License.
 # Copyright, 2021-2022, by Samuel Williams.
 
-require_relative '../serialized/logger'
+require_relative 'generic'
 
 module Console
 	module Output
-		class Sensitive
-			def initialize(output, **options)
-				@output = output
-			end
-			
+		class Sensitive < Generic
 			REDACT = /
 				  phone
 				| email
@@ -38,8 +34,14 @@ module Console
 				| password
 			/xi
 			
+			def initialize(output, redact: REDACT, **options)
+				super(output, **options)
+				
+				@redact = redact
+			end
+			
 			def redact?(text)
-				text.match?(REDACT)
+				text.match?(@redact)
 			end
 			
 			def redact_hash(arguments, filter)
@@ -96,7 +98,7 @@ module Console
 					arguments = redact_array(arguments, filter)
 				end
 				
-				@output.call(subject, *arguments, **options)
+				super(subject, *arguments, **options)
 			end
 		end
 	end

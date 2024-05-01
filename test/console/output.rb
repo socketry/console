@@ -17,7 +17,7 @@ describe Console::Output do
 			let(:capture) {File.open('/tmp/console.log', 'w')}
 			
 			it 'should use a serialized format' do
-				expect(output).to be_a(Console::Serialized::Logger)
+				expect(output).to be_a(Console::Output::Serialized)
 			end
 		end
 		
@@ -27,7 +27,7 @@ describe Console::Output do
 			it 'should use a terminal format' do
 				expect($stderr).to receive(:tty?).and_return(true)
 				
-				expect(output).to be_a Console::Terminal::Logger
+				expect(output).to be_a Console::Output::Terminal
 			end
 		end
 		

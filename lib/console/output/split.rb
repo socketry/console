@@ -18,9 +18,9 @@ module Console
 				@outputs.each{|output| output.verbose!(value)}
 			end
 			
-			def call(level, subject = nil, *arguments, **options, &block)
+			def call(...)
 				@outputs.each do |output|
-					output.call(level, subject, *arguments, **options, &block)
+					output.call(...)
 				end
 			end
 		end

@@ -6,7 +6,7 @@
 # Copyright, 2020, by Michael Adams.
 
 require 'console'
-require 'my_module'
+require 'console/capture'
 
 describe Console do
 	it "has a version number" do
@@ -19,41 +19,95 @@ describe Console do
 		end
 	end
 	
-	with MyModule do
-		let(:io) {StringIO.new}
-		let(:logger) {Console::Logger.new(Console::Terminal::Logger.new(io))}
+	with 'an isolated logger' do
+		let(:capture) {Console::Capture.new}
+		let(:logger) {Console::Logger.new(capture, level: Console::Logger::DEBUG)}
 		
-		it "should log some messages" do
+		def around
 			Fiber.new do
 				Console.logger = logger
-				MyModule.test_logger
+				super
 			end.resume
-			
-			expect(io.string).not.to be(:include?, "GOTO LINE 1")
-			expect(io.string).to be(:include?, "There be the dragons!")
 		end
 		
-		it "should show debug messages" do
-			Fiber.new do
-				Console.logger = logger
-				MyModule.logger.debug!
-				MyModule.test_logger
-			end.resume
-			
-			expect(io.string).to be(:include?, "GOTO LINE 1")
+		it "can invoke interface methods for all log levels" do
+			Console::Logger::LEVELS.each do |name, level|
+				Console.public_send(name, self, "Hello World!", name: "test")
+				
+				expect(capture.last).to have_keys(
+					time: be_a(String),
+					severity: be == name,
+					subject: be == self,
+					arguments: be == ["Hello World!"],
+					name: be == "test"
+				)
+			end
 		end
 		
-		it "should log nested exceptions" do
-			expect(logger.debug?).to be == false
-			expect(logger.info?).to be == true
+		it "can invoke interface methods for all log levels with block" do
+			Console::Logger::LEVELS.each do |name, level|
+				Console.public_send(name, self, name: "test") do
+					"Hello World!"
+				end
+				
+				expect(capture.last).to have_keys(
+					time: be_a(String),
+					severity: be == name,
+					subject: be == self,
+					message: be == "Hello World!",
+					name: be == "test"
+				)
+			end
+		end
+		
+		it "can invoke interface methods for all log levels with block buffer" do
+			Console::Logger::LEVELS.each do |name, level|
+				Console.public_send(name, self, name: "test") do |buffer|
+					buffer.puts "Hello World!"
+				end
+				
+				expect(capture.last).to have_keys(
+					time: be_a(String),
+					severity: be == name,
+					subject: be == self,
+					message: be == "Hello World!\n",
+					name: be == "test"
+				)
+			end
+		end
+		
+		it "can invoke error with exception" do
+			begin
+				raise StandardError, "It failed!"
+			rescue => error
+				Console.error(self, error, name: "test")
+			end
 			
-			Fiber.new do
-				Console.logger = logger
-				logger.verbose!
-				MyModule.log_error
-			end.resume
+			expect(capture.last).to have_keys(
+				time: be_a(String),
+				severity: be == :error,
+				event: be == :failure,
+				subject: be == self,
+				message: be == "It failed!",
+				name: be == "test"
+			)
+		end
+		
+		it "can invoke failure with exception" do
+			begin
+				raise StandardError, "It failed!"
+			rescue => error
+				Console.failure(self, error, name: "test")
+			end
 			
-			expect(io.string).to be(:include?, "Caused by ArgumentError: It broken!")
+			expect(capture.last).to have_keys(
+				time: be_a(String),
+				severity: be == :error,
+				event: be == :failure,
+				subject: be == self,
+				message: be == "It failed!",
+				name: be == "test"
+			)
 		end
 	end
 	

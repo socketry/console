@@ -4,11 +4,11 @@
 # Copyright, 2022-2023, by Samuel Williams.
 
 require 'console/compatible/logger'
-require 'console/terminal/logger'
+require 'console/output/terminal'
 
 describe Console::Compatible::Logger do
 	let(:io) {StringIO.new}
-	let(:output) {Console::Terminal::Logger.new(io)}
+	let(:output) {Console::Output::Terminal.new(io: io)}
 	let(:logger) {Console::Compatible::Logger.new("Test", output)}
 	
 	it "should log messages" do

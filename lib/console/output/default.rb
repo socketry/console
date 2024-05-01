@@ -3,19 +3,17 @@
 # Released under the MIT License.
 # Copyright, 2021-2022, by Samuel Williams.
 
-require_relative 'xterm'
-require_relative 'json'
+require_relative 'terminal'
+require_relative 'serialized'
 
 module Console
 	module Output
 		module Default
-			def self.new(output, **options)
-				output ||= $stderr
-				
-				if output.tty?
-					XTerm.new(output, **options)
+			def self.new(output, io: $stderr, **options)
+				if io.tty?
+					Terminal.new(io: io, **options)
 				else
-					JSON.new(output, **options)
+					Serialized.new(io: io, **options)
 				end
 			end
 		end

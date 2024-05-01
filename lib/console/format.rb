@@ -10,9 +10,5 @@ module Console
 		def self.default
 			Safe.new(format: ::JSON)
 		end
-		
-		def self.default_json
-			self.default
-		end
 	end
 end
