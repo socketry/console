@@ -35,7 +35,7 @@ module Console
 			
 			def to_hash
 				Hash.new.tap do |hash|
-					hash[:event] = :failure
+					hash[:type] = :failure
 					hash[:root] = @root if @root
 					extract(@exception, hash)
 				end

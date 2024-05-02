@@ -86,10 +86,12 @@ describe Console do
 			expect(capture.last).to have_keys(
 				time: be_a(String),
 				severity: be == :error,
-				event: be == :failure,
 				subject: be == self,
-				message: be == "It failed!",
-				name: be == "test"
+				name: be == "test",
+				event: have_keys(
+					type: be == :failure,
+					message: be == "It failed!",
+				),
 			)
 		end
 		
@@ -103,10 +105,12 @@ describe Console do
 			expect(capture.last).to have_keys(
 				time: be_a(String),
 				severity: be == :error,
-				event: be == :failure,
 				subject: be == self,
-				message: be == "It failed!",
-				name: be == "test"
+				name: be == "test",
+				event: have_keys(
+					type: be == :failure,
+					message: be == "It failed!",
+				)
 			)
 		end
 	end

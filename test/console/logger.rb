@@ -63,12 +63,14 @@ describe Console::Logger do
 			last = output.last
 			expect(last).to have_keys(
 				severity: be == :error,
-				event: be == :failure,
-				root: be_a(String),
-				class: be == "StandardError",
-				message: be == "It failed!",
-				backtrace: be_a(Array),
-				subject: be == self
+				subject: be == self,
+				event: have_keys(
+					type: be == :failure,
+					root: be_a(String),
+					class: be == "StandardError",
+					message: be == "It failed!",
+					backtrace: be_a(Array),
+				)
 			)
 		end
 	end

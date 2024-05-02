@@ -17,7 +17,7 @@ module Console
 		# event.status = Process.wait
 		# ```
 		class Spawn < Generic
-			def self.for(*arguments, **options, output: Console)
+			def self.for(*arguments, **options)
 				# Extract out the command environment:
 				if arguments.first.is_a?(Hash)
 					environment = arguments.shift
@@ -27,7 +27,7 @@ module Console
 				end
 			end
 			
-			def initialize(environment, arguments, options, output: Console)
+			def initialize(environment, arguments, options)
 				@environment = environment
 				@arguments = arguments
 				@options = options
@@ -36,8 +36,6 @@ module Console
 				
 				@end_time = nil
 				@status = nil
-				
-				@output = output
 			end
 			
 			def duration
@@ -48,7 +46,7 @@ module Console
 			
 			def to_hash
 				Hash.new.tap do |hash|
-					hash[:event] = :spawn
+					hash[:type] = :spawn
 					hash[:environment] = @environment if @environment&.any?
 					hash[:arguments] = @arguments if @arguments&.any?
 					hash[:options] = @options if @options&.any?
@@ -61,15 +59,9 @@ module Console
 				end
 			end
 			
-			def emit
-				@output.info(self, **to_hash)
-			end
-			
 			def status=(status)
 				@end_time = Time.now
 				@status = status
-				
-				self.emit
 			end
 		end
 	end

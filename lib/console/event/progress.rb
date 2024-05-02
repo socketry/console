@@ -13,7 +13,7 @@ module Console
 				Process.clock_gettime(Process::CLOCK_MONOTONIC)
 			end
 			
-			def initialize(subject, total = 0, minimum_output_duration: 0.1, output: Console, **options)
+			def initialize(output, subject, total = 0, minimum_output_duration: 0.1, **options)
 				@output = output
 				@subject = subject
 				@options = options
@@ -57,9 +57,12 @@ module Console
 			
 			def to_hash
 				Hash.new.tap do |hash|
-					hash[:event] = :progress
+					hash[:type] = :progress
 					hash[:current] = @current
 					hash[:total] = @total
+					
+					hash[:duration] = self.duration
+					hash[:estimated_remaining_time] = self.estimated_remaining_time
 				end
 			end
 			
@@ -67,7 +70,7 @@ module Console
 				@current += amount
 				
 				if output?
-					@output.info(@subject, self.to_s, **@options, **self)
+					@output.info(@subject, self.to_s, event: self.to_hash, **@options)
 					@last_output_time = Progress.now
 				end
 				
@@ -77,7 +80,7 @@ module Console
 			def resize(total)
 				@total = total
 				
-				@output.call(@subject, self.to_s, **@options, **self)
+				@output.call(@subject, self.to_s, event: self.to_hash, **@options)
 				@last_output_time = Progress.now
 				
 				return self

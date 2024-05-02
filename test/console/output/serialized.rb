@@ -37,12 +37,14 @@ describe Console::Output::Serialized do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		
 		it "can log structured events" do
-			logger.call(subject, **event)
+			logger.call(subject, event: event)
 			
 			expect(record).to have_keys(
 				subject: be == subject.name,
-				event: be == "spawn",
-				arguments: be == ["ls -lah"],
+				event: have_keys(
+					type: be == "spawn",
+					arguments: be == ["ls -lah"],
+				),
 			)
 		end
 	end

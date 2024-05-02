@@ -81,5 +81,9 @@ module Console
 			
 			super
 		end
+		
+		def failure(subject, exception, **options)
+			error(subject, event: Event::Failure.for(exception), **options)
+		end
 	end
 end

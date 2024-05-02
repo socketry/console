@@ -65,10 +65,12 @@ describe Console::Event::Progress do
 			expect(last).to have_keys(
 				severity: be == :info,
 				subject: be == "My Measurement",
-				event: be == :progress,
-				current: be == 100,
-				total: be == 100,
-				arguments: be == ["100/100 completed in 0.0s, 0.0s remaining."]
+				arguments: be == ["100/100 completed in 0.0s, 0.0s remaining."],
+				event: have_keys(
+					type: be == :progress,
+					current: be == 100,
+					total: be == 100,
+				),
 			)
 		end
 	end
