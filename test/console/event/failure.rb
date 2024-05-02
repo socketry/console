@@ -10,7 +10,7 @@ require 'console/captured_output'
 
 class TestError < StandardError
 	def detailed_message(...)
-		"#{super}\nwith details"
+		"#{message}\nwith details"
 	end
 end
 
