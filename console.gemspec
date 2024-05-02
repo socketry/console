@@ -24,6 +24,6 @@ Gem::Specification.new do |spec|
 	spec.required_ruby_version = ">= 3.1"
 	
 	spec.add_dependency "fiber-annotation"
-	spec.add_dependency "fiber-local"
+	spec.add_dependency "fiber-local", "~> 1.1"
 	spec.add_dependency "json"
 end
