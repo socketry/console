@@ -41,6 +41,9 @@ module Console
 			
 			def size
 				@output.winsize
+			rescue Errno::ENOTTY
+				# Fake it...
+				[24, 80]
 			end
 			
 			def width
