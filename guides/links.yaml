@@ -4,3 +4,5 @@ command-line:
   order: 2
 integration:
   order: 3
+events:
+  order: 4
