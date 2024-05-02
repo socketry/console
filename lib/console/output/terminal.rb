@@ -121,9 +121,9 @@ module Console
 					end
 				end
 				
-				if event and formatter = @formatters[event]
-					formatter.format(options, buffer, verbose: @verbose, width: width - indent_size)
-				elsif options&.any?
+				if event
+					format_event(event)
+				if options&.any?
 					format_options(options, buffer)
 				end
 				
@@ -131,6 +131,14 @@ module Console
 			end
 			
 			protected
+			
+			def format_event(event)
+				event = event.to_hash
+				
+				if formatter = @formatters[event]
+				
+				formatter.format(options, buffer, verbose: @verbose, width: width - indent_size)
+			end
 			
 			def format_options(options, output)
 				format_value(::JSON.pretty_generate(options), output)

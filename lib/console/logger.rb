@@ -72,21 +72,14 @@ module Console
 		end
 		
 		def error(subject, *arguments, **options, &block)
-			if self.enabled?(subject, ERROR)
-				if arguments.first.is_a?(Exception)
-					# It's better to use `failure`.
-					exception = arguments.shift
-					options.merge!(Event::Failure.for(exception))
-				end
-				
-				self.call(subject, *arguments, severity: :error, **@options, **options, &block)
+			# This is a special case where we want to create a failure event from an exception.
+			# It's common to see `Console.error(self, exception)` in code.
+			if arguments.first.is_a?(Exception)
+				exception = arguments.shift
+				options[:event] = Event::Failure.for(exception)
 			end
-		end
-		
-		def failure(subject, exception, *arguments, **options, &block)
-			if self.enabled?(subject, ERROR)
-				self.call(subject, *arguments, severity: :error, **@options, **options, **Event::Failure.for(exception), &block)
-			end
+			
+			super
 		end
 	end
 end

@@ -24,6 +24,10 @@ module Console
 				self.new(exception, self.default_root)
 			end
 			
+			def self.log(subject, exception, **options)
+				Console.error(subject, **self.for(exception).to_hash, **options)
+			end
+			
 			def initialize(exception, root = Dir.getwd)
 				@exception = exception
 				@root = root

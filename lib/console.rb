@@ -39,10 +39,6 @@ module Console
 			Logger.instance.fatal(...)
 		end
 		
-		def failure(...)
-			Logger.instance.failure(...)
-		end
-		
 		def call(...)
 			Logger.instance.call(...)
 		end
