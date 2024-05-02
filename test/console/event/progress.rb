@@ -4,13 +4,10 @@
 # Copyright, 2020-2022, by Samuel Williams.
 
 require 'console/progress'
-
-require 'console'
-require 'console/capture'
+require 'console/captured_output'
 
 describe Console::Progress do
-	let(:capture) {Console::Capture.new}
-	let(:logger) {Console::Logger.new(capture)}
+	include_context Console::CapturedOutput
 	let(:progress) {logger.progress("My Measurement", 100)}
 	
 	with '#mark' do

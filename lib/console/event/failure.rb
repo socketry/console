@@ -41,6 +41,12 @@ module Console
 				end
 			end
 			
+			def emit(*arguments, **options)
+				options[:severity] ||= :error
+				
+				super
+			end
+			
 			private
 			
 			def extract(exception, hash)

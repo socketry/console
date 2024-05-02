@@ -69,7 +69,7 @@ module Console
 		def progress(subject, total, **options)
 			options[:severity] ||= :info
 			
-			Progress.new(self, subject, total, **options)
+			Progress.new(subject, total, **options)
 		end
 		
 		def error(subject, *arguments, **options, &block)

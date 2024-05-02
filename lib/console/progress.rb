@@ -12,8 +12,7 @@ module Console
 			Process.clock_gettime(Process::CLOCK_MONOTONIC)
 		end
 		
-		def initialize(output, subject, total = 0, minimum_output_duration: 0.1, **options)
-			@output = output
+		def initialize(subject, total = 0, minimum_output_duration: 0.1, **options)
 			@subject = subject
 			@options = options
 			
@@ -69,7 +68,7 @@ module Console
 			@current += amount
 			
 			if output?
-				@output.info(@subject, self.to_s, event: self.to_hash, **@options)
+				Console.call(@subject, self.to_s, event: self.to_hash, **@options)
 				@last_output_time = Progress.now
 			end
 			
@@ -79,14 +78,14 @@ module Console
 		def resize(total)
 			@total = total
 			
-			@output.call(@subject, self.to_s, event: self.to_hash, **@options)
+			Console.call(@subject, self.to_s, event: self.to_hash, **@options)
 			@last_output_time = Progress.now
 			
 			return self
 		end
 		
 		def mark(*arguments, **options)
-			@output.call(@subject, *arguments, **options, **@options)
+			Console.call(@subject, *arguments, **options, **@options)
 		end
 		
 		def to_s

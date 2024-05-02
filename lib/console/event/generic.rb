@@ -13,6 +13,10 @@ module Console
 			def to_json(...)
 				JSON.generate(as_json, ...)
 			end
+			
+			def emit(*arguments, **options)
+				Console.call(*arguments, event: self, **options)
+			end
 		end
 	end
 end

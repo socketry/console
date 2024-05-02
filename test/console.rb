@@ -99,7 +99,7 @@ describe Console do
 			begin
 				raise StandardError, "It failed!"
 			rescue => error
-				Console.failure(self, error, name: "test")
+				Console::Event::Failure.for(error).emit(self, name: "test")
 			end
 			
 			expect(capture.last).to have_keys(

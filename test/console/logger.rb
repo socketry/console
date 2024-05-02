@@ -52,29 +52,6 @@ describe Console::Logger do
 		end
 	end
 	
-	with '#failure' do
-		it "logs error message" do
-			begin
-				raise StandardError, "It failed!"
-			rescue => error
-				logger.failure(self, error)
-			end
-			
-			last = output.last
-			expect(last).to have_keys(
-				severity: be == :error,
-				subject: be == self,
-				event: have_keys(
-					type: be == :failure,
-					root: be_a(String),
-					class: be == "StandardError",
-					message: be == "It failed!",
-					backtrace: be_a(Array),
-				)
-			)
-		end
-	end
-	
 	with "level" do
 		let(:level) {0}
 		let(:logger) {subject.new(output, level: level)}

@@ -122,7 +122,7 @@ module Console
 				end
 				
 				if event
-					format_event(event, buffer)
+					format_event(event, buffer, width - indent_size)
 				end
 				
 				if options&.any?
@@ -134,12 +134,12 @@ module Console
 			
 			protected
 			
-			def format_event(event, buffer)
+			def format_event(event, buffer, width)
 				event = event.to_hash
 				type = event[:type]
 				
 				if formatter = @formatters[type]
-					formatter.format(options, buffer, verbose: @verbose, width: width - indent_size)
+					formatter.format(event, buffer, verbose: @verbose, width: width)
 				else
 					format_value(::JSON.pretty_generate(event), buffer)
 				end
