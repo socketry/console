@@ -18,16 +18,12 @@ describe Console::Logger do
 	with '.instance' do
 		it "propagates to child thread" do
 			Fiber.new do
-				expect(Fiber[:console_logger]).to be_nil
-				
 				logger = Console::Logger.instance
 				
 				Fiber.new do
 					expect(Console::Logger.instance).to be_equal(logger)
 				end.resume
 			end.resume
-			
-			expect(Fiber[:console_logger]).to be_nil
 		end
 	end
 	
