@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022-2023, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
 require 'logger'
 
 module Console
 	module Compatible
+		# A compatible interface for {::Logger} which can be used with {Console}.
 		class Logger < ::Logger
 			class LogDevice
 				def initialize(subject, output)

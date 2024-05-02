@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require 'io/console'
 
@@ -24,6 +24,10 @@ module Console
 			
 			def colors?
 				false
+			end
+			
+			def width
+				80
 			end
 			
 			def style(foreground, background = nil, *attributes)

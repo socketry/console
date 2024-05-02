@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2019, by Bryan Powell.
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Robert Schulze.
@@ -49,18 +49,6 @@ describe Console::Logger do
 				name: be == "nested",
 				subject: be == message,
 			)
-		end
-	end
-	
-	with '#failure' do
-		it "logs error message" do
-			logger.failure(self, StandardError.new("It failed!"))
-			
-			last = output.last
-			expect(last).to have_keys(
-				severity: be == :fatal,
-			)
-			expect(last[:arguments].first).to be_a(StandardError)
 		end
 	end
 	

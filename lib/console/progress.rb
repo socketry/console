@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 # Copyright, 2022, by Anton Sozontov.
 
-require_relative 'event/progress'
 require_relative 'clock'
 
 module Console
@@ -13,9 +12,9 @@ module Console
 			Process.clock_gettime(Process::CLOCK_MONOTONIC)
 		end
 		
-		def initialize(output, subject, total = 0, minimum_output_duration: 0.1)
-			@output = output
+		def initialize(subject, total = 0, minimum_output_duration: 0.1, **options)
 			@subject = subject
+			@options = options
 			
 			@start_time = Progress.now
 			
@@ -54,11 +53,22 @@ module Console
 			end
 		end
 		
+		def to_hash
+			Hash.new.tap do |hash|
+				hash[:type] = :progress
+				hash[:current] = @current
+				hash[:total] = @total
+				
+				hash[:duration] = self.duration
+				hash[:estimated_remaining_time] = self.estimated_remaining_time
+			end
+		end
+		
 		def increment(amount = 1)
 			@current += amount
 			
 			if output?
-				@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+				Console.call(@subject, self.to_s, event: self.to_hash, **@options)
 				@last_output_time = Progress.now
 			end
 			
@@ -68,14 +78,14 @@ module Console
 		def resize(total)
 			@total = total
 			
-			@output.info(@subject, self) {Event::Progress.new(@current, @total)}
+			Console.call(@subject, self.to_s, event: self.to_hash, **@options)
 			@last_output_time = Progress.now
 			
 			return self
 		end
 		
-		def mark(...)
-			@output.info(@subject, ...)
+		def mark(*arguments, **options)
+			Console.call(@subject, *arguments, **options, **@options)
 		end
 		
 		def to_s

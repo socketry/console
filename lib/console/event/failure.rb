@@ -1,83 +1,74 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
 require_relative 'generic'
 
 module Console
 	module Event
+		# Represents a failure event.
+		#
+		# ```ruby
+		# Console::Event::Failure.for(exception).emit(self)
+		# ```
 		class Failure < Generic
-			def self.current_working_directory
+			def self.default_root
 				Dir.getwd
 			rescue # e.g. Errno::EMFILE
 				nil
 			end
 			
 			def self.for(exception)
-				self.new(exception, self.current_working_directory)
+				self.new(exception, self.default_root)
 			end
 			
-			def initialize(exception, root = nil)
+			def self.log(subject, exception, **options)
+				Console.error(subject, **self.for(exception).to_hash, **options)
+			end
+			
+			def initialize(exception, root = Dir.getwd)
 				@exception = exception
 				@root = root
 			end
 			
-			attr :exception
-			attr :root
-			
-			def self.register(terminal)
-				terminal[:exception_title] ||= terminal.style(:red, nil, :bold)
-				terminal[:exception_detail] ||= terminal.style(:yellow)
-				terminal[:exception_backtrace] ||= terminal.style(:red)
-				terminal[:exception_backtrace_other] ||= terminal.style(:red, nil, :faint)
-				terminal[:exception_message] ||= terminal.style(:default)
-			end
-			
-			def to_h
-				{exception: @exception, root: @root}
-			end
-			
-			def format(output, terminal, verbose)
-				format_exception(@exception, nil, output, terminal, verbose)
-			end
-			
-			if Exception.method_defined?(:detailed_message)
-				def detailed_message(exception)
-					exception.detailed_message
-				end
-			else
-				def detailed_message(exception)
-					exception.message
+			def to_hash
+				Hash.new.tap do |hash|
+					hash[:type] = :failure
+					hash[:root] = @root if @root
+					extract(@exception, hash)
 				end
 			end
 			
-			def format_exception(exception, prefix, output, terminal, verbose)
-				lines = detailed_message(exception).lines.map(&:chomp)
+			def emit(*arguments, **options)
+				options[:severity] ||= :error
 				
-				output.puts "  #{prefix}#{terminal[:exception_title]}#{exception.class}#{terminal.reset}: #{lines.shift}"
+				super
+			end
+			
+			private
+			
+			def extract(exception, hash)
+				hash[:class] = exception.class.name
 				
-				lines.each do |line|
-					output.puts "  #{terminal[:exception_detail]}#{line}#{terminal.reset}"
-				end
-				
-				root_pattern = /^#{@root}\// if @root
-				
-				exception.backtrace&.each_with_index do |line, index|
-					path, offset, message = line.split(":", 3)
-					style = :exception_backtrace
+				if exception.respond_to?(:detailed_message)
+					message = exception.detailed_message
 					
-					# Make the path a bit more readable
-					if root_pattern and path.sub!(root_pattern, "").nil?
-						style = :exception_backtrace_other
+					# We want to remove the trailling exception class as we format it differently:
+					message.sub!(/\s*\(.*?\)$/, '')
+					
+					hash[:message] = message
+				else
+					hash[:message] = exception.message
+				end
+				
+				hash[:backtrace] = exception.backtrace
+				
+				if cause = exception.cause
+					hash[:cause] = Hash.new.tap do |cause_hash|
+						extract(cause, cause_hash)
 					end
-					
-					output.puts "  #{index == 0 ? "→" : " "} #{terminal[style]}#{path}:#{offset}#{terminal[:exception_message]} #{message}#{terminal.reset}"
-				end
-				
-				if exception.cause
-					format_exception(exception.cause, "Caused by ", output, terminal, verbose)
 				end
 			end
 		end

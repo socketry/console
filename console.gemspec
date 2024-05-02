@@ -13,11 +13,15 @@ Gem::Specification.new do |spec|
 	spec.cert_chain  = ['release.cert']
 	spec.signing_key = File.expand_path('~/.gem/release.pem')
 	
-	spec.homepage = "https://socketry.github.io/console/"
+	spec.homepage = "https://socketry.github.io/console"
+	
+	spec.metadata = {
+		"documentation_uri" => "https://socketry.github.io/console/",
+	}
 	
 	spec.files = Dir.glob(['{bake,lib}/**/*', '*.md'], File::FNM_DOTMATCH, base: __dir__)
 	
-	spec.required_ruby_version = ">= 3.0"
+	spec.required_ruby_version = ">= 3.1"
 	
 	spec.add_dependency "fiber-annotation"
 	spec.add_dependency "fiber-storage"

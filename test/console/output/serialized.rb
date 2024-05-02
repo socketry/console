@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2023, by Felix Yan.
 
-require 'console/serialized/logger'
+require 'console/output/serialized'
 require 'console/event/spawn'
 
-describe Console::Serialized::Logger do
+describe Console::Output::Serialized do
 	let(:io) {StringIO.new}
 	let(:logger) {subject.new(io)}
 	
@@ -37,26 +37,15 @@ describe Console::Serialized::Logger do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		
 		it "can log structured events" do
-			logger.call(subject, event)
+			logger.call(subject, event: event)
 			
 			expect(record).to have_keys(
 				subject: be == subject.name,
-				message: be == ["Console::Event::Spawn", {:arguments => ["ls -lah"]}]
+				event: have_keys(
+					type: be == "spawn",
+					arguments: be == ["ls -lah"],
+				),
 			)
-		end
-	end
-	
-	with 'exception' do
-		let(:error_message) {record[:error]}
-		
-		it "can log exception message" do
-			begin
-				raise "Boom"
-			rescue => error
-				logger.call(self, error)
-			end
-			
-			expect(error_message).to have_keys(:kind, :message, :stack)
 		end
 	end
 	

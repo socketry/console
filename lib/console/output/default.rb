@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2021-2022, by Samuel Williams.
+# Copyright, 2021-2024, by Samuel Williams.
 
-require_relative 'xterm'
-require_relative 'json'
+require_relative 'terminal'
+require_relative 'serialized'
 
 module Console
 	module Output
@@ -13,9 +13,9 @@ module Console
 				output ||= $stderr
 				
 				if output.tty?
-					XTerm.new(output, **options)
+					Terminal.new(output, **options)
 				else
-					JSON.new(output, **options)
+					Serialized.new(output, **options)
 				end
 			end
 		end

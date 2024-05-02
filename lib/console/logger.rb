@@ -1,17 +1,15 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Bryan Powell.
 # Copyright, 2021, by Robert Schulze.
 
 require_relative 'output'
 require_relative 'filter'
-require_relative 'progress'
-
+require_relative 'event'
 require_relative 'resolver'
-require_relative 'terminal/logger'
-require_relative 'serialized/logger'
+require_relative 'progress'
 
 require 'fiber/storage'
 
@@ -69,12 +67,24 @@ module Console
 		end
 		
 		def progress(subject, total, **options)
-			Progress.new(self, subject, total, **options)
+			options[:severity] ||= :info
+			
+			Progress.new(subject, total, **options)
 		end
 		
-		# @deprecated Use `fatal` instead.
-		def failure(subject, exception, *arguments, &block)
-			self.fatal(subject, exception, *arguments, &block)
+		def error(subject, *arguments, **options, &block)
+			# This is a special case where we want to create a failure event from an exception.
+			# It's common to see `Console.error(self, exception)` in code.
+			if arguments.first.is_a?(Exception)
+				exception = arguments.shift
+				options[:event] = Event::Failure.for(exception)
+			end
+			
+			super
+		end
+		
+		def failure(subject, exception, **options)
+			error(subject, event: Event::Failure.for(exception), **options)
 		end
 	end
 end

@@ -1,12 +1,21 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require_relative 'generic'
+require_relative '../clock'
 
 module Console
 	module Event
+		# Represents a spawn event.
+		#
+		# ```ruby
+		# Console.info(self, **Console::Event::Spawn.for("ls", "-l"))
+		#
+		# event = Console::Event::Spawn.for("ls", "-l")
+		# event.status = Process.wait
+		# ```
 		class Spawn < Generic
 			def self.for(*arguments, **options)
 				# Extract out the command environment:
@@ -22,44 +31,38 @@ module Console
 				@environment = environment
 				@arguments = arguments
 				@options = options
+				
+				@start_time = Clock.now
+				
+				@end_time = nil
+				@status = nil
 			end
 			
-			attr :environment
-			attr :arguments
-			attr :options
-			
-			def chdir_string(options)
-				if options and chdir = options[:chdir]
-					" in #{chdir}"
+			def duration
+				if @end_time
+					@end_time - @start_time
 				end
 			end
 			
-			def self.register(terminal)
-				terminal[:shell_command] ||= terminal.style(:blue, nil, :bold)
-			end
-			
-			def to_h
+			def to_hash
 				Hash.new.tap do |hash|
+					hash[:type] = :spawn
 					hash[:environment] = @environment if @environment&.any?
 					hash[:arguments] = @arguments if @arguments&.any?
 					hash[:options] = @options if @options&.any?
-				end
-			end
-			
-			def format(output, terminal, verbose)
-				arguments = @arguments.flatten.collect(&:to_s)
-				
-				output.puts "  #{terminal[:shell_command]}#{arguments.join(' ')}#{terminal.reset}#{chdir_string(options)}"
-				
-				if verbose and @environment
-					@environment.each do |key, value|
-						output.puts "    export #{key}=#{value}"
+					
+					hash[:status] = @status.to_i if @status
+					
+					if duration = self.duration
+						hash[:duration] = duration
 					end
 				end
 			end
+			
+			def status=(status)
+				@end_time = Time.now
+				@status = status
+			end
 		end
 	end
-	
-	# Deprecated.
-	Shell = Event::Spawn
 end

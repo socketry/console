@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require_relative 'filter'
 
@@ -40,7 +40,7 @@ module Console
 			@verbose
 		end
 		
-		def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
+		def call(subject = nil, *arguments, severity: UNKNOWN, event: nil,  **options, &block)
 			message = {
 				time: ::Time.now.iso8601,
 				severity: severity,
@@ -49,6 +49,10 @@ module Console
 			
 			if subject
 				message[:subject] = subject
+			end
+			
+			if event
+				message[:event] = event.to_hash
 			end
 			
 			if arguments.any?

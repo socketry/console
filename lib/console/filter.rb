@@ -1,12 +1,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2019, by Bryan Powell.
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Robert Schulze.
-
-require_relative 'buffer'
 
 module Console
 	UNKNOWN = 'unknown'
@@ -37,7 +35,7 @@ module Console
 					
 					define_immutable_method(name) do |subject = nil, *arguments, **options, &block|
 						if self.enabled?(subject, level)
-							self.call(subject, *arguments, severity: name, **options, **@options, &block)
+							self.call(subject, *arguments, severity: name, **@options, **options, &block)
 						end
 					end
 					

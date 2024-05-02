@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
 require 'io/console'
 
@@ -41,6 +41,13 @@ module Console
 			
 			def size
 				@output.winsize
+			rescue Errno::ENOTTY
+				# Fake it...
+				[24, 80]
+			end
+			
+			def width
+				size.last
 			end
 			
 			def style(foreground, background = nil, *attributes)

@@ -1,53 +1,61 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative '../buffer'
-require_relative '../event'
 require_relative '../clock'
-
-require_relative 'text'
-require_relative 'xterm'
+require_relative '../terminal'
 
 require 'json'
 require 'fiber'
 require 'fiber/annotation'
+require 'stringio'
 
 module Console
-	module Terminal
-		# This, and all related methods, is considered private.
-		CONSOLE_START_AT = 'CONSOLE_START_AT'
-		
-		# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
-		def self.start_at!(environment = ENV)
-			if time_string = environment[CONSOLE_START_AT]
-				start_at = Time.parse(time_string) rescue nil
+	module Output
+		class Terminal
+			class Buffer < StringIO
+				def initialize(prefix = nil)
+					@prefix = prefix
+					
+					super()
+				end
+				
+				attr :prefix
+				
+				def puts(*args, prefix: @prefix)
+					args.each do |arg|
+						self.write(prefix) if prefix
+						super(arg)
+					end
+				end
+				
+				alias << puts
 			end
 			
-			unless start_at
-				start_at = Time.now
-				environment[CONSOLE_START_AT] = start_at.to_s
+			# This, and all related methods, is considered private.
+			CONSOLE_START_AT = 'CONSOLE_START_AT'
+			
+			# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
+			def self.start_at!(environment = ENV)
+				if time_string = environment[CONSOLE_START_AT]
+					start_at = Time.parse(time_string) rescue nil
+				end
+				
+				unless start_at
+					start_at = Time.now
+					environment[CONSOLE_START_AT] = start_at.to_s
+				end
+				
+				return start_at
 			end
 			
-			return start_at
-		end
-		
-		def self.for(io)
-			if io.isatty
-				XTerm.new(io)
-			else
-				Text.new(io)
-			end
-		end
-		
-		class Logger
-			def initialize(io = $stderr, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
-				@io = io
+			def initialize(output, verbose: nil, start_at: Terminal.start_at!, format: nil, **options)
+				@io = output
 				@start_at = start_at
 				
-				@terminal = format.nil? ? Terminal.for(io) : format.new(io)
+				@terminal = format.nil? ? Console::Terminal.for(@io) : format.new(@io)
 				
 				if verbose.nil?
 					@verbose = !@terminal.colors?
@@ -66,7 +74,8 @@ module Console
 				@terminal[:annotation] = @terminal.reset
 				@terminal[:value] = @terminal.style(:blue)
 				
-				self.register_defaults(@terminal)
+				@formatters = {}
+				self.register_formatters
 			end
 			
 			attr :io
@@ -80,20 +89,23 @@ module Console
 				@verbose = value
 			end
 			
-			def register_defaults(terminal)
-				Event.constants.each do |constant|
-					klass = Event.const_get(constant)
-					klass.register(terminal)
+			def register_formatters(namespace = Console::Terminal::Formatter)
+				namespace.constants.each do |name|
+					formatter = namespace.const_get(name)
+					@formatters[formatter::KEY] = formatter.new(@terminal)
 				end
 			end
 			
 			UNKNOWN = :unknown
 			
-			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, **options, &block)
+			def call(subject = nil, *arguments, name: nil, severity: UNKNOWN, event: nil, **options, &block)
+				width = @terminal.width
+				
 				prefix = build_prefix(name || severity.to_s)
 				indent = " " * prefix.size
 				
 				buffer = Buffer.new("#{indent}| ")
+				indent_size = buffer.prefix.size
 				
 				format_subject(severity, prefix, subject, buffer)
 				
@@ -109,6 +121,10 @@ module Console
 					end
 				end
 				
+				if event
+					format_event(event, buffer, width - indent_size)
+				end
+				
 				if options&.any?
 					format_options(options, buffer)
 				end
@@ -118,20 +134,24 @@ module Console
 			
 			protected
 			
+			def format_event(event, buffer, width)
+				event = event.to_hash
+				type = event[:type]
+				
+				if formatter = @formatters[type]
+					formatter.format(event, buffer, verbose: @verbose, width: width)
+				else
+					format_value(::JSON.pretty_generate(event), buffer)
+				end
+			end
+			
 			def format_options(options, output)
 				format_value(::JSON.pretty_generate(options), output)
 			end
 			
 			def format_argument(argument, output)
-				case argument
-				when Exception
-					Event::Failure.for(argument).format(output, @terminal, @verbose)
-				when Event::Generic
-					argument.format(output, @terminal, @verbose)
-				else
-					argument.to_s.each_line do |line|
-						output.puts line
-					end
+				argument.to_s.each_line do |line|
+					output.puts line
 				end
 			end
 			
@@ -214,6 +234,18 @@ module Console
 				else
 					time_offset_prefix
 				end
+			end
+		end
+		
+		module Text
+			def self.new(output, **options)
+				Terminal.new(output, format: Console::Terminal::Text, **options)
+			end
+		end
+		
+		module XTerm
+			def self.new(output, **options)
+				Terminal.new(output, format: Console::Terminal::XTerm, **options)
 			end
 		end
 	end

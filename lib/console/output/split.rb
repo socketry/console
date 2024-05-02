@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022-2023, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
 module Console
 	module Output
@@ -18,9 +18,9 @@ module Console
 				@outputs.each{|output| output.verbose!(value)}
 			end
 			
-			def call(level, subject = nil, *arguments, **options, &block)
+			def call(...)
 				@outputs.each do |output|
-					output.call(level, subject, *arguments, **options, &block)
+					output.call(...)
 				end
 			end
 		end
