@@ -9,6 +9,7 @@ require_relative 'output'
 require_relative 'filter'
 require_relative 'event'
 require_relative 'resolver'
+require_relative 'progress'
 
 require 'fiber/storage'
 
@@ -68,8 +69,7 @@ module Console
 		def progress(subject, total, **options)
 			options[:severity] ||= :info
 			
-			# This isn't strictly speaking, a discrete event. So maybe the module is wrong.
-			Event::Progress.new(self, subject, total, **options)
+			Progress.new(self, subject, total, **options)
 		end
 		
 		def error(subject, *arguments, **options, &block)
