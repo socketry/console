@@ -6,7 +6,7 @@
 # Copyright, 2020, by Michael Adams.
 
 require 'console'
-require 'console/capture'
+require 'console/captured_output'
 
 describe Console do
 	it "has a version number" do
@@ -20,15 +20,7 @@ describe Console do
 	end
 	
 	with 'an isolated logger' do
-		let(:capture) {Console::Capture.new}
-		let(:logger) {Console::Logger.new(capture, level: Console::Logger::DEBUG)}
-		
-		def around
-			Fiber.new do
-				Console.logger = logger
-				super
-			end.resume
-		end
+		include_context Console::CapturedOutput
 		
 		it "can invoke interface methods for all log levels" do
 			Console::Logger::LEVELS.each do |name, level|
