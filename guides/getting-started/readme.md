@@ -116,7 +116,7 @@ class Cache
 	def fetch(key)
 		@entries.fetch(key)
 	rescue => error
-		Console.error(self, error)
+		Console::Event::Failure.for(error).emit(self, "Cache fetch failure!")
 	end
 end
 
@@ -125,11 +125,12 @@ Cache.new.fetch(:foo)
 
 This will produce the following output:
 
-<pre><font color="#AA0000">  0.0s    fatal:</font> <b>Cache</b> <font color="#717171">[oid=0x3c] [pid=220776] [2020-08-08 14:10:00 +1200]</font>
-               |   <font color="#AA0000"><b>KeyError</b></font>: key not found: :foo
-               |   → <font color="#AA0000">cache.rb:11</font> in &apos;fetch&apos;
-               |     <font color="#AA0000">cache.rb:11</font> in &apos;fetch&apos;
-               |     <font color="#AA0000">cache.rb:17</font> in &apos;&lt;main&gt;&apos;
+<pre><font color="#C01C28">  0.0s    error:</font> <b>Cache</b> <font color="#8B8A88">[oid=0x848] [ec=0x85c] [pid=571936] [2024-05-03 10:55:11 +1200]</font>
+               | Cache fetch failure!
+               |   <font color="#C01C28"><b>KeyError</b></font>: <b>key not found: :foo (</b><u style="text-decoration-style:solid"><b>KeyError</b></u><b>)</b>
+               |   → <font color="#C01C28">test.rb:15</font> in `fetch&apos;
+               |     <font color="#C01C28">test.rb:15</font> in `fetch&apos;
+               |     <font color="#C01C28">test.rb:21</font> in `&lt;top (required)&gt;&apos;
 </pre>
 
 ## Program Structure
@@ -143,42 +144,15 @@ Individual classes should not be catching and logging exceptions. It makes for s
 Use `Console::Split` to log to multiple destinations.
 
 ``` ruby
-require 'console/terminal'
-require 'console/serialized/logger'
-require 'console/logger'
-require 'console/split'
-
-terminal = Console::Terminal::Logger.new
-file = Console::Serialized::Logger.new(File.open("log.json", "a"))
-
-logger = Console::Logger.new(Console::Split[terminal, file])
-
-logger.info "I can go everywhere!"
-```
-
-### Console Formatting
-
-Console classes are used to wrap data which can generate structured log messages:
-
-``` ruby
 require 'console'
+require 'console/output/split'
 
-class MyEvent < Console::Event::Generic
-	def format(output, terminal, verbose)
-		output.puts "My event message!"
-	end
-end
+terminal = Console::Output::Terminal.new($stderr)
+serialized = Console::Output::Serialized.new(File.open("log.json", "a"))
+Console.logger = Console::Logger.new(Console::Output::Split[terminal, serialized])
 
-Console.info("It finally happened.", MyEvent.new)
+Console.info "I can go everywhere!"
 ```
-
-#### Failure Events
-
-`Console::Event::Failure` represents an exception and will log the message and backtrace recursively.
-
-#### Spawn Events
-
-`Console::Event::Spawn` represents the execution of a command, and will log the environment, arguments and options used to execute it.
 
 ### Custom Log Levels
 
