@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
 require_relative 'generic'
@@ -11,8 +11,8 @@ module Console
 		# Represents a failure event.
 		#
 		# ```ruby
-		# Console.error(self, **Console::Event::Failure.for(exception))
-		# ````
+		# Console::Event::Failure.for(exception).emit(self)
+		# ```
 		class Failure < Generic
 			def self.default_root
 				Dir.getwd
