@@ -68,6 +68,7 @@ module Console
 		def progress(subject, total, **options)
 			options[:severity] ||= :info
 			
+			# This isn't strictly speaking, a discrete event. So maybe the module is wrong.
 			Event::Progress.new(self, subject, total, **options)
 		end
 		
