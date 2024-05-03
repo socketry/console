@@ -59,6 +59,11 @@ module Console
 				end
 			end
 			
+			def emit(*arguments, **options)
+				options[:severity] ||= :info
+				super
+			end
+			
 			def status=(status)
 				@end_time = Time.now
 				@status = status

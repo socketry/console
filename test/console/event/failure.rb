@@ -4,9 +4,8 @@
 # Copyright, 2021, by Robert Schulze.
 # Copyright, 2021-2024, by Samuel Williams.
 
-require 'console'
-require 'console/capture'
 require 'console/captured_output'
+require 'console/event/failure'
 
 class TestError < StandardError
 	def detailed_message(...)

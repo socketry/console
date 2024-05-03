@@ -4,6 +4,7 @@
 # Copyright, 2024, by Samuel Williams.
 
 require 'sus/shared'
+require 'console'
 require 'console/capture'
 require 'console/logger'
 
