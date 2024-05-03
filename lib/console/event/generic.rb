@@ -14,6 +14,10 @@ module Console
 				JSON.generate(as_json, ...)
 			end
 			
+			def to_s
+				to_json
+			end
+			
 			def emit(*arguments, **options)
 				Console.call(*arguments, event: self, **options)
 			end
