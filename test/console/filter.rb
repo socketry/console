@@ -4,6 +4,8 @@
 # Copyright, 2023, by Samuel Williams.
 
 require 'console/filter'
+require 'console/logger'
+require 'console/capture'
 
 module MySubject
 end
@@ -61,6 +63,32 @@ describe Console::Filter do
 			expect{
 				logger.clear("Hello World")
 			}.to raise_exception(ArgumentError)
+		end
+	end
+	
+	with '#call' do
+		it 'ignores messages below the level' do
+			logger.level = Console::Logger::INFO
+			
+			logger.call(MySubject, "Hello World", severity: :debug)
+			
+			expect(output).to be(:empty?)
+		end
+		
+		it 'logs messages at the level' do
+			logger.level = Console::Logger::INFO
+			
+			logger.call(MySubject, "Hello World", severity: :info)
+			
+			expect(output).to be(:include?, "Hello World")
+		end
+		
+		it 'logs messages above the level' do
+			logger.level = Console::Logger::INFO
+			
+			logger.call(MySubject, "Hello World", severity: :warn)
+			
+			expect(output).to be(:include?, "Hello World")
 		end
 	end
 end

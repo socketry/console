@@ -7,7 +7,7 @@
 # Copyright, 2021, by Robert Schulze.
 
 module Console
-	UNKNOWN = 'unknown'
+	UNKNOWN = :unknown
 	
 	class Filter
 		if Object.const_defined?(:Ractor) and RUBY_VERSION >= '3.1'
@@ -35,7 +35,7 @@ module Console
 					
 					define_immutable_method(name) do |subject = nil, *arguments, **options, &block|
 						if self.enabled?(subject, level)
-							self.call(subject, *arguments, severity: name, **@options, **options, &block)
+							@output.call(subject, *arguments, severity: name, **@options, **options, &block)
 						end
 					end
 					
@@ -143,8 +143,13 @@ module Console
 			@subjects.delete(subject)
 		end
 		
-		def call(*arguments, **options, &block)
-			@output.call(*arguments, **options, &block)
+		def call(subject, *arguments, **options, &block)
+			severity = options[:severity] || UNKNOWN
+			level = self.class::LEVELS[severity]
+			
+			if self.enabled?(subject, level)
+				@output.call(subject, *arguments, **options, &block)
+			end
 		end
 	end
 end
