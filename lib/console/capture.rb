@@ -9,27 +9,45 @@ module Console
 	# A general sink which captures all events into a buffer.
 	class Capture
 		def initialize
-			@buffer = []
+			@records = []
 			@verbose = false
 		end
 		
-		attr :buffer
+		attr :records
+		
+		# @deprecated Use {#records} instead of {#buffer}.
+		alias buffer records
+		
+		alias to_a records
+		
 		attr :verbose
 		
-		def last
-			@buffer.last
+		def include?(pattern)
+			@records.any? do |record|
+				record[:subject].to_s&.match?(pattern) or record[:message].to_s&.match?(pattern)
+			end
 		end
 		
-		def include?(pattern)
-			JSON.dump(@buffer).include?(pattern)
+		def each(&block)
+			@records.each(&block)
+		end
+		
+		include Enumerable
+		
+		def first
+			@records.first
+		end
+		
+		def last
+			@records.last
 		end
 		
 		def clear
-			@buffer.clear
+			@records.clear
 		end
 		
 		def empty?
-			@buffer.empty?
+			@records.empty?
 		end
 		
 		def verbose!(value = true)
@@ -41,39 +59,41 @@ module Console
 		end
 		
 		def call(subject = nil, *arguments, severity: UNKNOWN, event: nil,  **options, &block)
-			message = {
+			record = {
 				time: ::Time.now.iso8601,
 				severity: severity,
 				**options,
 			}
 			
 			if subject
-				message[:subject] = subject
+				record[:subject] = subject
 			end
 			
 			if event
-				message[:event] = event.to_hash
+				record[:event] = event.to_hash
 			end
 			
 			if arguments.any?
-				message[:arguments] = arguments
+				record[:arguments] = arguments
 			end
 			
 			if annotation = Fiber.current.annotation
-				message[:annotation] = annotation
+				record[:annotation] = annotation
 			end
 			
 			if block_given?
 				if block.arity.zero?
-					message[:message] = yield
+					record[:message] = yield
 				else
 					buffer = StringIO.new
 					yield buffer
-					message[:message] = buffer.string
+					record[:message] = buffer.string
 				end
+			else
+				record[:message] = arguments.join(" ")
 			end
 			
-			@buffer << message
+			@records << record
 		end
 	end
 end
