@@ -27,7 +27,9 @@ module Console
 			def self.log(subject, exception, **options)
 				Console.error(subject, **self.for(exception).to_hash, **options)
 			end
-			
+
+			attr_reader :exception
+
 			def initialize(exception, root = Dir.getwd)
 				@exception = exception
 				@root = root
