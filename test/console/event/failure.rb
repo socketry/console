@@ -53,5 +53,11 @@ describe Console::Event::Failure do
 				)
 			)
 		end
+
+		it "can get #exception" do
+			failure = Console::Event::Failure.for(error)
+			
+			expect(failure.exception).to be == error
+		end
 	end
 end
