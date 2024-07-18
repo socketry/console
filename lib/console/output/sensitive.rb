@@ -9,7 +9,7 @@ module Console
 	module Output
 		class Sensitive < Wrapper
 			REDACT = /
-				  phone
+				phone
 				| email
 				| full_?name
 				| first_?name

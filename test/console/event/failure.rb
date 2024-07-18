@@ -3,6 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2021, by Robert Schulze.
 # Copyright, 2021-2024, by Samuel Williams.
+# Copyright, 2024, by Patrik Wenger.
 
 require 'console/captured_output'
 require 'console/event/failure'
