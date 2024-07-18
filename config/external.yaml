@@ -3,7 +3,7 @@ async:
   command: bundle exec bake test
 async-dns:
   url: https://github.com/socketry/async-dns
-  command: CONSOLE_LEVEL=debug bundle exec rspec
+  command: bundle exec bake test
 falcon:
   url: https://github.com/socketry/falcon
-  command: CONSOLE_LEVEL=debug bundle exec sus
+  command: bundle exec bake test
