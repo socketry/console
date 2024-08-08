@@ -114,7 +114,7 @@ describe Console do
 			super
 		end
 		
-		def after
+		def after(error = nil)
 			subject.logger = @original_logger
 			
 			super

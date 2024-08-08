@@ -124,7 +124,7 @@ describe Console::Logger do
 			super
 		end
 		
-		def after
+		def after(error = nil)
 			$DEBUG = @debug
 			$VERBOSE = @verbose
 			super
