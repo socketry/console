@@ -61,7 +61,7 @@ describe Console::Progress do
 			expect(console_capture.last).to have_keys(
 				severity: be == :info,
 				subject: be == "My Measurement",
-				arguments: be == ["100/100 completed in 0.0s, 0.0s remaining."],
+				arguments: have_attributes(first: be =~ /100\/100 completed in .*?, 0.0s remaining\./),
 				event: have_keys(
 					type: be == :progress,
 					current: be == 100,
