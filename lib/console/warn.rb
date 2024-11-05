@@ -18,11 +18,17 @@ module Console
 				options[:backtrace] = caller(uplevel, 1)
 			end
 			
-			begin
-				fiber.console_warn = true
-				Console.warn(*arguments, **options)
-			ensure
-				fiber.console_warn = false
+			if arguments.last.is_a?(Exception)
+				exception = arguments.pop
+				
+				Console::Event::Failure.for(exception).emit(*arguments, severity: :warn)
+			else
+				begin
+					fiber.console_warn = true
+					Console.warn(*arguments, **options)
+				ensure
+					fiber.console_warn = false
+				end
 			end
 		end
 	end

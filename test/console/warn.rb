@@ -26,4 +26,19 @@ describe "Kernel#warn" do
 			backtrace: be_a(Array)
 		)
 	end
+	
+	it "supports exceptions" do
+		warn "An error occured:", StandardError.new("It did not work as expected!")
+		
+		expect(console_capture.last).to have_keys(
+			severity: be == :warn,
+			subject: be == "An error occured:",
+			event: have_keys(
+				type: be == :failure,
+				root: be_a(String),
+				class: be =~ /StandardError/,
+				message: be =~ /It did not work as expected!/
+			)
+		)
+	end
 end
