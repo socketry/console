@@ -17,14 +17,22 @@ describe "Kernel#warn" do
 		)
 	end
 	
-	it "supports uplevel" do
-		warn "It did not work as expected!", uplevel: 1
+	with "uplevel" do
+		def print_warning
+			warn "It did not work as expected!", uplevel: 0
+		end
 		
-		expect(console_capture.last).to have_keys(
-			severity: be == :warn,
-			subject: be == "It did not work as expected!",
-			backtrace: be_a(Array)
-		)
+		it "includes appropriate backtrace" do
+			print_warning
+			
+			expect(console_capture.last).to have_keys(
+				severity: be == :warn,
+				subject: be == "It did not work as expected!",
+				backtrace: be_a(Array)
+			)
+			
+			expect(console_capture.last[:backtrace].first).to be =~ /print_warning/
+		end
 	end
 	
 	it "supports exceptions" do
