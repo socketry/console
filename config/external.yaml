@@ -1,9 +1,6 @@
 async:
   url: https://github.com/socketry/async
   command: bundle exec bake test
-async-dns:
-  url: https://github.com/socketry/async-dns
-  command: bundle exec bake test
 falcon:
   url: https://github.com/socketry/falcon
   command: bundle exec bake test
