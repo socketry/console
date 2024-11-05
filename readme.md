@@ -26,6 +26,8 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
   - [Integration](https://socketry.github.io/console/guides/integration/index) - This guide explains how to integrate the `console` output into different systems.
 
+  - [Events](https://socketry.github.io/console/guides/events/index) - This guide explains how to log structured events with a well-defined schema.
+
 ## Contributing
 
 We welcome contributions to this project.
