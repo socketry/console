@@ -2,10 +2,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2022, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require 'benchmark/ips'
-require 'fiber'
+require "benchmark/ips"
+require "fiber"
 
 # GC.disable
 

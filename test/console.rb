@@ -5,8 +5,8 @@
 # Copyright, 2019, by Bryan Powell.
 # Copyright, 2020, by Michael Adams.
 
-require 'console'
-require 'console/captured_output'
+require "console"
+require "sus/fixtures/console"
 
 describe Console do
 	it "has a version number" do
@@ -19,14 +19,14 @@ describe Console do
 		end
 	end
 	
-	with 'an isolated logger' do
-		include_context Console::CapturedOutput
+	with "an isolated logger" do
+		include_context Sus::Fixtures::Console::CapturedLogger
 		
 		it "can invoke interface methods for all log levels" do
 			Console::Logger::LEVELS.each do |name, level|
 				Console.public_send(name, self, "Hello World!", name: "test")
 				
-				expect(capture.last).to have_keys(
+				expect(console_capture.last).to have_keys(
 					time: be_a(String),
 					severity: be == name,
 					subject: be == self,
@@ -42,7 +42,7 @@ describe Console do
 					"Hello World!"
 				end
 				
-				expect(capture.last).to have_keys(
+				expect(console_capture.last).to have_keys(
 					time: be_a(String),
 					severity: be == name,
 					subject: be == self,
@@ -58,7 +58,7 @@ describe Console do
 					buffer.puts "Hello World!"
 				end
 				
-				expect(capture.last).to have_keys(
+				expect(console_capture.last).to have_keys(
 					time: be_a(String),
 					severity: be == name,
 					subject: be == self,
@@ -75,7 +75,7 @@ describe Console do
 				Console.error(self, error, name: "test")
 			end
 			
-			expect(capture.last).to have_keys(
+			expect(console_capture.last).to have_keys(
 				time: be_a(String),
 				severity: be == :error,
 				subject: be == self,
@@ -94,7 +94,7 @@ describe Console do
 				Console::Event::Failure.for(error).emit(self, name: "test")
 			end
 			
-			expect(capture.last).to have_keys(
+			expect(console_capture.last).to have_keys(
 				time: be_a(String),
 				severity: be == :error,
 				subject: be == self,
@@ -107,7 +107,7 @@ describe Console do
 		end
 	end
 	
-	with '#logger' do
+	with "#logger" do
 		def before
 			@original_logger = subject.logger
 			
@@ -120,7 +120,7 @@ describe Console do
 			super
 		end
 		
-		it 'sets and returns a logger' do
+		it "sets and returns a logger" do
 			logger = Console::Logger.new(subject.logger.output)
 			subject.logger = logger
 			expect(subject.logger).to be(:eql?, logger)

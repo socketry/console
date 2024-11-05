@@ -5,13 +5,13 @@
 # Copyright, 2021, by Bryan Powell.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative 'output'
-require_relative 'filter'
-require_relative 'event'
-require_relative 'resolver'
-require_relative 'progress'
+require_relative "output"
+require_relative "filter"
+require_relative "event"
+require_relative "resolver"
+require_relative "progress"
 
-require 'fiber/local'
+require "fiber/local"
 
 module Console
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
@@ -21,7 +21,7 @@ module Console
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
 		# https://mislav.net/2011/06/ruby-verbose-mode/ has more details about how it all fits together.
 		def self.default_log_level(env = ENV)
-			if level = env['CONSOLE_LEVEL']
+			if level = env["CONSOLE_LEVEL"]
 				LEVELS[level.to_sym] || level.to_i
 			elsif $DEBUG
 				DEBUG
@@ -34,7 +34,7 @@ module Console
 		
 		# Controls verbose output using `$VERBOSE`.
 		def self.verbose?(env = ENV)
-			!$VERBOSE.nil? || env['CONSOLE_VERBOSE']
+			!$VERBOSE.nil? || env["CONSOLE_VERBOSE"]
 		end
 		
 		def self.default_logger(output = $stderr, env = ENV, **options)

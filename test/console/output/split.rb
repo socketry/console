@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022-2023, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
-require 'console/output/split'
-require 'console/capture'
+require "console/output/split"
+require "console/capture"
 
 describe Console::Output::Split do
 	let(:outputs) {2.times.map{Console::Capture.new}}

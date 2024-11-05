@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2023-2024, by Samuel Williams.
 
-require 'console/filter'
-require 'console/logger'
-require 'console/capture'
+require "console/filter"
+require "console/logger"
+require "console/capture"
 
 module MySubject
 end
@@ -14,7 +14,7 @@ describe Console::Filter do
 	let(:output) {Console::Capture.new}
 	let(:logger) {Console::Logger.new(output)}
 	
-	with '#off!' do
+	with "#off!" do
 		def before
 			super
 			logger.off!
@@ -25,7 +25,7 @@ describe Console::Filter do
 			expect(output).to be(:empty?)
 		end
 		
-		with '#enable' do
+		with "#enable" do
 			def before
 				super
 				logger.enable(MySubject)
@@ -36,7 +36,7 @@ describe Console::Filter do
 				expect(output).to be(:include?, "Hello World")
 			end
 			
-			with '#clear' do
+			with "#clear" do
 				def before
 					super
 					logger.clear(MySubject)
@@ -50,7 +50,7 @@ describe Console::Filter do
 		end
 	end
 	
-	with '#enable' do
+	with "#enable" do
 		it "can't enable non-class subjects" do
 			expect{
 				logger.enable("Hello World")
@@ -58,7 +58,7 @@ describe Console::Filter do
 		end
 	end
 	
-	with '#clear' do
+	with "#clear" do
 		it "can't clear non-class subjects" do
 			expect{
 				logger.clear("Hello World")
@@ -66,8 +66,8 @@ describe Console::Filter do
 		end
 	end
 	
-	with '#call' do
-		it 'ignores messages below the level' do
+	with "#call" do
+		it "ignores messages below the level" do
 			logger.level = Console::Logger::INFO
 			
 			logger.call(MySubject, "Hello World", severity: :debug)
@@ -75,7 +75,7 @@ describe Console::Filter do
 			expect(output).to be(:empty?)
 		end
 		
-		it 'logs messages at the level' do
+		it "logs messages at the level" do
 			logger.level = Console::Logger::INFO
 			
 			logger.call(MySubject, "Hello World", severity: :info)
@@ -83,7 +83,7 @@ describe Console::Filter do
 			expect(output).to be(:include?, "Hello World")
 		end
 		
-		it 'logs messages above the level' do
+		it "logs messages above the level" do
 			logger.level = Console::Logger::INFO
 			
 			logger.call(MySubject, "Hello World", severity: :warn)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 
-require 'console/terminal/xterm'
+require "console/terminal/xterm"
 
 describe Console::Terminal::XTerm do
 	let(:io) {StringIO.new}
@@ -33,7 +33,7 @@ describe Console::Terminal::XTerm do
 		expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
 	end
 	
-	with '#print' do
+	with "#print" do
 		it "can print using the specified style" do
 			terminal[:bold] = terminal.style(nil, nil, :bold)
 			
@@ -43,7 +43,7 @@ describe Console::Terminal::XTerm do
 		end
 	end
 	
-	with '#print_line' do
+	with "#print_line" do
 		it "can print a line using the specified style" do
 			terminal[:bold] = terminal.style(nil, nil, :bold)
 			
@@ -53,7 +53,7 @@ describe Console::Terminal::XTerm do
 		end
 	end
 	
-	with '#size' do
+	with "#size" do
 		it "can determine the size of the terminal" do
 			expect(io).to receive(:winsize).and_return([24, 80])
 			expect(terminal.size).to be == [24, 80]

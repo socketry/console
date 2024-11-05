@@ -2,19 +2,19 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022-2023, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
 # Run this using `systemd-cat bundle exec ./integration.rb`
 # This will send logs to datadog using the standard systemd journal.
 
-ENV['TRACES_BACKEND'] ||= 'traces/backend/datadog'
-ENV['CONSOLE_OUTPUT'] ||= 'Console::Output::Datadog,Console::Output::Default'
+ENV["TRACES_BACKEND"] ||= "traces/backend/datadog"
+ENV["CONSOLE_OUTPUT"] ||= "Console::Output::Datadog,Console::Output::Default"
 
-require 'ddtrace'
+require "ddtrace"
 
-require 'traces'
-require 'console/output/datadog'
-require 'console'
+require "traces"
+require "console/output/datadog"
+require "console"
 
 # Standard log levels according to syslog:
 # Fatal: system is unusable
@@ -41,9 +41,9 @@ class Logly
 	
 	Traces::Provider(self) do
 		def call(message)
-			trace('logly.call') {super}
+			trace("logly.call") {super}
 		end
 	end
 end
 
-Logly.new.call('Hello, world!')
+Logly.new.call("Hello, world!")

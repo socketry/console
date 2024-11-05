@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2022, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative 'filter'
+require_relative "filter"
 
 module Console
 	class Resolver
@@ -22,12 +22,12 @@ module Console
 		def self.default_resolver(logger, env = ENV)
 			# Find all CONSOLE_$LEVEL variables from environment:
 			levels = logger.class::LEVELS
-				.map{|label, level| [level, env["CONSOLE_#{label.upcase}"]&.split(',')]}
+				.map{|label, level| [level, env["CONSOLE_#{label.upcase}"]&.split(",")]}
 				.to_h
 				.compact
 			
-			off_klasses = env['CONSOLE_OFF']&.split(',')
-			on_klasses = env['CONSOLE_ON']&.split(',')
+			off_klasses = env["CONSOLE_OFF"]&.split(",")
+			on_klasses = env["CONSOLE_ON"]&.split(",")
 			
 			resolver = nil
 			

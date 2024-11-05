@@ -3,19 +3,19 @@
 # Released under the MIT License.
 # Copyright, 2020-2024, by Samuel Williams.
 
-require 'console/progress'
-require 'console/captured_output'
+require "console/progress"
+require "sus/fixtures/console"
 
 describe Console::Progress do
-	include_context Console::CapturedOutput
-	let(:progress) {logger.progress("My Measurement", 100)}
+	include_context Sus::Fixtures::Console::CapturedLogger
 	
-	with '#mark' do
+	let(:progress) {console_logger.progress("My Measurement", 100)}
+	
+	with "#mark" do
 		it "can mark progress" do
 			progress.mark("Hello World!")
 			
-			last = capture.last
-			expect(last).to have_keys(
+			expect(console_capture.last).to have_keys(
 				severity: be == :info,
 				subject: be == "My Measurement",
 				arguments: be == ["Hello World!"],
@@ -23,7 +23,7 @@ describe Console::Progress do
 		end
 	end
 	
-	with '#resize' do
+	with "#resize" do
 		it "can resize the progress bar total" do
 			progress.resize(200)
 			
@@ -31,7 +31,7 @@ describe Console::Progress do
 		end
 	end
 	
-	with '#to_s' do
+	with "#to_s" do
 		it "can generate a brief summary" do
 			expect(progress.to_s).to be == "0/100 completed, waiting for estimate..."
 			progress.increment(1)
@@ -41,8 +41,8 @@ describe Console::Progress do
 		end
 	end
 	
-	with '#increment' do
-		it 'can create new measurement' do
+	with "#increment" do
+		it "can create new measurement" do
 			expect(progress.ratio).to be == 0.0
 			
 			expect(progress.current).to be == 0
@@ -58,8 +58,7 @@ describe Console::Progress do
 			progress.increment(50)
 			expect(progress.estimated_remaining_time).to be == 0.0
 			
-			last = capture.last
-			expect(last).to have_keys(
+			expect(console_capture.last).to have_keys(
 				severity: be == :info,
 				subject: be == "My Measurement",
 				arguments: be == ["100/100 completed in 0.0s, 0.0s remaining."],

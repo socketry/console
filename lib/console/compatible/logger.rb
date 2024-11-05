@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2022-2024, by Samuel Williams.
 
-require 'logger'
+require "logger"
 
 module Console
 	module Compatible

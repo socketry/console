@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'console/output/terminal'
+require "console/output/terminal"
 
 describe Console::Output::Terminal do
 	let(:io) {StringIO.new}

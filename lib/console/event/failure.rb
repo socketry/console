@@ -5,7 +5,7 @@
 # Copyright, 2021, by Robert Schulze.
 # Copyright, 2024, by Patrik Wenger.
 
-require_relative 'generic'
+require_relative "generic"
 
 module Console
 	module Event
@@ -59,7 +59,7 @@ module Console
 					message = exception.detailed_message
 					
 					# We want to remove the trailling exception class as we format it differently:
-					message.sub!(/\s*\(.*?\)$/, '')
+					message.sub!(/\s*\(.*?\)$/, "")
 					
 					hash[:message] = message
 				else

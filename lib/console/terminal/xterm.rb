@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require 'io/console'
+require "io/console"
 
-require_relative 'text'
+require_relative "text"
 
 module Console
 	# Styled terminal output.

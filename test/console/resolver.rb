@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2023, by Samuel Williams.
+# Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require 'console'
-require 'console/resolver'
-require 'resolver_classes'
+require "console"
+require "console/resolver"
+require "resolver_classes"
 
 describe Console::Resolver do
 	let(:resolver) {subject.new}
@@ -38,15 +38,15 @@ describe Console::Resolver do
 		expect(resolved).to be == true
 	end
 	
-	describe '.default_resolver' do
+	describe ".default_resolver" do
 		let(:logger) {Console.logger}
 		
-		it 'has no resolver if not required by environment' do
+		it "has no resolver if not required by environment" do
 			expect(Console::Resolver.default_resolver(logger)).to be_nil
 		end
 		
-		it 'can set custom log levels from environment' do
-			expect(Console::Resolver.default_resolver(logger, {'CONSOLE_WARN' => 'Acorn,Banana', 'CONSOLE_DEBUG' => 'Cat'})).to be_a Console::Resolver
+		it "can set custom log levels from environment" do
+			expect(Console::Resolver.default_resolver(logger, {"CONSOLE_WARN" => "Acorn,Banana", "CONSOLE_DEBUG" => "Cat"})).to be_a Console::Resolver
 			
 			expect(Console.logger.subjects[Acorn]).to be == Console::Logger::WARN
 			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
@@ -55,9 +55,9 @@ describe Console::Resolver do
 
 		it 'can set "all" and "off" by environment' do
 			expect(Console::Resolver.default_resolver(logger, {
-				'CONSOLE_ON' => 'Cat',
-				'CONSOLE_WARN' => 'Dog',
-				'CONSOLE_OFF' => 'Acorn,Banana'
+				"CONSOLE_ON" => "Cat",
+				"CONSOLE_WARN" => "Dog",
+				"CONSOLE_OFF" => "Acorn,Banana"
 			})).to be_a Console::Resolver
 			
 			expect(Console.logger.subjects[Acorn]).to be == (Console::Logger::MAXIMUM_LEVEL + 1)

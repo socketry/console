@@ -6,8 +6,8 @@
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Robert Schulze.
 
-require 'console/logger'
-require 'console/capture'
+require "console/logger"
+require "console/capture"
 
 describe Console::Logger do
 	let(:output) {Console::Capture.new}
@@ -15,7 +15,7 @@ describe Console::Logger do
 	
 	let(:message) {"Hello World"}
 	
-	with '.instance' do
+	with ".instance" do
 		it "propagates to child thread" do
 			Fiber.new do
 				logger = Console::Logger.instance
@@ -27,7 +27,7 @@ describe Console::Logger do
 		end
 	end
 	
-	with '#with' do
+	with "#with" do
 		let(:nested) {logger.with(name: "nested", level: :debug)}
 		
 		it "should change level" do
@@ -70,7 +70,7 @@ describe Console::Logger do
 		end
 	end
 	
-	with '#enable' do
+	with "#enable" do
 		let(:object) {Object.new}
 		
 		it "can enable specific subjects" do
@@ -95,7 +95,7 @@ describe Console::Logger do
 				end
 			end
 			
-			with '#off!' do
+			with "#off!" do
 				it "doesn't log #{name} messages" do
 					logger.off!
 					
@@ -105,7 +105,7 @@ describe Console::Logger do
 				end
 			end
 			
-			with '#all!' do
+			with "#all!" do
 				it "can log #{name} messages" do
 					logger.all!
 					
@@ -117,7 +117,7 @@ describe Console::Logger do
 		end
 	end
 	
-	describe '.default_log_level' do
+	describe ".default_log_level" do
 		def before
 			@debug = $DEBUG
 			@verbose = $VERBOSE
@@ -130,28 +130,28 @@ describe Console::Logger do
 			super
 		end
 		
-		it 'should set default log level' do
+		it "should set default log level" do
 			$DEBUG = false
 			$VERBOSE = 0
 			
 			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
 		end
 		
-		it 'should set default log level based on $DEBUG' do
+		it "should set default log level based on $DEBUG" do
 			$DEBUG = true
 			
 			expect(Console::Logger.default_log_level).to be == Console::Logger::DEBUG
 		end
 		
-		it 'should set default log level based on $VERBOSE' do
+		it "should set default log level based on $VERBOSE" do
 			$DEBUG = false
 			$VERBOSE = true
 			
 			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
 		end
 		
-		it 'can get log level from ENV' do
-			expect(Console::Logger.default_log_level({'CONSOLE_LEVEL' => 'debug'})).to be == Console::Logger::DEBUG
+		it "can get log level from ENV" do
+			expect(Console::Logger.default_log_level({"CONSOLE_LEVEL" => "debug"})).to be == Console::Logger::DEBUG
 		end
 	end
 	

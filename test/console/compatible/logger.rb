@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2022-2024, by Samuel Williams.
 
-require 'console/compatible/logger'
-require 'console/output/terminal'
+require "console/compatible/logger"
+require "console/output/terminal"
 
 describe Console::Compatible::Logger do
 	let(:io) {StringIO.new}

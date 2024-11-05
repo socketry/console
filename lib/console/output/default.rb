@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2021-2024, by Samuel Williams.
 
-require_relative 'terminal'
-require_relative 'serialized'
+require_relative "terminal"
+require_relative "serialized"
 
 module Console
 	module Output

@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require_relative 'generic'
-require_relative '../clock'
+require_relative "generic"
+require_relative "../clock"
 
 module Console
 	module Event

@@ -3,10 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2024, by Samuel Williams.
 
-require 'console/terminal/formatter/progress'
-require 'console/progress'
-require 'console/output/null'
-require 'console/terminal'
+require "console/terminal/formatter/progress"
+require "console/progress"
+require "console/output/null"
+require "console/terminal"
 
 describe Console::Terminal::Formatter::Progress do
 	let(:buffer) {StringIO.new}

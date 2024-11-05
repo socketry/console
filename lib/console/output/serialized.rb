@@ -3,9 +3,9 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require_relative '../format'
-require 'time'
-require 'fiber/annotation'
+require_relative "../format"
+require "time"
+require "fiber/annotation"
 
 module Console
 	module Output

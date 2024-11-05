@@ -4,7 +4,7 @@
 # Copyright, 2020-2024, by Samuel Williams.
 # Copyright, 2022, by Anton Sozontov.
 
-require_relative 'clock'
+require_relative "clock"
 
 module Console
 	class Progress

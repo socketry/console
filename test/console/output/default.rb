@@ -3,8 +3,8 @@
 # Released under the MIT License.
 # Copyright, 2021-2024, by Samuel Williams.
 
-require 'console/logger'
-require 'console/capture'
+require "console/logger"
+require "console/capture"
 
 describe Console::Output::Default do
 	let(:output) {nil}
@@ -18,7 +18,7 @@ describe Console::Output::Default do
 		end
 	end
 	
-	it 'should output to $stderr by default' do
+	it "should output to $stderr by default" do
 		expect(final_output(logger).io).to be == $stderr
 	end
 end

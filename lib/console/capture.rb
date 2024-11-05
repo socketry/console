@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2019-2024, by Samuel Williams.
 
-require_relative 'filter'
+require_relative "filter"
 
 module Console
 	# A general sink which captures all events into a buffer.

@@ -3,7 +3,7 @@
 # Released under the MIT License.
 # Copyright, 2023-2024, by Samuel Williams.
 
-require_relative 'format/safe'
+require_relative "format/safe"
 
 module Console
 	module Format

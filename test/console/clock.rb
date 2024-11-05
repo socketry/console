@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2022, by Samuel Williams.
+# Copyright, 2022-2024, by Samuel Williams.
 
-require 'console/clock'
+require "console/clock"
 
 describe Console::Clock do
-	with '.formatted_duration' do
+	with ".formatted_duration" do
 		it "can format seconds" do
 			expect(subject.formatted_duration(0)).to be == "0s"
 			expect(subject.formatted_duration(1)).to be == "1s"
@@ -40,7 +40,7 @@ describe Console::Clock do
 		end
 	end
 	
-	with '.now' do
+	with ".now" do
 		it "can measure time" do
 			expect(subject.now).to be_a(Float)
 		end

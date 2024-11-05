@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2023, by Samuel Williams.
+# Copyright, 2023-2024, by Samuel Williams.
 
-require 'console/logger'
-require 'console/capture'
-require 'my_custom_output'
+require "console/logger"
+require "console/capture"
+require "my_custom_output"
 
 class JSONHash < Hash
 	def to_json(options = nil)
@@ -41,14 +41,14 @@ describe Console::Format::Safe do
 			)
 			
 			expect(message).to have_keys(
-				'truncated' => be == true,
-				'error' => have_keys(
-					'class' => be == 'SystemStackError',
-					'message' => be =~ /stack level too deep/,
+				"truncated" => be == true,
+				"error" => have_keys(
+					"class" => be == "SystemStackError",
+					"message" => be =~ /stack level too deep/,
 				)
 			)
 			
-			backtrace = message['error']['backtrace']
+			backtrace = message["error"]["backtrace"]
 			expect(backtrace).to be_a(Array)
 			expect(backtrace).to be == [
 				"A",
@@ -74,14 +74,14 @@ describe Console::Format::Safe do
 			)
 			
 			expect(message).to have_keys(
-				'truncated' => be == true,
-				'error' => have_keys(
-					'class' => be == 'StandardError',
-					'message' => be =~ /something went wrong/,
+				"truncated" => be == true,
+				"error" => have_keys(
+					"class" => be == "StandardError",
+					"message" => be =~ /something went wrong/,
 				)
 			)
 			
-			backtrace = message['error']['backtrace']
+			backtrace = message["error"]["backtrace"]
 			expect(backtrace).to be_a(Array)
 		end
 	end

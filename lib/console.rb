@@ -6,9 +6,9 @@
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Cédric Boutillier.
 
-require_relative 'console/version'
-require_relative 'console/logger'
-require_relative 'console/warn'
+require_relative "console/version"
+require_relative "console/logger"
+require_relative "console/warn"
 
 module Console
 	class << self

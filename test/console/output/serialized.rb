@@ -4,8 +4,8 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2023, by Felix Yan.
 
-require 'console/output/serialized'
-require 'console/event/spawn'
+require "console/output/serialized"
+require "console/event/spawn"
 
 describe Console::Output::Serialized do
 	let(:io) {StringIO.new}
@@ -33,7 +33,7 @@ describe Console::Output::Serialized do
 		)
 	end
 	
-	with 'structured event' do
+	with "structured event" do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		
 		it "can log structured events" do

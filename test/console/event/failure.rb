@@ -5,8 +5,8 @@
 # Copyright, 2021-2024, by Samuel Williams.
 # Copyright, 2024, by Patrik Wenger.
 
-require 'console/captured_output'
-require 'console/event/failure'
+require "console/event/failure"
+require "sus/fixtures/console"
 
 class TestError < StandardError
 	def detailed_message(...)
@@ -15,9 +15,9 @@ class TestError < StandardError
 end
 
 describe Console::Event::Failure do
-	include_context Console::CapturedOutput
+	include_context Sus::Fixtures::Console::CapturedLogger
 	
-	with 'test error' do
+	with "test error" do
 		let(:error) do
 			begin
 				raise TestError, "Test error!"
@@ -41,8 +41,7 @@ describe Console::Event::Failure do
 		it "logs error message" do
 			Console::Event::Failure.for(error).emit(self)
 			
-			last = capture.last
-			expect(last).to have_keys(
+			expect(console_capture.last).to have_keys(
 				severity: be == :error,
 				subject: be == self,
 				event: have_keys(

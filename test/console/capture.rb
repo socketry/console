@@ -1,17 +1,17 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2020-2023, by Samuel Williams.
+# Copyright, 2020-2024, by Samuel Williams.
 
-require 'console/capture'
-require 'console/logger'
+require "console/capture"
+require "console/logger"
 
 describe Console::Capture do
 	let(:capture) {subject.new}
 	let(:logger) {Console::Logger.new(capture)}
 	
-	with '#clear' do
-		it 'can clear log buffer' do
+	with "#clear" do
+		it "can clear log buffer" do
 			logger.info("Hello World!")
 			capture.clear
 			
@@ -19,8 +19,8 @@ describe Console::Capture do
 		end
 	end
 	
-	with '#buffer' do
-		it 'can access log buffer' do
+	with "#buffer" do
+		it "can access log buffer" do
 			logger.info("Hello World!")
 			
 			last = capture.last
@@ -31,7 +31,7 @@ describe Console::Capture do
 		end
 	end
 	
-	with 'block' do
+	with "block" do
 		it "can capture log output" do
 			logger.info(self) {"Hello World!"}
 			

@@ -4,13 +4,13 @@
 # Copyright, 2019-2024, by Samuel Williams.
 # Copyright, 2021, by Robert Schulze.
 
-require_relative '../clock'
-require_relative '../terminal'
+require_relative "../clock"
+require_relative "../terminal"
 
-require 'json'
-require 'fiber'
-require 'fiber/annotation'
-require 'stringio'
+require "json"
+require "fiber"
+require "fiber/annotation"
+require "stringio"
 
 module Console
 	module Output
@@ -35,7 +35,7 @@ module Console
 			end
 			
 			# This, and all related methods, is considered private.
-			CONSOLE_START_AT = 'CONSOLE_START_AT'
+			CONSOLE_START_AT = "CONSOLE_START_AT"
 			
 			# Exports CONSOLE_START which can be used to synchronize the start times of all child processes when they log using delta time.
 			def self.start_at!(environment = ENV)

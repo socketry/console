@@ -1,4 +1,9 @@
-require 'sus/fixtures/console'
+# frozen_string_literal: true
+
+# Released under the MIT License.
+# Copyright, 2024, by Samuel Williams.
+
+require "sus/fixtures/console"
 
 describe "Kernel#warn" do
 	include_context Sus::Fixtures::Console::CapturedLogger
