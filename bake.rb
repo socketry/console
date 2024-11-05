@@ -3,14 +3,10 @@
 # Released under the MIT License.
 # Copyright, 2020-2022, by Samuel Williams.
 
-def sample_progress_bar
-	require_relative 'lib/console'
-	
-	progress = Console.logger.progress("Progress Bar", 10)
-	
-	10.times do |i|
-		sleep 1
-		
-		progress.increment
-	end
+# Update the project documentation with the new version number.
+#
+# @parameter version [String] The new version number.
+def after_gem_release_version_increment(version)
+	context["releases:update"].call(version)
+	context["utopia:project:readme:update"].call
 end
