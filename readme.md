@@ -28,6 +28,14 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
   - [Events](https://socketry.github.io/console/guides/events/index) - This guide explains how to log structured events with a well-defined schema.
 
+## Releases
+
+Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
+
+### v1.28.0
+
+  - Add support for `Kernel#warn` redirection to `Console.warn`.
+
 ## Contributing
 
 We welcome contributions to this project.
