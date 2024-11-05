@@ -8,7 +8,6 @@
 
 require_relative "console/version"
 require_relative "console/logger"
-require_relative "console/warn"
 
 module Console
 	class << self
