@@ -6,6 +6,8 @@
 # Copyright, 2021, by Robert Schulze.
 
 require_relative "output"
+require_relative "output/failure"
+
 require_relative "filter"
 require_relative "event"
 require_relative "resolver"
@@ -47,6 +49,7 @@ module Console
 			end
 			
 			output = Output.new(output, env, **options)
+			
 			logger = self.new(output, **options)
 			
 			Resolver.default_resolver(logger)
@@ -61,6 +64,9 @@ module Console
 		DEFAULT_LEVEL = 1
 		
 		def initialize(output, **options)
+			# This is the expected default behaviour, but it may be nice to have a way to override it.
+			output = Output::Failure.new(output, **options)
+			
 			super(output, **options)
 		end
 		
@@ -68,21 +74,6 @@ module Console
 			options[:severity] ||= :info
 			
 			Progress.new(subject, total, **options)
-		end
-		
-		def error(subject, *arguments, **options, &block)
-			# This is a special case where we want to create a failure event from an exception.
-			# It's common to see `Console.error(self, exception)` in code.
-			if arguments.first.is_a?(Exception)
-				exception = arguments.shift
-				options[:event] = Event::Failure.for(exception)
-			end
-			
-			super
-		end
-		
-		def failure(subject, exception, **options)
-			error(subject, event: Event::Failure.for(exception), **options)
 		end
 	end
 end

@@ -10,6 +10,12 @@ module Console
 				@delegate = delegate
 			end
 			
+			attr :delegate
+			
+			def last_output
+				@delegate.last_output
+			end
+			
 			def verbose!(value = true)
 				@delegate.verbose!(value)
 			end

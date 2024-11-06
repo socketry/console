@@ -5,6 +5,7 @@
 
 require_relative "terminal"
 require_relative "serialized"
+require_relative "failure"
 
 module Console
 	module Output
@@ -13,10 +14,12 @@ module Console
 				output ||= $stderr
 				
 				if output.tty?
-					Terminal.new(output, **options)
+					output = Terminal.new(output, **options)
 				else
-					Serialized.new(output, **options)
+					output = Serialized.new(output, **options)
 				end
+				
+				return output
 			end
 		end
 	end

@@ -9,6 +9,10 @@ module Console
 			def initialize(...)
 			end
 			
+			def last_output
+				self
+			end
+			
 			def call(...)
 				# Do nothing.
 			end

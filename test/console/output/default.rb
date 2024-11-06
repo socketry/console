@@ -7,18 +7,10 @@ require "console/logger"
 require "console/capture"
 
 describe Console::Output::Default do
-	let(:output) {nil}
-	let(:logger) {subject.new(output)}
-	
-	def final_output(output)
-		if output.respond_to?(:output)
-			final_output(output.output)
-		else
-			output
-		end
-	end
+	let(:io) {nil}
+	let(:output) {subject.new(io)}
 	
 	it "should output to $stderr by default" do
-		expect(final_output(logger).io).to be == $stderr
+		expect(output.last_output.io).to be == $stderr
 	end
 end

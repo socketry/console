@@ -4,6 +4,7 @@
 # Copyright, 2019-2024, by Samuel Williams.
 
 require_relative "filter"
+require_relative "output/failure"
 
 module Console
 	# A general sink which captures all events into a buffer.
@@ -58,7 +59,7 @@ module Console
 			@verbose
 		end
 		
-		def call(subject = nil, *arguments, severity: UNKNOWN, event: nil,  **options, &block)
+		def call(subject = nil, *arguments, severity: UNKNOWN, event: nil, **options, &block)
 			record = {
 				time: ::Time.now.iso8601,
 				severity: severity,

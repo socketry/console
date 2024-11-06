@@ -10,9 +10,14 @@ require "fiber/annotation"
 module Console
 	module Output
 		class Serialized
-			def initialize(output, format: Format.default, **options)
-				@io = output
+			def initialize(io, format: Format.default, **options)
+				@io = io
 				@format = format
+			end
+			
+			# This a final output that then writes to an IO object.
+			def last_output
+				self
 			end
 			
 			attr :io

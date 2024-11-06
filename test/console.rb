@@ -83,7 +83,7 @@ describe Console do
 				event: have_keys(
 					type: be == :failure,
 					message: be == "It failed!",
-				),
+				)
 			)
 		end
 		

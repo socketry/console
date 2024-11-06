@@ -78,6 +78,11 @@ module Console
 				self.register_formatters
 			end
 			
+			# This a final output that then writes to an IO object.
+			def last_output
+				self
+			end
+			
 			attr :io
 			
 			attr_accessor :verbose

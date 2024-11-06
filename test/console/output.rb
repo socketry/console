@@ -17,7 +17,7 @@ describe Console::Output do
 			let(:capture) {File.open("/tmp/console.log", "w")}
 			
 			it "should use a serialized format" do
-				expect(output).to be_a(Console::Output::Serialized)
+				expect(output.last_output).to be_a(Console::Output::Serialized)
 			end
 		end
 		
@@ -27,13 +27,13 @@ describe Console::Output do
 			it "should use a terminal format" do
 				expect($stderr).to receive(:tty?).twice.and_return(true)
 				
-				expect(output).to be_a Console::Output::Terminal
+				expect(output.last_output).to be_a Console::Output::Terminal
 			end
 		end
 		
 		with env: {"CONSOLE_OUTPUT" => "JSON"} do
 			it "can set output to Serialized and format to JSON" do
-				expect(output).to be_a Console::Output::Serialized
+				expect(output.last_output).to be_a Console::Output::Serialized
 				expect(output.format).to be_a(Console::Format::Safe)
 			end
 		end
