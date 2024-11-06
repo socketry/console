@@ -32,6 +32,12 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.29.0
+
+  - Don't make `Kernel#warn` redirection to `Console.warn` the default behavior, you must `require 'console/warn'` to enable it.
+  - Remove deprecated `Console::Logger#failure`.
+  - [Consistent Handling of Exceptions](https://socketry.github.io/console/releases/index#consistent-handling-of-exceptions)
+
 ### v1.28.0
 
   - Add support for `Kernel#warn` redirection to `Console.warn`.
