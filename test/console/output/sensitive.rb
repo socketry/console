@@ -24,6 +24,10 @@ describe Console::Output::Sensitive do
 		expect(output).not.to be(:include?, "Samuel Williams")
 	end
 	
+	it "should return true" do
+		expect(logger.call("test")).to be == true
+	end
+	
 	with "sensitive: false" do
 		it "bypasses redaction" do
 			logger.call("first_name: Samuel Williams", sensitive: false)

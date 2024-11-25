@@ -13,4 +13,8 @@ describe Console::Output::Default do
 	it "should output to $stderr by default" do
 		expect(output.last_output.io).to be == $stderr
 	end
+	
+	it "should return true" do
+		expect(output.call("test")).to be == true
+	end
 end

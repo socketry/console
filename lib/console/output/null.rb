@@ -15,6 +15,7 @@ module Console
 			
 			def call(...)
 				# Do nothing.
+				true
 			end
 		end
 	end

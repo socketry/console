@@ -135,6 +135,7 @@ module Console
 				end
 				
 				@io.write buffer.string
+				true
 			end
 			
 			protected

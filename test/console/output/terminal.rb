@@ -27,6 +27,10 @@ describe Console::Output::Terminal do
 		expect(io.string).to be =~ /"foo": "bar"/
 	end
 	
+	it "should return true" do
+		expect(logger.call(message)).to be == true
+	end
+	
 	with "verbose: false" do
 		let(:logger) {subject.new(io, verbose: false)}
 		

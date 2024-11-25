@@ -23,4 +23,8 @@ describe Console::Output::Split do
 		expect(outputs[0].verbose?).to be == true
 		expect(outputs[1].verbose?).to be == true
 	end
+	
+	it "should return true" do
+		expect(logger.call("test")).to be == true
+	end
 end

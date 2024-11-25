@@ -33,6 +33,10 @@ describe Console::Output::Serialized do
 		)
 	end
 	
+	it "should return true" do
+		expect(logger.call(message)).to be == true
+	end
+	
 	with "structured event" do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		

@@ -22,6 +22,7 @@ module Console
 				@outputs.each do |output|
 					output.call(...)
 				end
+				true
 			end
 		end
 	end

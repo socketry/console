@@ -34,9 +34,9 @@ module Console
 					const_set(name.to_s.upcase, level)
 					
 					define_immutable_method(name) do |subject = nil, *arguments, **options, &block|
-						if self.enabled?(subject, level)
-							@output.call(subject, *arguments, severity: name, **@options, **options, &block)
-						end
+						return true unless self.enabled?(subject, level)
+						
+						@output.call(subject, *arguments, severity: name, **@options, **options, &block)
 					end
 					
 					define_immutable_method("#{name}!") do
@@ -147,9 +147,9 @@ module Console
 			severity = options[:severity] || UNKNOWN
 			level = self.class::LEVELS[severity]
 			
-			if self.enabled?(subject, level)
-				@output.call(subject, *arguments, **options, &block)
-			end
+			return true unless self.enabled?(subject, level)
+			
+			@output.call(subject, *arguments, **options, &block)
 		end
 	end
 end

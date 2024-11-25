@@ -24,6 +24,10 @@ describe Console::Filter do
 			logger.info(MySubject, "Hello World")
 			expect(output).to be(:empty?)
 		end
+
+		it "should return true" do
+			expect(logger.info(MySubject, "test")).to be == true
+		end
 		
 		with "#enable" do
 			def before
@@ -70,25 +74,28 @@ describe Console::Filter do
 		it "ignores messages below the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :debug)
+			result = logger.call(MySubject, "Hello World", severity: :debug)
 			
 			expect(output).to be(:empty?)
+			expect(result).to be == true
 		end
 		
 		it "logs messages at the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :info)
+			result = logger.call(MySubject, "Hello World", severity: :info)
 			
 			expect(output).to be(:include?, "Hello World")
+			expect(result).to be == true
 		end
 		
 		it "logs messages above the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :warn)
+			result = logger.call(MySubject, "Hello World", severity: :warn)
 			
 			expect(output).to be(:include?, "Hello World")
+			expect(result).to be == true
 		end
 	end
 end

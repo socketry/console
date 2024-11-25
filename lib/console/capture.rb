@@ -95,6 +95,7 @@ module Console
 			end
 			
 			@records << record
+			true
 		end
 	end
 end

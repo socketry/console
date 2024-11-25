@@ -69,6 +69,7 @@ module Console
 				record.update(options)
 				
 				@io.puts(self.dump(record))
+				true
 			end
 		end
 		
