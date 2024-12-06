@@ -13,7 +13,7 @@ module Console
 			def initialize(output, **options)
 				super(output, **options)
 			end
-			
+
 			# The exception must be either the last argument or passed as an option.
 			def call(subject = nil, *arguments, exception: nil, **options, &block)
 				if exception.nil?
@@ -21,10 +21,12 @@ module Console
 					if last.is_a?(Exception)
 						options[:event] = Event::Failure.for(last)
 					end
-				else
+				elsif exception.is_a?(Exception)
 					options[:event] = Event::Failure.for(exception)
+				else
+					options[:exception] = exception
 				end
-				
+
 				super(subject, *arguments, **options)
 			end
 		end
