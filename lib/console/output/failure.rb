@@ -26,7 +26,7 @@ module Console
 				else
 					options[:exception] = exception
 				end
-
+			
 				super(subject, *arguments, **options)
 			end
 		end
