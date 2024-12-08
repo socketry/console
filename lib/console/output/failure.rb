@@ -13,7 +13,7 @@ module Console
 			def initialize(output, **options)
 				super(output, **options)
 			end
-
+			
 			# The exception must be either the last argument or passed as an option.
 			def call(subject = nil, *arguments, exception: nil, **options, &block)
 				if exception.nil?
