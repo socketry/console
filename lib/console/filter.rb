@@ -37,6 +37,8 @@ module Console
 						if self.enabled?(subject, level)
 							@output.call(subject, *arguments, severity: name, **@options, **options, &block)
 						end
+						
+						return nil
 					end
 					
 					define_immutable_method("#{name}!") do
@@ -150,6 +152,8 @@ module Console
 			if self.enabled?(subject, level)
 				@output.call(subject, *arguments, **options, &block)
 			end
+			
+			return nil
 		end
 	end
 end

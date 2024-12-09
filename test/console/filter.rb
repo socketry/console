@@ -66,29 +66,52 @@ describe Console::Filter do
 		end
 	end
 	
-	with "#call" do
+	with "#info" do
 		it "ignores messages below the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :debug)
+			result = logger.debug(MySubject, "Hello World")
 			
 			expect(output).to be(:empty?)
+			expect(result).to be_nil
 		end
 		
 		it "logs messages at the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :info)
+			result = logger.info(MySubject, "Hello World", severity: :info)
 			
 			expect(output).to be(:include?, "Hello World")
+			expect(result).to be_nil
+		end
+	end
+	
+	with "#call" do
+		it "ignores messages below the level" do
+			logger.level = Console::Logger::INFO
+			
+			result = logger.call(MySubject, "Hello World", severity: :debug)
+			
+			expect(output).to be(:empty?)
+			expect(result).to be_nil
+		end
+		
+		it "logs messages at the level" do
+			logger.level = Console::Logger::INFO
+			
+			result = logger.call(MySubject, "Hello World", severity: :info)
+			
+			expect(output).to be(:include?, "Hello World")
+			expect(result).to be_nil
 		end
 		
 		it "logs messages above the level" do
 			logger.level = Console::Logger::INFO
 			
-			logger.call(MySubject, "Hello World", severity: :warn)
+			result = logger.call(MySubject, "Hello World", severity: :warn)
 			
 			expect(output).to be(:include?, "Hello World")
+			expect(result).to be_nil
 		end
 	end
 end
