@@ -21,8 +21,11 @@ module Console
 					if last.is_a?(Exception)
 						options[:event] = Event::Failure.for(last)
 					end
-				else
+				elsif exception.is_a?(Exception)
 					options[:event] = Event::Failure.for(exception)
+				else
+					# We don't know what this is, so we just pass it through:
+					options[:exception] = exception
 				end
 				
 				super(subject, *arguments, **options)
