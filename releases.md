@@ -1,5 +1,13 @@
 # Releases
 
+## v1.29.2
+
+  - Always return `nil` from `Console::Filter` logging methods.
+
+## v1.29.1
+
+  - Fix logging `exception:` keyword argument when the value was not an exception.
+
 ## v1.29.0
 
   - Don't make `Kernel#warn` redirection to `Console.warn` the default behavior, you must `require 'console/warn'` to enable it.
