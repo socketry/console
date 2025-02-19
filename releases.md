@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Serialized output now uses `IO#write` with a single string to reduce the chance of interleaved output.
+
 ## v1.29.2
 
   - Always return `nil` from `Console::Filter` logging methods.
