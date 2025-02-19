@@ -32,6 +32,10 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.29.3
+
+  - Serialized output now uses `IO#write` with a single string to reduce the chance of interleaved output.
+
 ### v1.29.2
 
   - Always return `nil` from `Console::Filter` logging methods.

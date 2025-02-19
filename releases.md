@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.29.3
 
   - Serialized output now uses `IO#write` with a single string to reduce the chance of interleaved output.
 
