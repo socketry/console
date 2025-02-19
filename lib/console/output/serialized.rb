@@ -68,7 +68,7 @@ module Console
 				
 				record.update(options)
 				
-				@io.puts(self.dump(record))
+				@io.write(self.dump(record) << "\n")
 			end
 		end
 		
