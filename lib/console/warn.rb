@@ -22,7 +22,7 @@ module Console
 				fiber.console_warn = true
 				message.chomp!
 				
-				Console::Logger.instance.warn(message, **options)
+				Console::Interface.instance.warn(message, **options)
 			ensure
 				fiber.console_warn = false
 			end

@@ -15,18 +15,6 @@ describe Console::Logger do
 	
 	let(:message) {"Hello World"}
 	
-	with ".instance" do
-		it "propagates to child thread" do
-			Fiber.new do
-				logger = Console::Logger.instance
-				
-				Fiber.new do
-					expect(Console::Logger.instance).to be_equal(logger)
-				end.resume
-			end.resume
-		end
-	end
-	
 	with "#with" do
 		let(:nested) {logger.with(name: "nested", level: :debug)}
 		

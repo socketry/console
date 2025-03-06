@@ -12,7 +12,7 @@ describe Console::Output do
 	let(:env) {Hash.new}
 	let(:output) {Console::Output.new(capture, env)}
 	
-	describe ".new" do
+	with ".new" do
 		with "output to a file" do
 			let(:capture) {File.open("/tmp/console.log", "w")}
 			
