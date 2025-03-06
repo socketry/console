@@ -21,6 +21,8 @@ group :test do
 	gem "decode"
 	gem "rubocop"
 	
+	gem "logger"
+	
 	gem "bake-test"
 	gem "bake-test-external"
 	
