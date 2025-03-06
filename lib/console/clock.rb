@@ -4,7 +4,12 @@
 # Copyright, 2021-2022, by Samuel Williams.
 
 module Console
+	# A simple clock utility for tracking and formatting time.
 	module Clock
+		# Format a duration in seconds as a human readable string.
+		#
+		# @parameter duration [Numeric] The duration in seconds.
+		# @returns [String] The formatted duration.
 		def self.formatted_duration(duration)
 			if duration < 60.0
 				return "#{duration.round(2)}s"
@@ -27,7 +32,7 @@ module Console
 			return "#{duration.floor}d"
 		end
 		
-		# Get the current elapsed monotonic time.
+		# @returns [Time] The current monotonic time.
 		def self.now
 			::Process.clock_gettime(::Process::CLOCK_MONOTONIC)
 		end
