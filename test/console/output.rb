@@ -12,7 +12,31 @@ describe Console::Output do
 	let(:env) {Hash.new}
 	let(:output) {Console::Output.new(capture, env)}
 	
-	describe ".new" do
+	with ".to_path" do
+		it "should convert constant name to path" do
+			expect(subject.to_path("Foo")).to be == "foo"
+			expect(subject.to_path("Foo::Bar")).to be == "foo/bar"
+			expect(subject.to_path("FooBar")).to be == "foo_bar"
+			expect(subject.to_path("Foo::BarBaz")).to be == "foo/bar_baz"
+			expect(subject.to_path("Foo::HTTPBar")).to be == "foo/http_bar"
+		end
+	end
+	
+	with ".load" do
+		it "should load a constant by name" do
+			expect(subject.load("Default")).to be == Console::Output::Default
+		end
+		
+		it "can require the file if it is not already loaded" do
+			expect(subject).to receive(:require).with("console/output/foo_bar")
+			
+			expect do
+				subject.load("Console::Output::FooBar")
+			end.to raise_exception(NameError)
+		end
+	end
+	
+	with ".new" do
 		with "output to a file" do
 			let(:capture) {File.open("/tmp/console.log", "w")}
 			
