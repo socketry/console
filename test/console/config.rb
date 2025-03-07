@@ -23,4 +23,14 @@ describe Console::Config do
 			expect(logger).to be_a Console::Logger
 		end
 	end
+	
+	with ".load" do
+		let(:path) {File.expand_path(".config/console_debug.rb", __dir__)}
+		
+		it "can load configuration" do
+			config = subject.load(path)
+			
+			expect(config.log_level).to be == :debug
+		end
+	end
 end

@@ -10,6 +10,45 @@ describe Console::Capture do
 	let(:capture) {subject.new}
 	let(:logger) {Console::Logger.new(capture)}
 	
+	with "#each" do
+		it "can iterate over log buffer" do
+			logger.info("Hello World!")
+			
+			capture.each do |entry|
+				expect(entry).to have_keys(
+					severity: be == :info,
+					subject: be == "Hello World!"
+				)
+			end
+		end
+	end
+	
+	with "#first" do
+		it "can access first log entry" do
+			logger.info("Goodbye World!")
+			logger.info("Hello World!")
+			
+			first = capture.first
+			expect(first).to have_keys(
+				severity: be == :info,
+				subject: be == "Goodbye World!"
+			)
+		end
+	end
+	
+	with "#last" do
+		it "can access last log entry" do
+			logger.info("Goodbye World!")
+			logger.info("Hello World!")
+			
+			last = capture.last
+			expect(last).to have_keys(
+				severity: be == :info,
+				subject: be == "Hello World!"
+			)
+		end
+	end
+	
 	with "#clear" do
 		it "can clear log buffer" do
 			logger.info("Hello World!")

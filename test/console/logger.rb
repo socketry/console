@@ -106,36 +106,17 @@ describe Console::Logger do
 	end
 	
 	describe ".default_log_level" do
-		def before
-			@debug = $DEBUG
-			@verbose = $VERBOSE
-			super
-		end
-		
-		def after(error = nil)
-			$DEBUG = @debug
-			$VERBOSE = @verbose
-			super
-		end
-		
 		it "should set default log level" do
-			$DEBUG = false
-			$VERBOSE = 0
-			
-			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
+			expect(Console::Logger.default_log_level(verbose: false, debug: false)).to be == Console::Logger::INFO
 		end
 		
 		it "should set default log level based on $DEBUG" do
-			$DEBUG = true
-			
-			expect(Console::Logger.default_log_level).to be == Console::Logger::DEBUG
+			expect(Console::Logger.default_log_level(debug: true)).to be == Console::Logger::DEBUG
 		end
 		
 		it "should set default log level based on $VERBOSE" do
-			$DEBUG = false
-			$VERBOSE = true
-			
-			expect(Console::Logger.default_log_level).to be == Console::Logger::INFO
+			expect(Console::Logger.default_log_level(verbose: true, debug: false)).to be == Console::Logger::INFO
+			expect(Console::Logger.default_log_level(verbose: nil, debug: false)).to be == Console::Logger::INFO
 		end
 		
 		it "can get log level from ENV" do

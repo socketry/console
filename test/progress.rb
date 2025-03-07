@@ -11,6 +11,12 @@ describe Console::Progress do
 	
 	let(:progress) {console_logger.progress("My Measurement", 100)}
 	
+	with ".now" do
+		it "can measure time" do
+			expect(Console::Progress.now).to be_a(Float)
+		end
+	end
+	
 	with "#mark" do
 		it "can mark progress" do
 			progress.mark("Hello World!")

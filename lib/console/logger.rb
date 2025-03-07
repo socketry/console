@@ -19,12 +19,17 @@ module Console
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
 		# https://mislav.net/2011/06/ruby-verbose-mode/ has more details about how it all fits together.
-		def self.default_log_level(env = ENV)
+		#
+		# @parameter env [Hash] The environment to read the log level from.
+		# @parameter verbose [Boolean] The verbose flag.
+		# @parameter debug [Boolean] The debug flag.
+		# @returns [Integer] The default log level.
+		def self.default_log_level(env = ENV, verbose: $VERBOSE, debug: $DEBUG)
 			if level = env["CONSOLE_LEVEL"]
 				LEVELS[level.to_sym] || level.to_i
-			elsif $DEBUG
+			elsif debug
 				DEBUG
-			elsif $VERBOSE.nil?
+			elsif verbose.nil?
 				WARN
 			else
 				INFO
