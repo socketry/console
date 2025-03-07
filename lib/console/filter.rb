@@ -9,18 +9,28 @@
 module Console
 	UNKNOWN = :unknown
 	
+	# A log filter which can be used to filter log messages based on severity, subject, and other criteria.
 	class Filter
 		if Object.const_defined?(:Ractor) and RUBY_VERSION >= "3.1"
+			# Define a method which can be shared between ractors.
 			def self.define_immutable_method(name, &block)
 				block = Ractor.make_shareable(block)
 				self.define_method(name, &block)
 			end
 		else
+			# Define a method.
 			def self.define_immutable_method(name, &block)
 				define_method(name, &block)
 			end
 		end
 		
+		# Create a new log filter with specific log levels.
+		#
+		# ```ruby
+		# class MyLogger < Console::Filter[debug: 0, okay: 1, bad: 2, terrible: 3]
+		# ```
+		#
+		# @parameter levels [Hash(Symbol, Integer)] A hash of log levels.
 		def self.[] **levels
 			klass = Class.new(self)
 			minimum_level, maximum_level = levels.values.minmax
@@ -54,6 +64,12 @@ module Console
 			return klass
 		end
 		
+		# Create a new log filter.
+		#
+		# @parameter output [Console::Output] The output destination.
+		# @parameter verbose [Boolean] Enable verbose output.
+		# @parameter level [Integer] The log level.
+		# @parameter options [Hash] Additional options.
 		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
 			@output = output
 			@verbose = verbose
@@ -64,6 +80,12 @@ module Console
 			@options = options
 		end
 		
+		# Create a new log filter with the given options, from an existing log filter.
+		#
+		# @parameter level [Integer] The log level.
+		# @parameter verbose [Boolean] Enable verbose output.
+		# @parameter options [Hash] Additional options.
+		# @returns [Console::Filter] The new log filter.
 		def with(level: @level, verbose: @verbose, **options)
 			dup.tap do |logger|
 				logger.level = level
@@ -72,14 +94,24 @@ module Console
 			end
 		end
 		
+		# @attribute [Console::Output] The output destination.
 		attr_accessor :output
+		
+		# @attribute [Boolean] Whether to enable verbose output.
 		attr :verbose
+		
+		# @attribute [Integer] The current log level.
 		attr :level
 		
+		# @attribute [Hash(Module, Integer)] The log levels for specific subject (classes).
 		attr :subjects
 		
+		# @attribute [Hash] Additional options.
 		attr_accessor :options
 		
+		# Set the log level.
+		#
+		# @parameter level [Integer | Symbol] The log level.
 		def level= level
 			if level.is_a? Symbol
 				@level = self.class::LEVELS[level]
@@ -88,19 +120,30 @@ module Console
 			end
 		end
 		
+		# Set verbose output (enable by default with no arguments).
+		#
+		# @parameter value [Boolean] Enable or disable verbose output.
 		def verbose!(value = true)
 			@verbose = value
 			@output.verbose!(value)
 		end
 		
+		# Disable all logging.
 		def off!
 			@level = self.class::MAXIMUM_LEVEL + 1
 		end
 		
+		# Enable all logging.
 		def all!
 			@level = self.class::MINIMUM_LEVEL - 1
 		end
 		
+		# Filter log messages based on the subject and log level.
+		#
+		# You must provide the subject's class, not an instance of the class.
+		#
+		# @parameter subject [Module] The subject to filter.
+		# @parameter level [Integer] The log level.
 		def filter(subject, level)
 			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
@@ -109,8 +152,13 @@ module Console
 			@subjects[subject] = level
 		end
 		
+		# Whether logging is enabled for the given subject and log level.
+		#
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
-		# @param subject [Object] the subject to check.
+		#
+		# @parameter subject [Module] The subject to check.
+		# @parameter level [Integer] The log level.
+		# @returns [Boolean] Whether logging is enabled.
 		def enabled?(subject, level = self.class::MINIMUM_LEVEL)
 			subject = subject.class unless subject.is_a?(Module)
 			
@@ -124,19 +172,24 @@ module Console
 		end
 		
 		# Enable specific log level for the given class.
+		#
 		# @parameter name [Module] The class to enable.
 		def enable(subject, level = self.class::MINIMUM_LEVEL)
 			# Set the filter level of logging for a given subject which passes all log messages:
 			filter(subject, level)
 		end
 		
+		# Disable logging for the given class.
+		#
+		# @parameter name [Module] The class to disable.
 		def disable(subject)
 			# Set the filter level of the logging for a given subject which filters all log messages:
 			filter(subject, self.class::MAXIMUM_LEVEL + 1)
 		end
 		
 		# Clear any specific filters for the given class.
-		# @parameter name [Module] The class to disable.
+		#
+		# @parameter subject [Module] The class to disable.
 		def clear(subject)
 			unless subject.is_a?(Module)
 				raise ArgumentError, "Expected a class, got #{subject.inspect}"
@@ -145,6 +198,13 @@ module Console
 			@subjects.delete(subject)
 		end
 		
+		# Log a message with the given severity.
+		#
+		# @parameter subject [Object] The subject of the log message.
+		# @parameter arguments [Array] The arguments to log.
+		# @parameter options [Hash] Additional options to pass to the output.
+		# @parameter block [Proc] A block passed to the output.
+		# @returns [Nil] Always returns nil.
 		def call(subject, *arguments, **options, &block)
 			severity = options[:severity] || UNKNOWN
 			level = self.class::LEVELS[severity]

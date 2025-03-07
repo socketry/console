@@ -16,6 +16,9 @@ require_relative "progress"
 require "fiber/local"
 
 module Console
+	# The standard logger interface with support for log levels and verbosity.
+	#
+	# The log levels are: `debug`, `info`, `warn`, `error`, and `fatal`.
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
 		extend Fiber::Local
 		
@@ -39,6 +42,7 @@ module Console
 			!$VERBOSE.nil? || env["CONSOLE_VERBOSE"]
 		end
 		
+		# Construct a new default logger.
 		def self.default_logger(output = $stderr, env = ENV, **options)
 			if options[:verbose].nil?
 				options[:verbose] = self.verbose?(env)
@@ -57,12 +61,17 @@ module Console
 			return logger
 		end
 		
+		# Construct a new fiber-local logger.
 		def self.local
 			self.default_logger
 		end
 		
 		DEFAULT_LEVEL = 1
 		
+		# Create a new logger.
+		#
+		# @parameter output [Console::Output] The output destination.
+		# @parameter options [Hash] Additional options.
 		def initialize(output, **options)
 			# This is the expected default behaviour, but it may be nice to have a way to override it.
 			output = Output::Failure.new(output, **options)
@@ -70,6 +79,12 @@ module Console
 			super(output, **options)
 		end
 		
+		# Create a progress indicator for the given subject.
+		#
+		# @parameter subject [String] The subject of the progress indicator.
+		# @parameter total [Integer] The total number of items to process.
+		# @parameter options [Hash] Additional options passed to {Progress}.
+		# @returns [Progress] The progress indicator.
 		def progress(subject, total, **options)
 			options[:severity] ||= :info
 			

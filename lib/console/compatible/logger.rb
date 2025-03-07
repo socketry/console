@@ -6,6 +6,7 @@
 require "logger"
 
 module Console
+	# @namespace
 	module Compatible
 		# A compatible interface for {::Logger} which can be used with {Console}.
 		class Logger < ::Logger

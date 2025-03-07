@@ -6,8 +6,8 @@
 require "console/terminal/xterm"
 
 describe Console::Terminal::XTerm do
-	let(:io) {StringIO.new}
-	let(:terminal) {subject.new(io)}
+	let(:stream) {StringIO.new}
+	let(:terminal) {subject.new(stream)}
 	
 	it "can generate simple style" do
 		expect(terminal.style(:blue)).to be == "\e[34m"
@@ -22,7 +22,7 @@ describe Console::Terminal::XTerm do
 		
 		terminal.write("Hello World", style: :bold)
 		
-		expect(io.string).to be == "\e[1mHello World\e[0m"
+		expect(stream.string).to be == "\e[1mHello World\e[0m"
 	end
 	
 	it "can puts text with specified style" do
@@ -30,7 +30,7 @@ describe Console::Terminal::XTerm do
 		
 		terminal.puts("Hello World", style: :bold)
 		
-		expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
+		expect(stream.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
 	end
 	
 	with "#print" do
@@ -39,7 +39,7 @@ describe Console::Terminal::XTerm do
 			
 			terminal.print(:bold, "Hello World")
 			
-			expect(io.string).to be == "\e[1mHello World"
+			expect(stream.string).to be == "\e[1mHello World"
 		end
 	end
 	
@@ -49,13 +49,13 @@ describe Console::Terminal::XTerm do
 			
 			terminal.print_line(:bold, "Hello World")
 			
-			expect(io.string.split(/\r?\n/)).to be == ["\e[1mHello World\e[0m"]
+			expect(stream.string.split(/\r?\n/)).to be == ["\e[1mHello World\e[0m"]
 		end
 	end
 	
 	with "#size" do
 		it "can determine the size of the terminal" do
-			expect(io).to receive(:winsize).and_return([24, 80])
+			expect(stream).to receive(:winsize).and_return([24, 80])
 			expect(terminal.size).to be == [24, 80]
 		end
 	end
