@@ -22,7 +22,7 @@ $ bundle add console
 
 ## Basic Logging
 
-Out of the box, {ruby Console.logger} is a globally shared logger that outputs to the current terminal via `stderr`.
+Out of the box, {ruby Console}  provides a logger interface that outputs to the current terminal via `stderr`.
 
 ~~~ ruby
 require 'console'
@@ -116,7 +116,7 @@ class Cache
 	def fetch(key)
 		@entries.fetch(key)
 	rescue => error
-		Console::Event::Failure.for(error).emit(self, "Cache fetch failure!")
+		Console.warn(self, "Cache fetch failure!", error)
 	end
 end
 

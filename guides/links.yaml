@@ -2,7 +2,9 @@ getting-started:
   order: 1
 command-line:
   order: 2
-integration:
+configuration:
   order: 3
-events:
+integration:
   order: 4
+events:
+  order: 5
