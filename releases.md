@@ -1,12 +1,12 @@
 # Releases
 
-## Unreleased
+## v1.30.0
 
 ### Introduce `Console::Config` for fine grained configuration.
 
-Introduced a new explicit configuration interface via config/console.rb to enhance logging setup in complex applications. This update gives the application code an opportunity to load files if required and control aspects such as log level, output, and more. Users can override default behaviors (e.g., make_output, make_logger, and log_level) for improved customization.
+Introduced a new explicit configuration interface via config/console.rb to enhance logging setup in complex applications. This update gives the application code an opportunity to load files if required and control aspects such as log level, output, and more. Users can override default behaviors (e.g., make\_output, make\_logger, and log\_level) for improved customization.
 
-```ruby 
+``` ruby
 # config/console.rb
 def log_level(env = ENV)
 	# Set a custom log level, e.g., force debug mode:

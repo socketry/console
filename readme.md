@@ -24,6 +24,8 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
   - [Command Line](https://socketry.github.io/console/guides/command-line/index) - This guide explains how the `console` gem can be controlled using environment variables.
 
+  - [Configuration](https://socketry.github.io/console/guides/configuration/index) - This guide explains how to implement per-project configuration for the `console` gem.
+
   - [Integration](https://socketry.github.io/console/guides/integration/index) - This guide explains how to integrate the `console` output into different systems.
 
   - [Events](https://socketry.github.io/console/guides/events/index) - This guide explains how to log structured events with a well-defined schema.
@@ -31,6 +33,10 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 ## Releases
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
+
+### v1.30.0
+
+  - [Introduce `Console::Config` for fine grained configuration.](https://socketry.github.io/console/releases/index#introduce-console::config-for-fine-grained-configuration.)
 
 ### v1.29.3
 
@@ -48,7 +54,7 @@ Please see the [project releases](https://socketry.github.io/console/releases/in
 
   - Don't make `Kernel#warn` redirection to `Console.warn` the default behavior, you must `require 'console/warn'` to enable it.
   - Remove deprecated `Console::Logger#failure`.
-  - [Consistent Handling of Exceptions](https://socketry.github.io/console/releases/index#consistent-handling-of-exceptions)
+  - [Consistent handling of exceptions.](https://socketry.github.io/console/releases/index#consistent-handling-of-exceptions.)
 
 ### v1.28.0
 
