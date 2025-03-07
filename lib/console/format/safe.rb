@@ -6,16 +6,27 @@
 require "json"
 
 module Console
+	# @namespace
 	module Format
-		# This class is used to safely dump objects.
-		# It will attempt to dump the object using the given format, but if it fails, it will generate a safe version of the object.
+		# A safe format for converting objects to strings.
+		# 
+		# Handles issues like circular references and encoding errors.
 		class Safe
+			# Create a new safe format.
+			#
+			# @parameter format [JSON] The format to use for serialization.
+			# @parameter limit [Integer] The maximum depth to recurse into objects.
+			# @parameter encoding [Encoding] The encoding to use for strings.
 			def initialize(format: ::JSON, limit: 8, encoding: ::Encoding::UTF_8)
 				@format = format
 				@limit = limit
 				@encoding = encoding
 			end
 			
+			# Dump the given object to a string.
+			#
+			# @parameter object [Object] The object to dump.
+			# @returns [String] The dumped object.
 			def dump(object)
 				@format.dump(object, @limit)
 			rescue SystemStackError, StandardError => error
@@ -24,6 +35,10 @@ module Console
 			
 			private
 			
+			# Filter the backtrace to remove duplicate frames and reduce verbosity.
+			#
+			# @parameter error [Exception] The exception to filter.
+			# @returns [Array(String)] The filtered backtrace.
 			def filter_backtrace(error)
 				frames = error.backtrace
 				filtered = {}
@@ -61,6 +76,13 @@ module Console
 				return frames
 			end
 			
+			# Dump the given object to a string, replacing it with a safe representation if there is an error.
+			#
+			# This is a slow path so we try to avoid it.
+			#
+			# @parameter object [Object] The object to dump.
+			# @parameter error [Exception] The error that occurred while dumping the object.
+			# @returns [Hash] The dumped (truncated) object including error details.
 			def safe_dump(object, error)
 				object = safe_dump_recurse(object)
 				
@@ -74,6 +96,10 @@ module Console
 				return object
 			end
 			
+			# Replace the given object with a safe truncated representation.
+			#
+			# @parameter object [Object] The object to replace.
+			# @returns [String] The replacement string.
 			def replacement_for(object)
 				case object
 				when Array
@@ -85,15 +111,17 @@ module Console
 				end
 			end
 			
+			# Create a new hash with identity comparison.
 			def default_objects
 				Hash.new.compare_by_identity
 			end
 			
-			# This will recursively generate a safe version of the object.
-			# Nested hashes and arrays will be transformed recursively.
-			# Strings will be encoded with the given encoding.
-			# Primitive values will be returned as-is.
-			# Other values will be converted using `as_json` if available, otherwise `to_s`.
+			# This will recursively generate a safe version of the object. Nested hashes and arrays will be transformed recursively. Strings will be encoded with the given encoding. Primitive values will be returned as-is. Other values will be converted using `as_json` if available, otherwise `to_s`.
+			#
+			# @parameter object [Object] The object to dump.
+			# @parameter limit [Integer] The maximum depth to recurse into objects.
+			# @parameter objects [Hash] The objects that have already been visited.
+			# @returns [Object] The dumped object as a primitive representation.
 			def safe_dump_recurse(object, limit = @limit, objects = default_objects)
 				if limit <= 0 || objects[object]
 					return replacement_for(object)

@@ -10,7 +10,9 @@ require_relative "text"
 module Console
 	# Styled terminal output.
 	module Terminal
+		# XTerm style terminal output.
 		class XTerm < Text
+			# XTerm color codes.
 			COLORS = {
 				black: 0,
 				red: 1,
@@ -23,6 +25,7 @@ module Console
 				default: 9,
 			}.freeze
 			
+			# XTerm attribute codes.
 			ATTRIBUTES = {
 				normal: 0,
 				bold: 1,
@@ -35,21 +38,30 @@ module Console
 				hidden: 8,
 			}.freeze
 			
+			# Whether the terminal supports colors.
 			def colors?
 				true
 			end
 			
+			# The size of the terminal.
 			def size
-				@output.winsize
+				@stream.winsize
 			rescue Errno::ENOTTY
 				# Fake it...
 				[24, 80]
 			end
 			
+			# The width of the terminal.
 			def width
 				size.last
 			end
 			
+			# Apply the given style to the output.
+			#
+			# @parameter foreground [Symbol] The foreground color.
+			# @parameter background [Symbol] The background color.
+			# @parameter attributes [Array(Symbol)] The attributes to apply.
+			# @returns [String] The style code.
 			def style(foreground, background = nil, *attributes)
 				tokens = []
 				
@@ -68,6 +80,9 @@ module Console
 				return "\e[#{tokens.join(';')}m"
 			end
 			
+			# Reset the style.
+			#
+			# @returns [String] The reset code.
 			def reset
 				"\e[0m"
 			end

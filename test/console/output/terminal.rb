@@ -6,8 +6,8 @@
 require "console/output/terminal"
 
 describe Console::Output::Terminal do
-	let(:io) {StringIO.new}
-	let(:logger) {subject.new(io, verbose: true)}
+	let(:stream) {StringIO.new}
+	let(:logger) {subject.new(stream, verbose: true)}
 	
 	let(:message) {"Hello World"}
 	
@@ -16,7 +16,7 @@ describe Console::Output::Terminal do
 			buffer << message
 		end
 		
-		expect(io.string).to be(:include?, message)
+		expect(stream.string).to be(:include?, message)
 	end
 	
 	it "can format options" do
@@ -24,15 +24,15 @@ describe Console::Output::Terminal do
 		
 		logger.call("Hello World", **options)
 		
-		expect(io.string).to be =~ /"foo": "bar"/
+		expect(stream.string).to be =~ /"foo": "bar"/
 	end
 	
 	with "verbose: false" do
-		let(:logger) {subject.new(io, verbose: false)}
+		let(:logger) {subject.new(stream, verbose: false)}
 		
 		it "can log to buffer" do
 			logger.call(message)
-			expect(io.string).to be(:include?, message)
+			expect(stream.string).to be(:include?, message)
 		end
 	end
 	
@@ -44,7 +44,7 @@ describe Console::Output::Terminal do
 				logger.call(message)
 			end.resume
 			
-			expect(io.string).to be(:include?, "Running in a fiber.")
+			expect(stream.string).to be(:include?, "Running in a fiber.")
 		end
 		
 		it "logs fiber annotations when it isn't a string" do
@@ -56,7 +56,7 @@ describe Console::Output::Terminal do
 				logger.call(message)
 			end.resume
 			
-			expect(io.string).to be(:include?, thing.to_s)
+			expect(stream.string).to be(:include?, thing.to_s)
 		end
 	end
 end

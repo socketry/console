@@ -7,6 +7,9 @@ require_relative "format/safe"
 
 module Console
 	module Format
+		# A safe format for converting objects to strings.
+		#
+		# @returns [Console::Format::Safe]
 		def self.default
 			Safe.new(format: ::JSON)
 		end

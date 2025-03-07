@@ -9,6 +9,7 @@
 require_relative "console/version"
 require_relative "console/interface"
 
+# @namespace
 module Console
 	Console.extend(Interface)
 end

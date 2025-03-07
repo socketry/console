@@ -6,9 +6,14 @@
 module Console
 	module Terminal
 		module Formatter
+			# Format a failure event, including the exception message and backtrace.
 			class Failure
+				# The key used to identify this formatter.
 				KEY = :failure
 				
+				# Create a new failure formatter.
+				#
+				# @param terminal [Terminal::Text] The terminal to use for formatting.
 				def initialize(terminal)
 					@terminal = terminal
 					
@@ -19,7 +24,14 @@ module Console
 					@terminal[:exception_message] ||= @terminal.style(:default)
 				end
 				
-				def format(event, output, prefix: nil, verbose: false, width: 80)
+				# Format the given event.
+				#
+				# @parameter event [Hash] The event to format.
+				# @parameter stream [IO] The stream to write the formatted event to.
+				# @parameter prefix [String] The prefix to use before the title.
+				# @parameter verbose [Boolean] Whether to include additional information.
+				# @parameter options [Hash] Additional options.
+				def format(event, stream, prefix: nil, verbose: false, **options)
 					title = event[:class]
 					message = event[:message]
 					backtrace = event[:backtrace]
@@ -27,10 +39,10 @@ module Console
 					
 					lines = message.lines.map(&:chomp)
 					
-					output.puts "  #{prefix}#{@terminal[:exception_title]}#{title}#{@terminal.reset}: #{lines.shift}"
+					stream.puts "  #{prefix}#{@terminal[:exception_title]}#{title}#{@terminal.reset}: #{lines.shift}"
 					
 					lines.each do |line|
-						output.puts "  #{@terminal[:exception_detail]}#{line}#{@terminal.reset}"
+						stream.puts "  #{@terminal[:exception_detail]}#{line}#{@terminal.reset}"
 					end
 					
 					root_pattern = /^#{root}\// if root
@@ -44,11 +56,11 @@ module Console
 							style = :exception_backtrace_other
 						end
 						
-						output.puts "  #{index == 0 ? "→" : " "} #{@terminal[style]}#{path}:#{offset}#{@terminal[:exception_message]} #{message}#{@terminal.reset}"
+						stream.puts "  #{index == 0 ? "→" : " "} #{@terminal[style]}#{path}:#{offset}#{@terminal[:exception_message]} #{message}#{@terminal.reset}"
 					end
 					
 					if cause = event[:cause]
-						format(cause, output, prefix: "Caused by ", verbose: verbose, width: width)
+						format(cause, stream, prefix: "Caused by ", verbose: verbose, **options)
 					end
 				end
 			end

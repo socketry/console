@@ -9,9 +9,15 @@ require "fiber/annotation"
 
 module Console
 	module Output
+		# Serialize log messages in a structured format.
 		class Serialized
-			def initialize(io, format: Format.default, **options)
-				@io = io
+			# Create a new serialized output.
+			#
+			# @parameter io [IO] The output stream.
+			# @parameter format [Console::Format] The format to use for serializing log messages.
+			# @parameter options [Hash] Additional options to customize the output.
+			def initialize(stream, format: Format.default, **options)
+				@stream = stream
 				@format = format
 			end
 			
@@ -20,13 +26,27 @@ module Console
 				self
 			end
 			
-			attr :io
+			# @attribute [IO] The output stream.
+			attr :stream
+			
+			# @attribute [Console::Format] The format to use for serializing log messages.
 			attr :format
 			
+			# Serialize the given record.
+			#
+			# @parameter record [Hash] The record to serialize.
+			# @returns [String] The serialized record.
 			def dump(record)
 				@format.dump(record)
 			end
 			
+			# Output the given log message.
+			#
+			# @parameter subject [String] The subject of the log message.
+			# @parameter arguments [Array] The arguments to log.
+			# @parameter severity [Symbol] The severity of the log message.
+			# @parameter options [Hash] Additional options.
+			# @parameter block [Proc] An optional block used to generate the log message.
 			def call(subject = nil, *arguments, severity: UNKNOWN, **options, &block)
 				record = {
 					time: Time.now.iso8601,
@@ -68,10 +88,11 @@ module Console
 				
 				record.update(options)
 				
-				@io.write(self.dump(record) << "\n")
+				@stream.write(self.dump(record) << "\n")
 			end
 		end
 		
+		# @deprecated This is a legacy constant, please use `Serialized` instead.
 		JSON = Serialized
 	end
 end

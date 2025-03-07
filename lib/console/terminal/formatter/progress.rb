@@ -6,9 +6,12 @@
 module Console
 	module Terminal
 		module Formatter
+			# Format a progress event, including the current progress and total.
 			class Progress
+				# The key used to identify this formatter.
 				KEY = :progress
 				
+				# The block characters used to render the progress bar.
 				BLOCK = [
 					" ",
 					"▏",
@@ -21,12 +24,21 @@ module Console
 					"█",
 				]
 				
+				# Create a new progress formatter.
+				#
+				# @param terminal [Terminal::Text] The terminal to use for formatting.
 				def initialize(terminal)
 					@terminal = terminal
 					@terminal[:progress_bar] ||= terminal.style(:blue, :white)
 				end
 				
-				def format(event, output, verbose: false, width: 80)
+				# Format the given event.
+				#
+				# @parameter event [Hash] The event to format.
+				# @parameter stream [IO] The stream to write the formatted event to.
+				# @parameter verbose [Boolean] Whether to include additional information.
+				# @parameter width [Integer] The width of the progress bar.
+				def format(event, stream, verbose: false, width: 80)
 					current = event[:current].to_f
 					total = event[:total].to_f
 					value = current / total
@@ -36,11 +48,12 @@ module Console
 						value = 1.0
 					end
 					
-					output.puts "#{@terminal[:progress_bar]}#{self.bar(value, width-10)}#{@terminal.reset} #{sprintf('%6.2f', value * 100)}%"
+					stream.puts "#{@terminal[:progress_bar]}#{self.bar(value, width-10)}#{@terminal.reset} #{sprintf('%6.2f', value * 100)}%"
 				end
 				
 				private
 				
+				# Render a progress bar with the given value and width.
 				def bar(value, width)
 					blocks = width * value
 					full_blocks = blocks.floor

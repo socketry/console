@@ -5,18 +5,16 @@
 
 require_relative "terminal/text"
 require_relative "terminal/xterm"
-
-require_relative "terminal/formatter/progress"
-require_relative "terminal/formatter/failure"
-require_relative "terminal/formatter/spawn"
+require_relative "terminal/formatter"
 
 module Console
 	module Terminal
-		def self.for(io)
-			if io.tty?
-				XTerm.new(io)
+		# Create a new terminal output for the given stream.
+		def self.for(stream)
+			if stream.tty?
+				XTerm.new(stream)
 			else
-				Text.new(io)
+				Text.new(stream)
 			end
 		end
 	end

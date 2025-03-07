@@ -8,12 +8,12 @@ require "console/output/serialized"
 require "console/event/spawn"
 
 describe Console::Output::Serialized do
-	let(:io) {StringIO.new}
-	let(:logger) {subject.new(io)}
+	let(:stream) {StringIO.new}
+	let(:logger) {subject.new(stream)}
 	
 	let(:message) {"Hello World"}
 	
-	let(:record) {JSON.parse(io.string, symbolize_names: true)}
+	let(:record) {JSON.parse(stream.string, symbolize_names: true)}
 	
 	it "can log to buffer" do
 		logger.call do |buffer|
