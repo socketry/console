@@ -8,20 +8,14 @@
 require_relative "output"
 require_relative "output/failure"
 
-require_relative "filter"
-require_relative "event"
-require_relative "resolver"
 require_relative "progress"
-
-require "fiber/local"
+require_relative "config"
 
 module Console
 	# The standard logger interface with support for log levels and verbosity.
 	#
 	# The log levels are: `debug`, `info`, `warn`, `error`, and `fatal`.
 	class Logger < Filter[debug: 0, info: 1, warn: 2, error: 3, fatal: 4]
-		extend Fiber::Local
-		
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
 		# You can also specify CONSOLE_LEVEL=debug or CONSOLE_LEVEL=info in environment.
 		# https://mislav.net/2011/06/ruby-verbose-mode/ has more details about how it all fits together.
@@ -35,35 +29,6 @@ module Console
 			else
 				INFO
 			end
-		end
-		
-		# Controls verbose output using `$VERBOSE`.
-		def self.verbose?(env = ENV)
-			!$VERBOSE.nil? || env["CONSOLE_VERBOSE"]
-		end
-		
-		# Construct a new default logger.
-		def self.default_logger(output = $stderr, env = ENV, **options)
-			if options[:verbose].nil?
-				options[:verbose] = self.verbose?(env)
-			end
-			
-			if options[:level].nil?
-				options[:level] = self.default_log_level(env)
-			end
-			
-			output = Output.new(output, env, **options)
-			
-			logger = self.new(output, **options)
-			
-			Resolver.default_resolver(logger)
-			
-			return logger
-		end
-		
-		# Construct a new fiber-local logger.
-		def self.local
-			self.default_logger
 		end
 		
 		DEFAULT_LEVEL = 1
