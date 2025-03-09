@@ -9,7 +9,6 @@ require_relative "output"
 require_relative "output/failure"
 
 require_relative "progress"
-require_relative "config"
 
 module Console
 	# The standard logger interface with support for log levels and verbosity.
