@@ -1,9 +1,10 @@
 # frozen_string_literal: true
 
 # Released under the MIT License.
-# Copyright, 2019-2024, by Samuel Williams.
+# Copyright, 2019-2025, by Samuel Williams.
 # Copyright, 2021, by Bryan Powell.
 # Copyright, 2021, by Robert Schulze.
+# Copyright, 2025, by Shigeru Nakajima.
 
 require_relative "output"
 require_relative "output/failure"
