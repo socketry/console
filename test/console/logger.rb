@@ -116,7 +116,7 @@ describe Console::Logger do
 		
 		it "should set default log level based on $VERBOSE" do
 			expect(Console::Logger.default_log_level(verbose: true, debug: false)).to be == Console::Logger::INFO
-			expect(Console::Logger.default_log_level(verbose: nil, debug: false)).to be == Console::Logger::INFO
+			expect(Console::Logger.default_log_level(verbose: nil, debug: false)).to be == Console::Logger::WARN
 		end
 		
 		it "can get log level from ENV" do
