@@ -6,6 +6,8 @@
 # Copyright, 2021, by Robert Schulze.
 # Copyright, 2025, by Shigeru Nakajima.
 
+require_relative "filter"
+
 require_relative "output"
 require_relative "output/failure"
 
