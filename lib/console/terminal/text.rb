@@ -78,15 +78,19 @@ module Console
 				end
 			end
 			
-			# Write the given arguments to the output stream using the given style. The reset sequence is automatically appended.
+			# Write the given arguments to the output stream using the given style. The reset sequence is automatically
+			# appended at the end of each line.
 			#
 			# @parameter arguments [Array] The arguments to write, each on a new line.
 			# @parameter style [Symbol] The style to apply.
 			def puts(*arguments, style: nil)
 				if style and prefix = self[style]
-					@stream.write(prefix)
-					@stream.puts(*arguments)
-					@stream.write(self.reset)
+					arguments.each do |argument|
+						argument.to_s.lines.each do |line|
+							@stream.write(prefix, line.chomp)
+							@stream.puts(self.reset)
+						end
+					end
 				else
 					@stream.puts(*arguments)
 				end
