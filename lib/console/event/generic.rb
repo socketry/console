@@ -10,6 +10,13 @@ module Console
 			# Convert the event to a hash suitable for JSON serialization.
 			#
 			# @returns [Hash] The hash representation of the event.
+			def to_hash
+				{}
+			end
+			
+			# Convert the event to a hash suitable for JSON serialization.
+			#
+			# @returns [Hash] The hash representation of the event.
 			def as_json(...)
 				to_hash
 			end
