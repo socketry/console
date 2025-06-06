@@ -30,7 +30,16 @@ describe Console::Terminal::XTerm do
 		
 		terminal.puts("Hello World", style: :bold)
 		
-		expect(stream.string.split(/\r?\n/)).to be == ["\e[1mHello World", "\e[0m"]
+		expect(stream.string.chomp).to be == "\e[1mHello World\e[0m"
+		expect(stream.string).to be =~ /\r?\n\z/
+	end
+
+	it "can puts multiline text with specified style" do
+		terminal[:bold] = terminal.style(nil, nil, :bold)
+		
+		terminal.puts("Hello\nWorld", style: :bold)
+		
+		expect(stream.string.split(/\r?\n/)).to be == ["\e[1mHello\e[0m", "\e[1mWorld\e[0m"]
 	end
 	
 	with "#print" do
