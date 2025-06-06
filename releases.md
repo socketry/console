@@ -1,5 +1,22 @@
 # Releases
 
+## Unreleased
+
+### Improved output format selection for cron jobs and email contexts.
+
+When `MAILTO` environment variable is set (typically in cron jobs), the console library now prefers human-readable terminal output instead of JSON serialized output, even when the output stream is not a TTY. This ensures that cron job output sent via email is formatted in a readable way for administrators.
+
+``` ruby
+# Previously in cron jobs (non-TTY), this would output JSON:
+# {"time":"2025-06-07T10:30:00Z","severity":"info","subject":"CronJob","message":["Task completed"]}
+
+# Now with MAILTO set, it outputs human-readable format:
+#   0.1s     info: CronJob
+#                | Task completed
+```
+
+This change is conservative and only affects environments where `MAILTO` is explicitly set, ensuring compatibility with existing deployments.
+
 ## v1.30.0
 
 ### Introduce `Console::Config` for fine grained configuration.
