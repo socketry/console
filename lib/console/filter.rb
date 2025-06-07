@@ -70,10 +70,16 @@ module Console
 		# @parameter verbose [Boolean] Enable verbose output.
 		# @parameter level [Integer] The log level.
 		# @parameter options [Hash] Additional options.
-		def initialize(output, verbose: true, level: self.class::DEFAULT_LEVEL, **options)
+		def initialize(output, verbose: true, level: nil, **options)
 			@output = output
 			@verbose = verbose
-			@level = level
+			
+			# Set the log level using the behaviour implemented in `level=`:
+			if level
+				self.level = level
+			else
+				@level = self.class::DEFAULT_LEVEL
+			end
 			
 			@subjects = {}
 			
@@ -156,7 +162,7 @@ module Console
 		#
 		# You can enable and disable logging for classes. This function checks if logging for a given subject is enabled.
 		#
-		# @parameter subject [Module] The subject to check.
+		# @parameter subject [Module | Object] The subject to check.
 		# @parameter level [Integer] The log level.
 		# @returns [Boolean] Whether logging is enabled.
 		def enabled?(subject, level = self.class::MINIMUM_LEVEL)

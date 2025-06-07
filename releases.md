@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+### Symbol log level compatibility.
+
+Previously, returning symbols from custom `log_level` methods in configuration files would cause runtime errors like "comparison of Integer with :debug failed". This has been fixed to properly convert symbols to their corresponding integer values.
+
+```ruby
+# config/console.rb - This now works correctly:
+def log_level(env = ENV)
+	:debug  # Automatically converted to Console::Logger::LEVELS[:debug]
+end
+```
+
+While this fix maintains backward compatibility, the recommended approach is still to use integer values directly:
+
+```ruby
+# config/console.rb - Recommended approach:
+def log_level(env = ENV)
+	Console::Logger::LEVELS[:debug]  # Returns 0
+end
+```
+
 ### Improved output format selection for cron jobs and email contexts.
 
 When `MAILTO` environment variable is set (typically in cron jobs), the console library now prefers human-readable terminal output instead of JSON serialized output, even when the output stream is not a TTY. This ensures that cron job output sent via email is formatted in a readable way for administrators.

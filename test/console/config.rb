@@ -32,5 +32,12 @@ describe Console::Config do
 			
 			expect(config.log_level).to be == :debug
 		end
+		
+		it "can create a logger from the loaded configuration" do
+			config = subject.load(path)
+			logger = config.make_logger
+			expect(logger).to be_a Console::Logger
+			expect(logger.level).to be == Console::Logger::DEBUG
+		end
 	end
 end
