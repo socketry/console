@@ -35,7 +35,7 @@ module Console
 			# Cron jobs often have MAILTO set and lack TERM, or have minimal TERM values.
 			def self.mail?(env = ENV)
 				# Check for common cron environment indicators
-				return true if env.key?('MAILTO') && !env['MAILTO'].empty?
+				return true if env.key?("MAILTO") && !env["MAILTO"].empty?
 				
 				false
 			end

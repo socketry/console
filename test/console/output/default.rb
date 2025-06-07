@@ -24,12 +24,12 @@ describe Console::Output::Default do
 		end
 		
 		it "should use Terminal output when MAILTO is set" do
-			output = subject.new(stream, env: {'MAILTO' => 'admin@example.com'})
+			output = subject.new(stream, env: {"MAILTO" => "admin@example.com"})
 			expect(output).to be_a(Console::Output::Terminal)
 		end
 		
 		it "should use Serialized output for regular non-TTY streams" do
-			output = subject.new(stream, env: {'TERM' => 'xterm-256color', 'DISPLAY' => ':0'})
+			output = subject.new(stream, env: {"TERM" => "xterm-256color", "DISPLAY" => ":0"})
 			expect(output).to be_a(Console::Output::Serialized)
 		end
 	end
