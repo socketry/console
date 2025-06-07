@@ -1,12 +1,12 @@
 # Releases
 
-## Unreleased
+## v1.31.0
 
 ### Ractor compatibility.
 
 The console library now works correctly with Ruby's Ractor concurrency model. Previously, attempting to use console logging within Ractors would fail with errors about non-shareable objects. This has been fixed by ensuring the default configuration is properly frozen.
 
-```ruby
+``` ruby
 # This now works without errors:
 ractor = Ractor.new do
   require 'console'
@@ -24,7 +24,7 @@ The fix is minimal and maintains full backward compatibility while enabling safe
 
 Previously, returning symbols from custom `log_level` methods in configuration files would cause runtime errors like "comparison of Integer with :debug failed". This has been fixed to properly convert symbols to their corresponding integer values.
 
-```ruby
+``` ruby
 # config/console.rb - This now works correctly:
 def log_level(env = ENV)
 	:debug  # Automatically converted to Console::Logger::LEVELS[:debug]
@@ -33,7 +33,7 @@ end
 
 While this fix maintains backward compatibility, the recommended approach is still to use integer values directly:
 
-```ruby
+``` ruby
 # config/console.rb - Recommended approach:
 def log_level(env = ENV)
 	Console::Logger::LEVELS[:debug]  # Returns 0

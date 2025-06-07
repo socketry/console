@@ -34,6 +34,12 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.31.0
+
+  - [Ractor compatibility.](https://socketry.github.io/console/releases/index#ractor-compatibility.)
+  - [Symbol log level compatibility.](https://socketry.github.io/console/releases/index#symbol-log-level-compatibility.)
+  - [Improved output format selection for cron jobs and email contexts.](https://socketry.github.io/console/releases/index#improved-output-format-selection-for-cron-jobs-and-email-contexts.)
+
 ### v1.30.0
 
   - [Introduce `Console::Config` for fine grained configuration.](https://socketry.github.io/console/releases/index#introduce-console::config-for-fine-grained-configuration.)
