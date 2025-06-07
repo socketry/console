@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+### Ractor compatibility.
+
+The console library now works correctly with Ruby's Ractor concurrency model. Previously, attempting to use console logging within Ractors would fail with errors about non-shareable objects. This has been fixed by ensuring the default configuration is properly frozen.
+
+```ruby
+# This now works without errors:
+ractor = Ractor.new do
+  require 'console'
+  Console.info('Hello from Ractor!')
+  'Ractor completed successfully'
+end
+
+result = ractor.take
+puts result # => 'Ractor completed successfully'
+```
+
+The fix is minimal and maintains full backward compatibility while enabling safe parallel logging across multiple Ractors.
+
 ### Symbol log level compatibility.
 
 Previously, returning symbols from custom `log_level` methods in configuration files would cause runtime errors like "comparison of Integer with :debug failed". This has been fixed to properly convert symbols to their corresponding integer values.

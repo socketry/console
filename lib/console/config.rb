@@ -30,7 +30,7 @@ module Console
 		# Load the default configuration.
 		# @returns [Config] The default configuration.
 		def self.default
-			@default ||= self.load(PATH)
+			@default ||= self.load(PATH).freeze
 		end
 		
 		# Set the default log level based on `$DEBUG` and `$VERBOSE`.
