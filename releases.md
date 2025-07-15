@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Add `fiber_id` to serialized output records to help identify which fiber logged the message.
+
 ## v1.31.0
 
 ### Ractor compatibility.

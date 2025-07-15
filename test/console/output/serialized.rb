@@ -41,6 +41,9 @@ describe Console::Output::Serialized do
 			
 			expect(record).to have_keys(
 				subject: be == subject.name,
+				pid: be == Process.pid,
+				oid: be == subject.object_id,
+				fiber_id: be == Fiber.current.object_id,
 				event: have_keys(
 					type: be == "spawn",
 					arguments: be == ["ls -lah"],

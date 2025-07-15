@@ -51,8 +51,9 @@ module Console
 				record = {
 					time: Time.now.iso8601,
 					severity: severity,
-					oid: subject.object_id,
 					pid: Process.pid,
+					oid: subject.object_id,
+					fiber_id: Fiber.current.object_id,
 				}
 				
 				# We want to log just a brief subject:
