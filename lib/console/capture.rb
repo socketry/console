@@ -18,9 +18,10 @@ module Console
 		# @attribute [Array(Hash)] All records captured by this buffer.
 		attr :records
 		
-		# @deprecated Use {#records} instead of {#buffer}.
+		# @deprecated Use {records} instead of {buffer}.
 		alias buffer records
 		
+		# @deprecated Use {records} instead of {to_a}.
 		alias to_a records
 		
 		# @attribute [Boolean] If true, the buffer will capture verbose messages.

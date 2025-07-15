@@ -41,6 +41,7 @@ module Console
 					end
 				end
 				
+				# Write a line to the buffer.
 				alias << puts
 			end
 			
