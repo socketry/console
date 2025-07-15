@@ -52,17 +52,17 @@ describe Console::Filter do
 	
 	with "#enable" do
 		it "can't enable non-class subjects" do
-			expect{
+			expect do
 				logger.enable("Hello World")
-			}.to raise_exception(ArgumentError)
+			end.to raise_exception(ArgumentError)
 		end
 	end
 	
 	with "#clear" do
 		it "can't clear non-class subjects" do
-			expect{
+			expect do
 				logger.clear("Hello World")
-			}.to raise_exception(ArgumentError)
+			end.to raise_exception(ArgumentError)
 		end
 	end
 	

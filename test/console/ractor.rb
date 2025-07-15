@@ -24,7 +24,7 @@ describe Console do
 				
 				{
 					result: "Ractor completed successfully",
-					messages: capture.records.map { |record| record[:subject] }
+					messages: capture.records.map {|record| record[:subject]}
 				}
 			end
 			
@@ -49,13 +49,13 @@ describe Console do
 					
 					{
 						result: "Ractor #{id} completed",
-						messages: capture.records.map { |record| record[:subject] }
+						messages: capture.records.map{|record| record[:subject]}
 					}
 				end
 			end
 			
 			outputs = ractors.map(&:take)
-			results = outputs.map { |o| o[:result] }
+			results = outputs.map{|output| output[:result]}
 			
 			expect(results).to be == [
 				"Ractor 0 completed",
@@ -82,7 +82,7 @@ describe Console do
 				logger.warn("Captured warning")
 				
 				# Return the captured messages
-				capture.records.map { |record| record[:subject] }
+				capture.records.map{|record| record[:subject]}
 			end
 			
 			captured_messages = ractor.take

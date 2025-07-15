@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Console::VERSION
 	
 	spec.summary = "Beautiful logging for Ruby."
-	spec.authors = ["Samuel Williams", "Robert Schulze", "Bryan Powell", "Michael Adams", "Anton Sozontov", "Cyril Roelandt", "Cédric Boutillier", "Felix Yan", "Olle Jonsson", "Patrik Wenger", "Shigeru Nakajima", "William T. Nelson"]
+	spec.authors = ["Samuel Williams", "Robert Schulze", "Bryan Powell", "Michael Adams", "Patrik Wenger", "Anton Sozontov", "Cyril Roelandt", "Cédric Boutillier", "Felix Yan", "Olle Jonsson", "Shigeru Nakajima", "William T. Nelson"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ["release.cert"]
