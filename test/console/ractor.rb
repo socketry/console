@@ -7,6 +7,9 @@ require "console"
 
 return unless defined?(Ractor)
 
+# Ractors are more or less broken in older Ruby versions, so we require Ruby 3.4 or later for Ractor compatibility.
+return unless RUBY_VERSION >= "3.4"
+
 describe Console do
 	with Ractor do
 		it "can log messages from within a ractor" do
