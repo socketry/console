@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.32.0
 
   - Add `fiber_id` to serialized output records to help identify which fiber logged the message.
   - Ractor support appears broken in older Ruby versions, so we now require Ruby 3.4 or later for Ractor compatibility, if you need Ractor support.

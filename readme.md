@@ -34,6 +34,11 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.32.0
+
+  - Add `fiber_id` to serialized output records to help identify which fiber logged the message.
+  - Ractor support appears broken in older Ruby versions, so we now require Ruby 3.4 or later for Ractor compatibility, if you need Ractor support.
+
 ### v1.31.0
 
   - [Ractor compatibility.](https://socketry.github.io/console/releases/index#ractor-compatibility.)
