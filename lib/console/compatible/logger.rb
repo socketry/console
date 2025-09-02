@@ -62,7 +62,7 @@ module Console
 			# @parameter message [String] The message to log.
 			# @parameter progname [String] The program name.
 			# @returns [Boolean] True if the message was logged.
-			def add(severity, message = nil, progname = nil)
+			def add(severity, message = nil, progname = nil, **options)
 				severity ||= UNKNOWN
 				
 				if @logdev.nil? or severity < level
@@ -84,6 +84,7 @@ module Console
 				
 				@logdev.call(
 					progname, message,
+					**options,
 					severity: format_severity(severity)
 				)
 				
