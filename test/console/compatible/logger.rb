@@ -43,10 +43,10 @@ describe Console::Compatible::Logger do
 		expect(logger.level).to be_a(Integer)
 		expect(logger.level).to be == ::Logger::DEBUG
 	end
-
+	
 	it "accepts keyword arguments and passes them to the log device" do
 		logger.add(Logger::INFO, "Hello World", request_id: 137)
-
+		
 		expect(stream.string).to be(:include?, '"request_id": 137')
 	end
 end
