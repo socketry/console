@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.34.0
 
   - Allow `Console::Compatible::Logger#add` to accept `**options`.
 

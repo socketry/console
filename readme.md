@@ -34,6 +34,10 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.34.0
+
+  - Allow `Console::Compatible::Logger#add` to accept `**options`.
+
 ### v1.32.0
 
   - Add `fiber_id` to serialized output records to help identify which fiber logged the message.
