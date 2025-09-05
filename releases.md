@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Allow `Console::Compatible::Logger#add` to accept `**options`.
+
 ## v1.32.0
 
   - Add `fiber_id` to serialized output records to help identify which fiber logged the message.
