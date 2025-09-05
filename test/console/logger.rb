@@ -77,7 +77,7 @@ describe Console::Logger do
 			with "#send" do
 				it "can log #{name} messages" do
 					expect(output).to receive(:call).with(message, severity: name)
-				
+					
 					logger.level = level
 					logger.send(name, message)
 				end

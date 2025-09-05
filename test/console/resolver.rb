@@ -52,7 +52,7 @@ describe Console::Resolver do
 			expect(Console.logger.subjects[Banana]).to be == Console::Logger::WARN
 			expect(Console.logger.subjects[Cat]).to be == Console::Logger::DEBUG
 		end
-
+		
 		it 'can set "all" and "off" by environment' do
 			expect(Console::Resolver.default_resolver(logger, {
 				"CONSOLE_ON" => "Cat",

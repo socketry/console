@@ -90,7 +90,7 @@ describe Console do
 				# Return the captured messages
 				port.send(capture.records.map{|record| record[:subject]})
 			end
-
+			
 			captured_messages = port.receive
 			expect(captured_messages).to be == ["Captured message", "Captured warning"]
 		end

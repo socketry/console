@@ -34,7 +34,7 @@ describe Console::Terminal::XTerm do
 		expect(stream.string.chomp).to be == "\e[1mHello World\e[0m"
 		expect(stream.string).to be =~ /\r?\n\z/
 	end
-
+	
 	it "can puts multiline text with specified style" do
 		terminal[:bold] = terminal.style(nil, nil, :bold)
 		
