@@ -26,10 +26,10 @@ module Console
 				names = names.split(",").reverse
 				
 				names.inject(output) do |output, name|
-					Output.const_get(name).new(output, **options)
+					Output.const_get(name).new(output, env: env, **options)
 				end
 			else
-				return Output::Default.new(output, **options)
+				return Output::Default.new(output, env: env, **options)
 			end
 		end
 	end
