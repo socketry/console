@@ -5,15 +5,14 @@
 
 require "console"
 
-return unless defined?(Ractor)
-
-# Ractors are more or less broken in older Ruby versions, so we require Ruby 3.4 or later for Ractor compatibility.
-return unless RUBY_VERSION >= "3.4"
+return unless defined?(Ractor::Port)
 
 describe Console do
 	with Ractor do
 		it "can log messages from within a ractor" do
-			ractor = Ractor.new do
+			port = Ractor::Port.new
+			
+			ractor = Ractor.new(port) do |port|
 				require "console"
 				require "console/capture"
 				
@@ -25,20 +24,22 @@ describe Console do
 				Console.warn("Warning from Ractor!")
 				Console.error("Error from Ractor!")
 				
-				{
+				port.send({
 					result: "Ractor completed successfully",
 					messages: capture.records.map {|record| record[:subject]}
-				}
+				})
 			end
 			
-			output = ractor.take
+			output = port.receive
 			expect(output[:result]).to be == "Ractor completed successfully"
 			expect(output[:messages]).to be == ["Hello from Ractor!", "Warning from Ractor!", "Error from Ractor!"]
 		end
 		
 		it "can handle multiple concurrent ractors" do
+			port = Ractor::Port.new
+			
 			ractors = 3.times.map do |i|
-				Ractor.new(i) do |id|
+				Ractor.new(port, i) do |port, id|
 					require "console"
 					require "console/capture"
 					
@@ -50,14 +51,14 @@ describe Console do
 					sleep(0.01) # Brief work simulation
 					Console.info("Ractor #{id}", "Finished work")
 					
-					{
+					port.send({
 						result: "Ractor #{id} completed",
 						messages: capture.records.map{|record| record[:subject]}
-					}
+					})
 				end
 			end
 			
-			outputs = ractors.map(&:take)
+			outputs = 3.times.map{port.receive}.sort_by{|output| output[:result]}
 			results = outputs.map{|output| output[:result]}
 			
 			expect(results).to be == [
@@ -73,7 +74,9 @@ describe Console do
 		end
 		
 		it "can use custom loggers in ractors" do
-			ractor = Ractor.new do
+			port = Ractor::Port.new
+			
+			ractor = Ractor.new(port) do |port|
 				require "console"
 				require "console/capture"
 				
@@ -85,10 +88,10 @@ describe Console do
 				logger.warn("Captured warning")
 				
 				# Return the captured messages
-				capture.records.map{|record| record[:subject]}
+				port.send(capture.records.map{|record| record[:subject]})
 			end
-			
-			captured_messages = ractor.take
+
+			captured_messages = port.receive
 			expect(captured_messages).to be == ["Captured message", "Captured warning"]
 		end
 	end
