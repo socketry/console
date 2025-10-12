@@ -51,10 +51,12 @@ module Console
 				record = {
 					time: Time.now.iso8601,
 					severity: severity,
-					pid: Process.pid,
-					oid: subject.object_id,
+					process_id: Process.pid,
 					fiber_id: Fiber.current.object_id,
 				}
+				
+				# For backwards compatibility:
+				record[:pid] = record[:process_id]
 				
 				# We want to log just a brief subject:
 				if subject.is_a?(String)
@@ -63,6 +65,7 @@ module Console
 					record[:subject] = subject.name
 				else
 					record[:subject] = subject.class.name
+					record[:object_id] = subject.object_id
 				end
 				
 				if annotation = Fiber.current.annotation

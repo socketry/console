@@ -1,5 +1,10 @@
 # Releases
 
+## Unreleased
+
+  - Add `process_id` to serialized output records for clarity (`pid` is still included for backwards compatibility).
+	- Add `object_id` to serialized output records **only** when the subject is not a string or class/module.
+
 ## v1.34.0
 
   - Allow `Console::Compatible::Logger#add` to accept `**options`.
