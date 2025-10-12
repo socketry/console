@@ -12,6 +12,7 @@ Copyright, 2022, by William T. Nelson.
 Copyright, 2023, by Felix Yan.  
 Copyright, 2024-2025, by Patrik Wenger.  
 Copyright, 2025, by Shigeru Nakajima.  
+Copyright, 2025, by Yasha Krasnou.  
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

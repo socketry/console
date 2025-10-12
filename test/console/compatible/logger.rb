@@ -2,6 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2022-2025, by Samuel Williams.
+# Copyright, 2025, by Yasha Krasnou.
 
 require "console/compatible/logger"
 require "console/output/terminal"

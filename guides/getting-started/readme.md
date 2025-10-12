@@ -144,8 +144,8 @@ Individual classes should not be catching and logging exceptions. It makes for s
 Use `Console::Split` to log to multiple destinations.
 
 ``` ruby
-require 'console'
-require 'console/output/split'
+require "console"
+require "console/output/split"
 
 terminal = Console::Output::Terminal.new($stderr)
 serialized = Console::Output::Serialized.new(File.open("log.json", "a"))
@@ -159,7 +159,7 @@ Console.info "I can go everywhere!"
 `Console::Filter` implements support for multiple log levels.
 
 ``` ruby
-require 'console'
+require "console"
 
 MyLogger = Console::Filter[noise: 0, stuff: 1, broken: 2]
 

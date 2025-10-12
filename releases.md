@@ -23,9 +23,9 @@ The console library now works correctly with Ruby's Ractor concurrency model. Pr
 ``` ruby
 # This now works without errors:
 ractor = Ractor.new do
-  require 'console'
-  Console.info('Hello from Ractor!')
-  'Ractor completed successfully'
+	require "console"
+	Console.info("Hello from Ractor!")
+	"Ractor completed successfully"
 end
 
 result = ractor.take
@@ -86,7 +86,7 @@ def make_logger(output = $stderr, env = ENV, **options)
 	# Custom logger configuration with verbose output:
 	options[:verbose] = true
 	
-	 Logger.new(output, **options)
+	Logger.new(output, **options)
 end
 ```
 
