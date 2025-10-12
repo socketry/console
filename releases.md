@@ -1,9 +1,9 @@
 # Releases
 
-## Unreleased
+## v1.34.1
 
   - Add `process_id` to serialized output records for clarity (`pid` is still included for backwards compatibility).
-	- Add `object_id` to serialized output records **only** when the subject is not a string or class/module.
+      - Add `object_id` to serialized output records **only** when the subject is not a string or class/module.
 
 ## v1.34.0
 
