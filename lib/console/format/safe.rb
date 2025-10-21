@@ -17,7 +17,7 @@ module Console
 			# @parameter format [JSON] The format to use for serialization.
 			# @parameter limit [Integer] The maximum depth to recurse into objects.
 			# @parameter encoding [Encoding] The encoding to use for strings.
-			def initialize(format: ::JSON, limit: 8, encoding: ::Encoding::UTF_8)
+			def initialize(format: ::JSON, limit: 12, encoding: ::Encoding::UTF_8)
 				@format = format
 				@limit = limit
 				@encoding = encoding
@@ -96,21 +96,6 @@ module Console
 				return object
 			end
 			
-			# Replace the given object with a safe truncated representation.
-			#
-			# @parameter object [Object] The object to replace.
-			# @returns [String] The replacement string.
-			def replacement_for(object)
-				case object
-				when Array
-					"[...]"
-				when Hash
-					"{...}"
-				else
-					"..."
-				end
-			end
-			
 			# Create a new hash with identity comparison.
 			def default_objects
 				Hash.new.compare_by_identity
@@ -123,40 +108,47 @@ module Console
 			# @parameter objects [Hash] The objects that have already been visited.
 			# @returns [Object] The dumped object as a primitive representation.
 			def safe_dump_recurse(object, limit = @limit, objects = default_objects)
-				if limit <= 0 || objects[object]
-					return replacement_for(object)
-				end
-				
 				case object
 				when Hash
-					objects[object] = true
-					
-					object.to_h do |key, value|
-						[
-							String(key).encode(@encoding, invalid: :replace, undef: :replace),
-							safe_dump_recurse(value, limit - 1, objects)
-						]
+					if limit <= 0 || objects[object]
+						return "{...}"
+					else
+						objects[object] = true
+						
+						return object.to_h do |key, value|
+							[
+								String(key).encode(@encoding, invalid: :replace, undef: :replace),
+								safe_dump_recurse(value, limit - 1, objects)
+							]
+						end
 					end
 				when Array
-					objects[object] = true
-					
-					object.map do |value|
-						safe_dump_recurse(value, limit - 1, objects)
+					if limit <= 0 || objects[object]
+						return "[...]"
+					else
+						objects[object] = true
+						
+						return object.map do |value|
+							safe_dump_recurse(value, limit - 1, objects)
+						end
 					end
 				when String
-					object.encode(@encoding, invalid: :replace, undef: :replace)
+					return object.encode(@encoding, invalid: :replace, undef: :replace)
 				when Numeric, TrueClass, FalseClass, NilClass
-					object
+					return object
 				else
-					objects[object] = true
-					
-					# We could do something like this but the chance `as_json` will blow up.
-					# We'd need to be extremely careful about it.
-					# if object.respond_to?(:as_json)
-					# 	safe_dump_recurse(object.as_json, limit - 1, objects)
-					# else
-					
-					safe_dump_recurse(object.to_s, limit - 1, objects)
+					if limit <= 0 || objects[object]
+						return "..."
+					else
+						objects[object] = true
+						
+						# We could do something like this but the chance `as_json` will blow up.
+						# We'd need to be extremely careful about it.
+						# if object.respond_to?(:as_json)
+						# 	safe_dump_recurse(object.as_json, limit - 1, objects)
+						# else
+						return safe_dump_recurse(object.to_s, limit - 1, objects)
+					end
 				end
 			end
 		end
