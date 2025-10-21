@@ -7,7 +7,7 @@ require "console/event/spawn"
 require "sus/fixtures/console"
 
 describe Console::Event::Spawn do
-	include_context Sus::Fixtures::Console::CapturedLogger
+	include Sus::Fixtures::Console::CapturedLogger
 	
 	it "logs error message" do
 		subject.for({"TERM" => "dumb"}, "ls -lah", chdir: "/").emit(self)

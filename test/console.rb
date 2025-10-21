@@ -20,7 +20,7 @@ describe Console do
 	end
 	
 	with "an isolated logger" do
-		include_context Sus::Fixtures::Console::CapturedLogger
+		include Sus::Fixtures::Console::CapturedLogger
 		
 		it "can invoke interface methods for all log levels" do
 			Console::Logger::LEVELS.each do |name, level|

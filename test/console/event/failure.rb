@@ -15,7 +15,7 @@ class TestError < StandardError
 end
 
 describe Console::Event::Failure do
-	include_context Sus::Fixtures::Console::CapturedLogger
+	include Sus::Fixtures::Console::CapturedLogger
 	
 	with "test error" do
 		let(:error) do

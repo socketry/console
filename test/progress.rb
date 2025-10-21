@@ -7,7 +7,7 @@ require "console/progress"
 require "sus/fixtures/console"
 
 describe Console::Progress do
-	include_context Sus::Fixtures::Console::CapturedLogger
+	include Sus::Fixtures::Console::CapturedLogger
 	
 	let(:progress) {console_logger.progress("My Measurement", 100)}
 	

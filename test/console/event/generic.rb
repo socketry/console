@@ -7,7 +7,7 @@ require "console/event/generic"
 require "sus/fixtures/console"
 
 describe Console::Event::Generic do
-	include_context Sus::Fixtures::Console::CapturedLogger
+	include Sus::Fixtures::Console::CapturedLogger
 	
 	with "#to_hash" do
 		it "returns an empty hash" do
