@@ -39,6 +39,7 @@ module Console
 				const_set(:LEVELS, levels.freeze)
 				const_set(:MINIMUM_LEVEL, minimum_level)
 				const_set(:MAXIMUM_LEVEL, maximum_level)
+				const_set(:DEFAULT_LEVEL, minimum_level)
 				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
@@ -215,7 +216,8 @@ module Console
 			severity = options[:severity] || UNKNOWN
 			level = self.class::LEVELS[severity]
 			
-			if self.enabled?(subject, level)
+			# If the severity is unknown (level is nil), pass through to output without filtering:
+			if level.nil? || self.enabled?(subject, level)
 				@output.call(subject, *arguments, **options, &block)
 			end
 			
