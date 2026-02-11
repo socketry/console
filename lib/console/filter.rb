@@ -40,6 +40,10 @@ module Console
 				const_set(:MINIMUM_LEVEL, minimum_level)
 				const_set(:MAXIMUM_LEVEL, maximum_level)
 				
+				# The default log level for instances of this filter class.
+				# Set to MINIMUM_LEVEL to allow all messages by default.
+				const_set(:DEFAULT_LEVEL, minimum_level)
+				
 				levels.each do |name, level|
 					const_set(name.to_s.upcase, level)
 					
@@ -206,6 +210,10 @@ module Console
 		
 		# Log a message with the given severity.
 		#
+		# If the severity is not defined in this filter's LEVELS (e.g., when chaining
+		# filters with different severity levels), the message is passed through to the
+		# output without filtering. This allows custom filters to be composed together.
+		#
 		# @parameter subject [Object] The subject of the log message.
 		# @parameter arguments [Array] The arguments to log.
 		# @parameter options [Hash] Additional options to pass to the output.
@@ -215,7 +223,8 @@ module Console
 			severity = options[:severity] || UNKNOWN
 			level = self.class::LEVELS[severity]
 			
-			if self.enabled?(subject, level)
+			# If the severity is unknown (level is nil), pass through to output without filtering:
+			if level.nil? || self.enabled?(subject, level)
 				@output.call(subject, *arguments, **options, &block)
 			end
 			
