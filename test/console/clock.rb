@@ -8,11 +8,13 @@ require "console/clock"
 describe Console::Clock do
 	with ".formatted_duration" do
 		it "can format seconds" do
-			expect(subject.formatted_duration(0)).to be == "0s"
-			expect(subject.formatted_duration(1)).to be == "1s"
-			expect(subject.formatted_duration(2)).to be == "2s"
-			expect(subject.formatted_duration(10)).to be == "10s"
-			expect(subject.formatted_duration(59)).to be == "59s"
+			expect(subject.formatted_duration(0)).to be == "0.00s"
+			expect(subject.formatted_duration(0.5)).to be == "0.50s"
+			expect(subject.formatted_duration(0.667)).to be == "0.67s"
+			expect(subject.formatted_duration(1)).to be == "1.00s"
+			expect(subject.formatted_duration(2)).to be == "2.00s"
+			expect(subject.formatted_duration(10)).to be == "10.00s"
+			expect(subject.formatted_duration(59)).to be == "59.00s"
 		end
 		
 		it "can format minutes" do
