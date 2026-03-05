@@ -12,7 +12,7 @@ module Console
 		# @returns [String] The formatted duration.
 		def self.formatted_duration(duration)
 			if duration < 60.0
-				return "#{format("%.2f", duration)}s"
+				return format("%.2fs", duration)
 			end
 			
 			duration /= 60.0
