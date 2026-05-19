@@ -46,7 +46,7 @@ module Console
 			# The size of the terminal.
 			def size
 				@stream.winsize
-			rescue Errno::ENOTTY
+			rescue Errno::ENOTTY, Errno::ENODEV
 				# Fake it...
 				[24, 80]
 			end

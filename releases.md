@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Fix handling of `Errno::ENODEV` errors when calculating the width of a terminal that was been re-opened to `File::NULL`.
+
 ## v1.34.1
 
   - Add `process_id` to serialized output records for clarity (`pid` is still included for backwards compatibility).

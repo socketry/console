@@ -68,5 +68,15 @@ describe Console::Terminal::XTerm do
 			expect(stream).to receive(:winsize).and_return([24, 80])
 			expect(terminal.size).to be == [24, 80]
 		end
+		
+		it "returns default size when Errno::ENOTTY is raised" do
+			expect(stream).to receive(:winsize).and_raise(Errno::ENOTTY)
+			expect(terminal.size).to be == [24, 80]
+		end
+		
+		it "returns default size when Errno::ENODEV is raised" do
+			terminal = subject.new(File.open(File::NULL, "w"))
+			expect(terminal.size).to be == [24, 80]
+		end
 	end
 end
