@@ -26,7 +26,7 @@ describe Console do
 				
 				port.send({
 					result: "Ractor completed successfully",
-					messages: capture.records.map {|record| record[:subject]}
+					messages: capture.records.map{|record| record[:subject]}
 				})
 			end
 			

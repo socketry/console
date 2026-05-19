@@ -72,7 +72,7 @@ describe Console::Capture do
 	
 	with "block" do
 		it "can capture log output" do
-			logger.info(self) {"Hello World!"}
+			logger.info(self){"Hello World!"}
 			
 			last = capture.last
 			expect(last).to have_keys(

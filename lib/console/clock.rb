@@ -2,6 +2,7 @@
 
 # Released under the MIT License.
 # Copyright, 2021-2025, by Samuel Williams.
+# Copyright, 2026, by William T. Nelson.
 
 module Console
 	# A simple clock utility for tracking and formatting time.

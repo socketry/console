@@ -7,7 +7,7 @@ Gem::Specification.new do |spec|
 	spec.version = Console::VERSION
 	
 	spec.summary = "Beautiful logging for Ruby."
-	spec.authors = ["Samuel Williams", "Robert Schulze", "Bryan Powell", "Michael Adams", "Patrik Wenger", "Anton Sozontov", "Cyril Roelandt", "Cédric Boutillier", "Felix Yan", "Olle Jonsson", "Shigeru Nakajima", "William T. Nelson", "Yasha Krasnou"]
+	spec.authors = ["Samuel Williams", "Robert Schulze", "Bryan Powell", "Michael Adams", "Patrik Wenger", "William T. Nelson", "Anton Sozontov", "Copilot", "Cyril Roelandt", "Cédric Boutillier", "Felix Yan", "Olle Jonsson", "Shigeru Nakajima", "Yasha Krasnou"]
 	spec.license = "MIT"
 	
 	spec.cert_chain  = ["release.cert"]
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
 	
 	spec.files = Dir.glob(["{bake,lib}/**/*", "*.md"], File::FNM_DOTMATCH, base: __dir__)
 	
-	spec.required_ruby_version = ">= 3.2"
+	spec.required_ruby_version = ">= 3.3"
 	
 	spec.add_dependency "fiber-annotation"
 	spec.add_dependency "fiber-local", "~> 1.1"

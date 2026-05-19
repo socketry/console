@@ -5,6 +5,7 @@
 # Copyright, 2019, by Bryan Powell.
 # Copyright, 2020, by Michael Adams.
 # Copyright, 2021, by Robert Schulze.
+# Copyright, 2026, by Copilot.
 
 module Console
 	UNKNOWN = :unknown
