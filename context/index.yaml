@@ -4,6 +4,8 @@
 description: Beautiful logging for Ruby.
 metadata:
   documentation_uri: https://socketry.github.io/console/
+  funding_uri: https://github.com/sponsors/ioquatix/
+  source_code_uri: https://github.com/socketry/console.git
 files:
 - path: getting-started.md
   title: Getting Started
