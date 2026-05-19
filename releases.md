@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.35.0
 
   - Fix handling of `Errno::ENODEV` errors when calculating the width of a terminal that was been re-opened to `File::NULL`.
 

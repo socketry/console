@@ -34,6 +34,10 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.35.0
+
+  - Fix handling of `Errno::ENODEV` errors when calculating the width of a terminal that was been re-opened to `File::NULL`.
+
 ### v1.34.1
 
   - Add `process_id` to serialized output records for clarity (`pid` is still included for backwards compatibility).
@@ -75,10 +79,6 @@ Please see the [project releases](https://socketry.github.io/console/releases/in
   - Don't make `Kernel#warn` redirection to `Console.warn` the default behavior, you must `require 'console/warn'` to enable it.
   - Remove deprecated `Console::Logger#failure`.
   - [Consistent handling of exceptions.](https://socketry.github.io/console/releases/index#consistent-handling-of-exceptions.)
-
-### v1.28.0
-
-  - Add support for `Kernel#warn` redirection to `Console.warn`.
 
 ## Contributing
 

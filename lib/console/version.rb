@@ -4,5 +4,5 @@
 # Copyright, 2019-2026, by Samuel Williams.
 
 module Console
-	VERSION = "1.34.3"
+	VERSION = "1.35.0"
 end

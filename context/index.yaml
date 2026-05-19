@@ -1,0 +1,26 @@
+# Automatically generated context index for Utopia::Project guides.
+# Do not edit then files in this directory directly, instead edit the guides and then run `bake utopia:project:agent:context:update`.
+---
+description: Beautiful logging for Ruby.
+metadata:
+  documentation_uri: https://socketry.github.io/console/
+files:
+- path: getting-started.md
+  title: Getting Started
+  description: This guide explains how to use `console` for logging.
+- path: command-line.md
+  title: Command Line
+  description: This guide explains how the `console` gem can be controlled using environment
+    variables.
+- path: configuration.md
+  title: Configuration
+  description: This guide explains how to implement per-project configuration for
+    the `console` gem.
+- path: integration.md
+  title: Integration
+  description: This guide explains how to integrate the `console` output into different
+    systems.
+- path: events.md
+  title: Events
+  description: This guide explains how to log structured events with a well-defined
+    schema.
