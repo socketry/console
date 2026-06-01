@@ -86,7 +86,7 @@ describe Console::Output do
 			output.call("Hello", arguments)
 			
 			message = JSON.parse(capture.string)
-			expect(message["truncated"]).to be == true
+			expect(message["truncated"]["message"]).not.to be_nil
 			expect(message["message"]).to be == ["[...]"]
 		end
 		
@@ -97,7 +97,7 @@ describe Console::Output do
 			output.call("Hello", arguments)
 			
 			message = JSON.parse(capture.string)
-			expect(message["truncated"]).to be == true
+			expect(message["truncated"]["message"]).not.to be_nil
 			expect(message["message"]).to be == {"arguments"=>"{...}"}
 		end
 	end

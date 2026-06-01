@@ -10,30 +10,165 @@ module Console
 	module Format
 		# A safe format for converting objects to strings.
 		# 
-		# Handles issues like circular references and encoding errors.
+		# Handles issues like circular references, encoding errors, excessive nesting depth, and excessive output size.
 		class Safe
+			# The JSON fragment used as the truncation marker when dropped fields cannot be named.
+			TRUNCATED = "\"truncated\":true"
+			
 			# Create a new safe format.
 			#
 			# @parameter format [JSON] The format to use for serialization.
-			# @parameter limit [Integer] The maximum depth to recurse into objects.
+			# @parameter depth_limit [Integer] The maximum depth to recurse into objects (the JSON `max_nesting`).
+			# @parameter size_limit [Integer | Nil] The maximum byte size of the serialized output, or `nil` to disable size limiting. Limits below {TRUNCATED} (the minimal marker) cannot be honoured.
 			# @parameter encoding [Encoding] The encoding to use for strings.
-			def initialize(format: ::JSON, limit: 12, encoding: ::Encoding::UTF_8)
+			# @parameter limit [Integer | Nil] Deprecated alias for `depth_limit`.
+			def initialize(format: ::JSON, depth_limit: 12, size_limit: 16 * 1024, encoding: ::Encoding::UTF_8, limit: nil)
+				if limit
+					warn "Console::Format::Safe `limit:` is deprecated, use `depth_limit:` instead.", uplevel: 1, category: :deprecated
+					depth_limit = limit
+				end
+				
 				@format = format
-				@limit = limit
+				@depth_limit = depth_limit
+				@size_limit = size_limit
 				@encoding = encoding
 			end
 			
+			# @attribute [Integer] The maximum depth to recurse into objects.
+			attr :depth_limit
+			
+			# @attribute [Integer | Nil] The maximum byte size of the serialized output.
+			attr :size_limit
+			
 			# Dump the given object to a string.
+			#
+			# The common case is a single fast serialization. If that fails (e.g. circular
+			# references, excessive nesting, or encoding errors) or its output exceeds
+			# {size_limit}, it falls back to {safe_dump}, which rebuilds the record
+			# field-by-field within the limit.
 			#
 			# @parameter object [Object] The object to dump.
 			# @returns [String] The dumped object.
 			def dump(object)
-				@format.dump(object, @limit)
-			rescue SystemStackError, StandardError => error
-				@format.dump(safe_dump(object, error))
+				buffer = @format.dump(object, @depth_limit)
+				
+				if @size_limit and buffer.bytesize > @size_limit
+					return safe_dump(object)
+				end
+				
+				return buffer
+			rescue SystemStackError, StandardError
+				return safe_dump(object)
 			end
 			
 			private
+			
+			# Produce a safe, size-limited serialization of the given object. This is the
+			# fallback path, used both when direct serialization fails (an exception) and
+			# when its output exceeds {size_limit}.
+			#
+			# Each top-level value is serialized independently and defensively, so a single
+			# un-serializable or oversized value cannot break or bloat the whole record.
+			# Whenever a field is degraded, the reason is recorded in a trailing `"truncated"`
+			# object that maps the field name to why it was truncated:
+			#
+			# - `"key": true` — the value was dropped because it did not fit the size limit.
+			# - `"key": {error}` — the value could not be serialized directly; a safe
+			#   representation was kept in its place and the triggering error is recorded.
+			#
+			# Fields are kept while they fit, always reserving room for at least a minimal
+			# `"truncated":true` marker. The detailed reason map is then emitted only if it
+			# fits in the remaining space; otherwise it degrades to `"truncated":true`. This
+			# is best-effort — in the worst case the per-field detail is lost — but it keeps
+			# the bookkeeping simple and the size guarantee hard.
+			#
+			# @parameter object [Object] The object to serialize.
+			# @returns [String] The safe, size-limited serialized record.
+			def safe_dump(object)
+				# Serialize hash-like objects field-by-field; anything else falls through to the
+				# error handler below, which emits a minimal truncated marker.
+				object = object.to_hash
+				
+				# Serialize each field once, capturing the error for any value that could not be
+				# serialized directly. Our own "truncated" key is skipped so it is never duplicated.
+				errors = {}
+				fragments = []
+				object.each do |key, value|
+					name = key.to_s
+					next if name == "truncated"
+					
+					fragment, error = dump_pair(key, value)
+					errors[name] = error_info(error) if error
+					fragments << [name, fragment]
+				end
+				
+				# Assemble the body, keeping each field while it fits — always reserving room for
+				# at least a minimal `"truncated":true` marker. Each truncated field's reason is
+				# collected: its error (value recovered) or `true` (dropped for size).
+				buffer = +"{"
+				first = true
+				reasons = {}
+				
+				fragments.each do |name, fragment|
+					if buffer.bytesize + (first ? 0 : 1) + fragment.bytesize + TRUNCATED.bytesize + 2 <= @size_limit
+						buffer << "," unless first
+						buffer << fragment
+						first = false
+						
+						# The value was kept; if it had to be recovered, note why.
+						reasons[name] = errors[name] if errors[name]
+					else
+						# The value did not fit and was dropped entirely.
+						reasons[name] = true
+					end
+				end
+				
+				unless reasons.empty?
+					# Include the detailed reasons if they fit, otherwise fall back to the minimal
+					# marker so the truncation is still signalled.
+					detailed = "\"truncated\":#{@format.dump(reasons)}"
+					fits = buffer.bytesize + (first ? 0 : 1) + detailed.bytesize + 1 <= @size_limit
+					
+					buffer << "," unless first
+					buffer << (fits ? detailed : TRUNCATED)
+				end
+				
+				buffer << "}"
+				
+				return buffer
+			rescue SystemStackError, StandardError
+				return "{#{TRUNCATED}}"
+			end
+			
+			# Serialize a single top-level `"key":value` pair, safely handling values that
+			# cannot be serialized directly.
+			#
+			# @parameter key [Object] The field key.
+			# @parameter value [Object] The field value.
+			# @returns [Array(String, Exception | Nil)] The `"key":value` fragment and the error, if recovery was needed.
+			def dump_pair(key, value)
+				value_json, error = dump_value(value)
+				
+				return ["#{dump_string(String(key))}:#{value_json}", error]
+			end
+			
+			# Serialize a single value, falling back to a safe representation on failure.
+			#
+			# @parameter value [Object] The value to serialize.
+			# @returns [Array(String, Exception | Nil)] The serialized value and the error, if recovery was needed.
+			def dump_value(value)
+				[@format.dump(value, @depth_limit), nil]
+			rescue SystemStackError, StandardError => error
+				[@format.dump(safe_dump_recurse(value)), error]
+			end
+			
+			# Serialize a string as a JSON string, encoding it safely first.
+			#
+			# @parameter value [String] The string to serialize.
+			# @returns [String] The serialized (quoted) string.
+			def dump_string(value)
+				@format.dump(value.encode(@encoding, invalid: :replace, undef: :replace))
+			end
 			
 			# Filter the backtrace to remove duplicate frames and reduce verbosity.
 			#
@@ -76,24 +211,16 @@ module Console
 				return frames
 			end
 			
-			# Dump the given object to a string, replacing it with a safe representation if there is an error.
+			# Build a safe, primitive representation of an error for inclusion as an `"error"` field.
 			#
-			# This is a slow path so we try to avoid it.
-			#
-			# @parameter object [Object] The object to dump.
 			# @parameter error [Exception] The error that occurred while dumping the object.
-			# @returns [Hash] The dumped (truncated) object including error details.
-			def safe_dump(object, error)
-				object = safe_dump_recurse(object)
-				
-				object[:truncated] = true
-				object[:error] = {
+			# @returns [Hash] The error details (class, message, filtered backtrace).
+			def error_info(error)
+				{
 					class: safe_dump_recurse(error.class.name),
 					message: safe_dump_recurse(error.message),
 					backtrace: safe_dump_recurse(filter_backtrace(error)),
 				}
-				
-				return object
 			end
 			
 			# Create a new hash with identity comparison.
@@ -107,7 +234,7 @@ module Console
 			# @parameter limit [Integer] The maximum depth to recurse into objects.
 			# @parameter objects [Hash] The objects that have already been visited.
 			# @returns [Object] The dumped object as a primitive representation.
-			def safe_dump_recurse(object, limit = @limit, objects = default_objects)
+			def safe_dump_recurse(object, limit = @depth_limit, objects = default_objects)
 				case object
 				when Hash
 					if limit <= 0 || objects[object]

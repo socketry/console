@@ -1,5 +1,11 @@
 # Releases
 
+## Unreleased
+
+  - Add a `size_limit` to `Console::Format::Safe` (default 16KiB) which rebuilds oversized records field-by-field, keeping as many top-level fields as fit within the limit.
+  - Degraded fields are recorded in a `truncated` object that maps each field name to why it was truncated: `true` (dropped for size) or the error (the value could not be serialized directly and a safe representation was kept in its place).
+  - Rename `Console::Format::Safe`'s `limit:` to `depth_limit:` (with a deprecated `limit:` alias) to clarify its purpose alongside the new `size_limit:`.
+
 ## v1.35.0
 
   - Fix handling of `Errno::ENODEV` errors when calculating the width of a terminal that was been re-opened to `File::NULL`.

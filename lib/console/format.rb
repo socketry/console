@@ -6,6 +6,7 @@
 require_relative "format/safe"
 
 module Console
+	# @namespace
 	module Format
 		# A safe format for converting objects to strings.
 		#
