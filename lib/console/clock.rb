@@ -16,21 +16,28 @@ module Console
 				return format("%.2fs", duration)
 			end
 			
+			seconds = duration % 60
 			duration /= 60.0
 			
 			if duration < 60.0
-				return "#{duration.floor}m"
+				return format("%dm%02ds", duration, seconds)
 			end
 			
+			minutes = duration % 60
 			duration /= 60.0
 			
 			if duration < 24.0
-				return "#{duration.floor}h"
+				return format("%dh%02dm", duration, minutes)
 			end
 			
+			hours = duration % 24
 			duration /= 24.0
 			
-			return "#{duration.floor}d"
+			if duration < 100.0
+				return format("%dd%02dh", duration, hours)
+			end
+			
+			return format("%dd", duration)
 		end
 		
 		# @returns [Time] The current monotonic time.
