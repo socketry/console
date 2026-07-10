@@ -32,5 +32,11 @@ describe Console::Output::Default do
 			output = subject.new(stream, env: {"TERM" => "xterm-256color", "DISPLAY" => ":0"})
 			expect(output).to be_a(Console::Output::Serialized)
 		end
+		
+		it "should use XTerm output for GitHub Actions" do
+			output = subject.new(stream, env: {"GITHUB_ACTIONS" => "true"})
+			expect(output).to be_a(Console::Output::Terminal)
+			expect(output.terminal).to be_a(Console::Terminal::XTerm)
+		end
 	end
 end
