@@ -18,6 +18,11 @@ describe Console::Terminal::XTerm do
 		expect(terminal.style(:blue, nil, :underline, :bold)).to be == "\e[34;4;1m"
 	end
 	
+	it "can determine terminal width" do
+		expect(stream).to receive(:winsize).and_return([24, 100])
+		expect(terminal.width).to be == 100
+	end
+	
 	it "can write text with specified style" do
 		terminal[:bold] = terminal.style(nil, nil, :bold)
 		
