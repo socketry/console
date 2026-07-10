@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Show compound units in elapsed time display.
+
 ## v1.36.0
 
   - Add a `size_limit` to `Console::Format::Safe` (default 16KiB) which rebuilds oversized records field-by-field, keeping as many top-level fields as fit within the limit.
