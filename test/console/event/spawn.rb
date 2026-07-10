@@ -23,4 +23,25 @@ describe Console::Event::Spawn do
 			)
 		)
 	end
+	
+	it "records completion status and duration" do
+		event = subject.for("ls")
+		status = Object.new
+		
+		def status.to_i
+			0
+		end
+		
+		expect(Time).to receive(:now).and_return(event.start_time + 1)
+		
+		event.status = status
+		
+		expect(event.end_time).to be == event.start_time + 1
+		expect(event.status).to be == status
+		expect(event.duration).to be == 1
+		expect(event.to_hash).to have_keys(
+			status: be == 0,
+			duration: be == 1
+		)
+	end
 end
