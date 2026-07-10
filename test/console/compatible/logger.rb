@@ -50,4 +50,11 @@ describe Console::Compatible::Logger do
 		
 		expect(stream.string).to be(:include?, '"request_id": 137')
 	end
+	
+	it "ignores messages below the log level" do
+		logger.level = Logger::WARN
+		
+		expect(logger.add(Logger::INFO, "Hello World")).to be == true
+		expect(stream.string).to be == ""
+	end
 end
