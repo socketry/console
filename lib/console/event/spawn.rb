@@ -61,7 +61,7 @@ module Console
 			#
 			# @parameter status [Process::Status] The status of the command.
 			def status=(status)
-				@end_time = Time.now
+				@end_time = self.now
 				@status = status
 			end
 			
@@ -99,6 +99,12 @@ module Console
 			def emit(*arguments, **options)
 				options[:severity] ||= :info
 				super
+			end
+			
+			private
+			
+			def now
+				Clock.now
 			end
 		end
 	end

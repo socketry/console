@@ -32,7 +32,7 @@ describe Console::Event::Spawn do
 			0
 		end
 		
-		expect(Time).to receive(:now).and_return(event.start_time + 1)
+		expect(event).to receive(:now).and_return(event.start_time + 1)
 		
 		event.status = status
 		
