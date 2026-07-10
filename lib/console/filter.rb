@@ -12,13 +12,17 @@ module Console
 	
 	# A log filter which can be used to filter log messages based on severity, subject, and other criteria.
 	class Filter
-		# Define a method which can be shared between ractors.
-		def self.define_immutable_method(name, &block)
-			if Object.const_defined?(:Ractor) and RUBY_VERSION >= "3.4"
+		if Object.const_defined?(:Ractor) and RUBY_VERSION >= "3.4"
+			# Define a method which can be shared between ractors.
+			def self.define_immutable_method(name, &block)
 				block = Ractor.make_shareable(block)
+				self.define_method(name, &block)
 			end
-			
-			define_method(name, &block)
+		else
+			# Define a method.
+			def self.define_immutable_method(name, &block)
+				define_method(name, &block)
+			end
 		end
 		
 		# Create a new log filter with specific log levels.
