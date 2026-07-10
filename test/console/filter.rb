@@ -59,6 +59,16 @@ describe Console::Filter do
 		end
 	end
 	
+	with "#all!" do
+		it "enables all messages" do
+			logger.level = Console::Logger::FATAL
+			logger.all!
+			
+			logger.debug(MySubject, "Hello World")
+			expect(output).to be(:include?, "Hello World")
+		end
+	end
+	
 	with "#clear" do
 		it "can't clear non-class subjects" do
 			expect do
