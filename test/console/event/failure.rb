@@ -14,6 +14,23 @@ class TestError < StandardError
 	end
 end
 
+class PlainError
+	def class
+		StandardError
+	end
+	
+	def message
+		"Plain error!"
+	end
+	
+	def backtrace
+		[]
+	end
+	
+	def cause
+	end
+end
+
 describe Console::Event::Failure do
 	include Sus::Fixtures::Console::CapturedLogger
 	
@@ -59,5 +76,44 @@ describe Console::Event::Failure do
 			
 			expect(failure.exception).to be == error
 		end
+		
+		it "logs failures directly" do
+			Console::Event::Failure.log("It failed", error, name: "failure")
+			
+			expect(console_capture.last).to have_keys(
+				severity: be == :error,
+				subject: be == "It failed",
+				name: be == "failure",
+			)
+		end
+		
+		it "includes nested causes" do
+			begin
+				begin
+					raise RuntimeError, "Cause!"
+				rescue
+					raise TestError, "Test error!"
+				end
+			rescue TestError => error
+				expect(Console::Event::Failure.for(error).to_hash).to have_keys(
+					cause: have_keys(
+						class: be == "RuntimeError",
+						message: be =~ /Cause!/
+					)
+				)
+			end
+		end
+	end
+	
+	it "returns nil if the default root cannot be determined" do
+		expect(Dir).to receive(:getwd).and_raise(Errno::EMFILE)
+		
+		expect(subject.default_root).to be_nil
+	end
+	
+	it "uses the basic message when detailed messages are unavailable" do
+		expect(subject.new(PlainError.new).to_hash).to have_keys(
+			message: be == "Plain error!"
+		)
 	end
 end
