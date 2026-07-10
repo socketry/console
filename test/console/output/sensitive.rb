@@ -43,7 +43,7 @@ describe Console::Output::Sensitive do
 	
 	with "sensitive: callable" do
 		it "filters strings using the callable" do
-			logger.call("token", sensitive: ->(value) {value.upcase})
+			logger.call("token", sensitive: ->(value){value.upcase})
 			
 			expect(output).to be(:include?, "TOKEN")
 		end
