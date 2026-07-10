@@ -12,6 +12,18 @@ describe Console::Output::Terminal do
 	
 	let(:message) {"Hello World"}
 	
+	with ".start_at!" do
+		it "initializes the start time" do
+			env = {}
+			start_at = subject.start_at!(env)
+			
+			expect(start_at).to be_a(Time)
+			expect(env).to have_keys(
+				Console::Output::Terminal::CONSOLE_START_AT => be == start_at.to_s
+			)
+		end
+	end
+	
 	it "can log to buffer with block" do
 		logger.call do |buffer|
 			buffer << message
