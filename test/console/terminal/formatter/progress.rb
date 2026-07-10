@@ -24,4 +24,16 @@ describe Console::Terminal::Formatter::Progress do
 		
 		expect(buffer.string).to be =~ /0.00%/
 	end
+	
+	it "can format partial progress" do
+		formatter.format({current: 1, total: 3}, buffer, width: 20)
+		
+		expect(buffer.string).to be =~ /33.33%/
+	end
+	
+	it "clamps progress to 100 percent" do
+		formatter.format({current: 2, total: 1}, buffer, width: 20)
+		
+		expect(buffer.string).to be =~ /100.00%/
+	end
 end
