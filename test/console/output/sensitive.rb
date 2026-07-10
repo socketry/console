@@ -40,4 +40,18 @@ describe Console::Output::Sensitive do
 			expect(output).not.to be(:include?, "Samuel Williams")
 		end
 	end
+	
+	with "sensitive: callable" do
+		it "filters strings using the callable" do
+			logger.call("token", sensitive: ->(value) {value.upcase})
+			
+			expect(output).to be(:include?, "TOKEN")
+		end
+	end
+	
+	it "redacts nested arguments" do
+		logger.call("subject", ["token"], {password: "token"}, :token)
+		
+		expect(output).not.to be(:include?, "token")
+	end
 end
