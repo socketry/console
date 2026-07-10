@@ -9,7 +9,7 @@ describe Console::Output::Null do
 	let(:output) {subject.new}
 	
 	it "is its own last output" do
-		expect(output.last_output).to be == output
+		expect(output.last_output).to be_equal(output)
 	end
 	
 	it "ignores calls" do
