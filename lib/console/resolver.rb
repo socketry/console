@@ -103,8 +103,13 @@ module Console
 		#
 		# @parameter trace_point [TracePoint] The trace point that triggered the event.
 		def resolve(trace_point)
-			if block = @names.delete(trace_point.self.to_s)
-				block.call(trace_point.self)
+			resolve_class(trace_point.self)
+		end
+		
+		# @parameter klass [Class] The class that was resolved.
+		def resolve_class(klass)
+			if block = @names.delete(klass.to_s)
+				block.call(klass)
 			end
 			
 			if @names.empty?

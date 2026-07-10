@@ -38,6 +38,36 @@ describe Console::Resolver do
 		expect(resolved).to be == true
 	end
 	
+	it "keeps waiting for unresolved names" do
+		resolved = false
+		
+		resolver.bind(["Console::Resolver::Missing", "Console::Resolver::Quux"]) do |klass|
+			resolved = true
+		end
+		
+		class Console::Resolver::Quux
+		end
+		
+		expect(resolver).to be(:waiting?)
+		expect(resolved).to be == true
+	end
+	
+	it "can directly resolve classes" do
+		resolved = nil
+		
+		resolver.instance_variable_get(:@names)["Console::Resolver"] = proc{|klass| resolved = klass}
+		
+		trace_point = Object.new
+		def trace_point.self
+			Console::Resolver
+		end
+		
+		resolver.resolve(trace_point)
+		
+		expect(resolved).to be == Console::Resolver
+		expect(resolver).not.to be(:waiting?)
+	end
+	
 	describe ".default_resolver" do
 		let(:logger) {Console.logger}
 		
