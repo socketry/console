@@ -29,7 +29,7 @@ describe Console::Output::Terminal do
 	end
 	
 	it "can log zero arity blocks" do
-		logger.call {message}
+		logger.call{message}
 		
 		expect(stream.string).to be(:include?, message)
 	end
