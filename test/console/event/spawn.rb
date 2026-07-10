@@ -44,4 +44,17 @@ describe Console::Event::Spawn do
 			duration: be == 1
 		)
 	end
+	
+	it "uses the monotonic clock for completion time" do
+		event = subject.for("ls")
+		status = Object.new
+		
+		def status.to_i
+			0
+		end
+		
+		event.status = status
+		
+		expect(event.duration).to be >= 0
+	end
 end
