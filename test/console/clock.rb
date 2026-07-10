@@ -16,6 +16,7 @@ describe Console::Clock do
 			expect(subject.formatted_duration(2)).to be == "2.00s"
 			expect(subject.formatted_duration(10)).to be == "10.00s"
 			expect(subject.formatted_duration(59)).to be == "59.00s"
+			expect(subject.formatted_duration(59.999)).to be == "60.00s"
 		end
 		
 		it "can format minutes" do
