@@ -34,7 +34,7 @@ describe Console::Output::Serialized do
 	end
 	
 	it "can log messages from zero arity blocks" do
-		logger.call {message}
+		logger.call{message}
 		
 		expect(record).to have_keys(
 			message: be == message
