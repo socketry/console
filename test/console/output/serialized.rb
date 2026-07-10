@@ -33,6 +33,22 @@ describe Console::Output::Serialized do
 		)
 	end
 	
+	it "can log messages from zero arity blocks" do
+		logger.call {message}
+		
+		expect(record).to have_keys(
+			message: be == message
+		)
+	end
+	
+	it "can log multiple messages" do
+		logger.call("Subject", "Hello", "World")
+		
+		expect(record).to have_keys(
+			message: be == ["Hello", "World"]
+		)
+	end
+	
 	with "structured event" do
 		let(:event) {Console::Event::Spawn.for("ls -lah")}
 		
