@@ -1,6 +1,6 @@
 # Releases
 
-## Unreleased
+## v1.38.0
 
   - Fix `Console::Progress` to emit through the logger that created it and safely handle zero totals.
 

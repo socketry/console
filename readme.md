@@ -34,6 +34,10 @@ Please see the [project documentation](https://socketry.github.io/console/) for 
 
 Please see the [project releases](https://socketry.github.io/console/releases/index) for all releases.
 
+### v1.38.0
+
+  - Fix `Console::Progress` to emit through the logger that created it and safely handle zero totals.
+
 ### v1.37.0
 
   - Show compound units in elapsed time display.
@@ -75,10 +79,6 @@ Please see the [project releases](https://socketry.github.io/console/releases/in
 ### v1.29.3
 
   - Serialized output now uses `IO#write` with a single string to reduce the chance of interleaved output.
-
-### v1.29.2
-
-  - Always return `nil` from `Console::Filter` logging methods.
 
 ## Contributing
 
