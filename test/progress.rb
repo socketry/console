@@ -30,6 +30,48 @@ describe Console::Progress do
 		end
 	end
 	
+	with "a specific logger" do
+		let(:capture) {Console::Capture.new}
+		let(:logger) {Console::Logger.new(capture)}
+		let(:progress) {logger.progress("My Measurement", 1)}
+		
+		it "emits progress through that logger" do
+			progress.increment
+			
+			expect(capture.last).to have_keys(
+				severity: be == :info,
+				subject: be == "My Measurement",
+				event: have_keys(type: be == :progress),
+			)
+			expect(console_capture).to be(:empty?)
+		end
+		
+		it "emits resizing through that logger" do
+			progress.resize(2)
+			
+			expect(capture.last).to have_keys(
+				severity: be == :info,
+				subject: be == "My Measurement",
+				event: have_keys(
+					type: be == :progress,
+					total: be == 2,
+				),
+			)
+			expect(console_capture).to be(:empty?)
+		end
+		
+		it "emits marks through that logger" do
+			progress.mark("Hello World!")
+			
+			expect(capture.last).to have_keys(
+				severity: be == :info,
+				subject: be == "My Measurement",
+				arguments: be == ["Hello World!"],
+			)
+			expect(console_capture).to be(:empty?)
+		end
+	end
+	
 	with "#resize" do
 		it "can resize the progress bar total" do
 			progress.resize(200)
@@ -75,6 +117,14 @@ describe Console::Progress do
 					total: be == 100,
 				),
 			)
+		end
+	end
+	
+	with "a zero total" do
+		let(:progress) {Console::Progress.new("My Measurement")}
+		
+		it "has a zero ratio" do
+			expect(progress.ratio).to be == 0.0
 		end
 	end
 end

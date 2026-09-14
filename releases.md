@@ -1,5 +1,9 @@
 # Releases
 
+## Unreleased
+
+  - Fix `Console::Progress` to emit through the logger that created it and safely handle zero totals.
+
 ## v1.37.0
 
   - Show compound units in elapsed time display.
