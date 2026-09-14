@@ -60,7 +60,7 @@ module Console
 		def progress(subject, total, **options)
 			options[:severity] ||= :info
 			
-			Progress.new(subject, total, **options)
+			Progress.new(subject, total, logger: self, **options)
 		end
 	end
 end

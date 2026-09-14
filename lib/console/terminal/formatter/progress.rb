@@ -41,12 +41,10 @@ module Console
 				def format(event, stream, verbose: false, width: 80)
 					current = event[:current].to_f
 					total = event[:total].to_f
-					value = current / total
+					value = total.zero? ? 0.0 : current / total
 					
-					# Clamp value to 1.0 to avoid rendering issues:
-					if value > 1.0
-						value = 1.0
-					end
+					# Clamp value to avoid rendering issues:
+					value = value.clamp(0.0, 1.0)
 					
 					stream.puts "#{@terminal[:progress_bar]}#{self.bar(value, width-10)}#{@terminal.reset} #{sprintf('%6.2f', value * 100)}%"
 				end

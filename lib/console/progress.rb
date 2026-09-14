@@ -18,10 +18,12 @@ module Console
 		#
 		# @parameter subject [Object] The subject of the progress indicator.
 		# @parameter total [Integer] The total number of steps.
+		# @parameter logger [Console::Logger] The logger to use for output.
 		# @parameter minimum_output_duration [Numeric] The minimum duration between outputs.
 		# @parameter options [Hash] Additional options to customize the output.
-		def initialize(subject, total = 0, minimum_output_duration: 0.1, **options)
+		def initialize(subject, total = 0, logger: Console, minimum_output_duration: 0.1, **options)
 			@subject = subject
+			@logger = logger
 			@options = options
 			
 			@start_time = Clock.now
@@ -55,6 +57,8 @@ module Console
 		
 		# @returns [Rational] The ratio of steps completed to total steps.
 		def ratio
+			return Rational(0, 1) if @total.zero?
+			
 			Rational(@current.to_f, @total.to_f)
 		end
 		
@@ -99,7 +103,7 @@ module Console
 			@current += amount
 			
 			if output?
-				Console.call(@subject, self.to_s, event: self.to_hash, **@options)
+				@logger.call(@subject, self.to_s, event: self.to_hash, **@options)
 				@last_output_time = Clock.now
 			end
 			
@@ -113,7 +117,7 @@ module Console
 		def resize(total)
 			@total = total
 			
-			Console.call(@subject, self.to_s, event: self.to_hash, **@options)
+			@logger.call(@subject, self.to_s, event: self.to_hash, **@options)
 			@last_output_time = Clock.now
 			
 			return self
@@ -125,7 +129,7 @@ module Console
 		# @parameter **options [Hash] Additional options to log.
 		# @parameter &block [Proc] An optional block used to generate the log message.
 		def mark(*arguments, **options, &block)
-			Console.call(@subject, *arguments, **options, **@options, &block)
+			@logger.call(@subject, *arguments, **options, **@options, &block)
 		end
 		
 		# @returns [String] A human-readable representation of the progress indicator.

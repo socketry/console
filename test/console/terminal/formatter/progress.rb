@@ -36,4 +36,16 @@ describe Console::Terminal::Formatter::Progress do
 		
 		expect(buffer.string).to be =~ /100.00%/
 	end
+	
+	it "clamps negative progress to zero percent" do
+		formatter.format({current: -1, total: 1}, buffer, width: 20)
+		
+		expect(buffer.string).to be =~ /0.00%/
+	end
+	
+	it "formats a zero total as zero percent" do
+		formatter.format({current: 0, total: 0}, buffer, width: 20)
+		
+		expect(buffer.string).to be =~ /0.00%/
+	end
 end
