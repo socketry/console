@@ -21,7 +21,8 @@ module Console
 			config = self.new
 			
 			if File.exist?(path)
-				config.instance_eval(File.read(path), path)
+				# Spinel compiles ahead of time and cannot evaluate a config file read at run time:
+				RUBY_ENGINE == "spinel" ? raise(NotImplementedError, "Console::Config cannot load #{path} under Spinel") : config.instance_eval(File.read(path), path)
 			end
 			
 			return config

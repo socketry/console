@@ -223,9 +223,9 @@ module Console
 				}
 			end
 			
-			# Create a new hash with identity comparison.
+			# Create a new hash of the visited objects, keyed by object_id.
 			def default_objects
-				Hash.new.compare_by_identity
+				{}
 			end
 			
 			# This will recursively generate a safe version of the object. Nested hashes and arrays will be transformed recursively. Strings will be encoded with the given encoding. Primitive values will be returned as-is. Other values will be converted using `as_json` if available, otherwise `to_s`.
@@ -237,10 +237,10 @@ module Console
 			def safe_dump_recurse(object, limit = @depth_limit, objects = default_objects)
 				case object
 				when Hash
-					if limit <= 0 || objects[object]
+					if limit <= 0 || objects[object.object_id]
 						return "{...}"
 					else
-						objects[object] = true
+						objects[object.object_id] = true
 						
 						return object.to_h do |key, value|
 							[
@@ -250,10 +250,10 @@ module Console
 						end
 					end
 				when Array
-					if limit <= 0 || objects[object]
+					if limit <= 0 || objects[object.object_id]
 						return "[...]"
 					else
-						objects[object] = true
+						objects[object.object_id] = true
 						
 						return object.map do |value|
 							safe_dump_recurse(value, limit - 1, objects)
@@ -264,10 +264,10 @@ module Console
 				when Numeric, TrueClass, FalseClass, NilClass
 					return object
 				else
-					if limit <= 0 || objects[object]
+					if limit <= 0 || objects[object.object_id]
 						return "..."
 					else
-						objects[object] = true
+						objects[object.object_id] = true
 						
 						# We could do something like this but the chance `as_json` will blow up.
 						# We'd need to be extremely careful about it.
